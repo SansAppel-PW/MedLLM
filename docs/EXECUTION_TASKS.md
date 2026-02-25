@@ -25,8 +25,8 @@
 | T005 | 数据版本登记 | `docs/DATA_CATALOG.md` | 列出数据来源、许可、用途、更新时间 | T001 | P0 | DONE |
 | T006 | 质量与安全基线 | `docs/SAFETY_POLICY.md` | 明确禁忌输出、拒答策略、免责声明 | T003 | P0 | DONE |
 | T101 | 数据源接入脚本 | `scripts/data/download_datasets.sh` | 可下载并落地 MedQA/CMtMedQA 等数据 | T002,T005 | P0 | DONE |
-| T102 | 数据统一 Schema | `src/data/schema.py` `data/raw/schema_examples.json` | 多来源数据转换为统一字段（query/context/answer/meta） | T101 | P0 | TODO |
-| T103 | PII 清洗模块 | `src/data/pii_cleaner.py` | 能识别并脱敏姓名/电话/身份证等敏感信息 | T102 | P0 | TODO |
+| T102 | 数据统一 Schema | `src/data/schema.py` `data/raw/schema_examples.json` | 多来源数据转换为统一字段（query/context/answer/meta） | T101 | P0 | DONE |
+| T103 | PII 清洗模块 | `src/data/pii_cleaner.py` | 能识别并脱敏姓名/电话/身份证等敏感信息 | T102 | P0 | DONE |
 | T104 | 医疗 NER+EL 管线 | `src/data/ner_el_pipeline.py` | 可抽取 Disease/Drug/Symptom 并链接标准术语 | T102 | P0 | TODO |
 | T105 | KG 三元组映射 | `src/data/triple_mapper.py` `data/kg/triples/*.jsonl` | 文本可稳定映射为 `<h,r,t>` 三元组 | T104 | P0 | TODO |
 | T106 | KG 逻辑冲突检测 | `src/data/kg_validator.py` | 可检测禁忌症、适应症、剂量等冲突并输出标签 | T105 | P0 | TODO |
