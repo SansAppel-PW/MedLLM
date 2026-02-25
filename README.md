@@ -26,5 +26,12 @@ make setup
 make run-config CONFIG=configs/train/sft.yaml
 ```
 
+## 运行数据治理流水线（T104-T110）
+```bash
+python scripts/data/run_data_governance_pipeline.py \
+  --input data/raw/schema_examples.json \
+  --kg data/kg/cmekg_demo.jsonl
+```
+
 ## 当前执行清单
 - 见 `docs/EXECUTION_TASKS.md`

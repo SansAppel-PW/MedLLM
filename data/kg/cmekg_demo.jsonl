@@ -1,0 +1,5 @@
+{"head":"阿司匹林","head_type":"drug","relation":"contraindicated_for","tail":"血友病","tail_type":"disease"}
+{"head":"阿莫西林","head_type":"drug","relation":"contraindicated_for","tail":"青霉素过敏","tail_type":"population"}
+{"head":"奥司他韦","head_type":"drug","relation":"treats","tail":"流感","tail_type":"disease"}
+{"head":"布洛芬","head_type":"drug","relation":"dosage_range_mg","tail":"200-400","tail_type":"dosage"}
+{"head":"布洛芬","head_type":"drug","relation":"treats","tail":"发热","tail_type":"symptom"}

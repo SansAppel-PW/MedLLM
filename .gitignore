@@ -32,6 +32,10 @@ artifacts/
 # Data/cache (keep curated datasets and reports)
 data/cache/
 data/tmp/
+data/raw/normalized_records*.jsonl
+data/kg/entities.jsonl
+data/kg/triples/
+reports/pii_cleaning_report.json
 
 # Jupyter
 .ipynb_checkpoints/

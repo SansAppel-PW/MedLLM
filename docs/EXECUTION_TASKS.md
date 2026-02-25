@@ -27,13 +27,13 @@
 | T101 | 数据源接入脚本 | `scripts/data/download_datasets.sh` | 可下载并落地 MedQA/CMtMedQA 等数据 | T002,T005 | P0 | DONE |
 | T102 | 数据统一 Schema | `src/data/schema.py` `data/raw/schema_examples.json` | 多来源数据转换为统一字段（query/context/answer/meta） | T101 | P0 | DONE |
 | T103 | PII 清洗模块 | `src/data/pii_cleaner.py` | 能识别并脱敏姓名/电话/身份证等敏感信息 | T102 | P0 | DONE |
-| T104 | 医疗 NER+EL 管线 | `src/data/ner_el_pipeline.py` | 可抽取 Disease/Drug/Symptom 并链接标准术语 | T102 | P0 | TODO |
-| T105 | KG 三元组映射 | `src/data/triple_mapper.py` `data/kg/triples/*.jsonl` | 文本可稳定映射为 `<h,r,t>` 三元组 | T104 | P0 | TODO |
-| T106 | KG 逻辑冲突检测 | `src/data/kg_validator.py` | 可检测禁忌症、适应症、剂量等冲突并输出标签 | T105 | P0 | TODO |
-| T107 | 低置信冲突重写 | `src/data/rewrite_low_conflict.py` | 低置信冲突样本可重写并保留修正轨迹 | T106 | P1 | TODO |
-| T108 | 数据清洗质量报告 | `reports/data_cleaning_report.md` | 含剔除率、冲突类型分布、样本前后对比 | T106,T107 | P0 | TODO |
-| T109 | SFT 训练数据产出 | `data/clean/sft_train.jsonl` `data/clean/sft_dev.jsonl` | 可直接供训练脚本读取 | T108 | P0 | TODO |
-| T110 | 偏好对候选集生成 | `data/clean/pref_seed_pairs.jsonl` | 包含 `(x,y_good,y_bad_seed)` 初始对 | T109 | P0 | TODO |
+| T104 | 医疗 NER+EL 管线 | `src/data/ner_el_pipeline.py` | 可抽取 Disease/Drug/Symptom 并链接标准术语 | T102 | P0 | DONE |
+| T105 | KG 三元组映射 | `src/data/triple_mapper.py` `data/kg/triples/*.jsonl` | 文本可稳定映射为 `<h,r,t>` 三元组 | T104 | P0 | DONE |
+| T106 | KG 逻辑冲突检测 | `src/data/kg_validator.py` | 可检测禁忌症、适应症、剂量等冲突并输出标签 | T105 | P0 | DONE |
+| T107 | 低置信冲突重写 | `src/data/rewrite_low_conflict.py` | 低置信冲突样本可重写并保留修正轨迹 | T106 | P1 | DONE |
+| T108 | 数据清洗质量报告 | `reports/data_cleaning_report.md` | 含剔除率、冲突类型分布、样本前后对比 | T106,T107 | P0 | DONE |
+| T109 | SFT 训练数据产出 | `data/clean/sft_train.jsonl` `data/clean/sft_dev.jsonl` | 可直接供训练脚本读取 | T108 | P0 | DONE |
+| T110 | 偏好对候选集生成 | `data/clean/pref_seed_pairs.jsonl` | 包含 `(x,y_good,y_bad_seed)` 初始对 | T109 | P0 | DONE |
 | T201 | 白盒不确定性评分 | `src/detect/whitebox_uncertainty.py` | 输出 token entropy/self-consistency/eigenscore | T109 | P0 | TODO |
 | T202 | 原子事实抽取器 | `src/detect/atomic_fact_extractor.py` | 长回答可拆为原子事实列表 | T109 | P0 | TODO |
 | T203 | 医疗证据检索模块 | `src/detect/retriever.py` | 支持本地库检索 Top-K 证据 | T202 | P0 | TODO |
