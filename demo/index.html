@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedLLM Demo</title>
+  <style>
+    :root {
+      --bg: #f4f7f2;
+      --card: #ffffff;
+      --primary: #0e6b5a;
+      --accent: #f39c12;
+      --text: #1f2d2a;
+      --muted: #6b7d79;
+      --border: #dbe7e3;
+    }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at 20% 20%, #e3f2ed 0, var(--bg) 45%, #edf4f7 100%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      padding: 18px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: 0.5px;
+    }
+    p {
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 92px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 10px;
+      border: none;
+      background: linear-gradient(90deg, var(--primary), #2c9b83);
+      color: white;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 16px;
+      background: #f8fbfa;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      line-height: 1.6;
+    }
+    .risk {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    .risk.low { background: #2c9b83; }
+    .risk.medium { background: #f39c12; }
+    .risk.high { background: #d64545; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>MedLLM 小型 Demo</h1>
+      <p>输入问题后，调用本地 API <code>/ask</code>，展示候选回答、风险等级与守卫后的输出。</p>
+      <textarea id="query">血友病患者可以使用阿司匹林吗？</textarea>
+      <button id="askBtn">发送到 /ask</button>
+      <div class="result" id="result">等待请求...</div>
+    </div>
+  </div>
+
+  <script>
+    const resultEl = document.getElementById('result');
+    const queryEl = document.getElementById('query');
+
+    function render(data) {
+      const risk = data.risk_level || 'unknown';
+      resultEl.innerHTML = `
+        <div><strong>候选回答：</strong>${data.candidate_answer || ''}</div>
+        <div><strong>风险等级：</strong>${risk}<span class="risk ${risk}">${risk}</span></div>
+        <div><strong>最终输出：</strong>${data.final_answer || ''}</div>
+        <div><strong>风险分数：</strong>${data.risk_score ?? ''}</div>
+      `;
+    }
+
+    async function ask() {
+      resultEl.textContent = '请求中...';
+      try {
+        const res = await fetch('http://127.0.0.1:8000/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: queryEl.value })
+        });
+        const data = await res.json();
+        render(data);
+      } catch (err) {
+        resultEl.textContent = '请求失败，请先启动 API 服务（scripts/deploy/run_demo.sh --api）。';
+      }
+    }
+
+    document.getElementById('askBtn').addEventListener('click', ask);
+  </script>
+</body>
+</html>

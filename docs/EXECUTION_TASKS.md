@@ -54,10 +54,10 @@
 | T405 | 消融三：SFT vs DPO vs SimPO | `reports/ablation_alignment.md` | 结论明确：哪种策略更优及原因 | T303,T304,T402 | P0 | DONE |
 | T406 | 对标模型评测 | `reports/sota_compare.md` | 与 HuatuoGPT/BioMistral 等做统一口径对比 | T405 | P1 | TODO |
 | T407 | 错误案例分析 | `reports/error_analysis.md` | 至少覆盖 30 个失败案例并分类归因 | T405 | P1 | TODO |
-| T501 | 推理服务化 | `src/serve/app.py` | 提供问答+风险分级接口（REST/CLI） | T206,T304 | P0 | TODO |
-| T502 | Demo 前端/交互页 | `demo/` | 能展示回答、证据片段、风险等级与拦截提示 | T501 | P1 | TODO |
-| T503 | 部署与运行脚本 | `scripts/deploy/run_demo.sh` `docs/DEPLOY.md` | 一键拉起 Demo（本地或服务器） | T501,T502 | P1 | TODO |
-| T504 | 端到端验收报告 | `reports/e2e_acceptance.md` | 从输入问题到风险输出全链路可复现 | T503,T402 | P0 | TODO |
+| T501 | 推理服务化 | `src/serve/app.py` | 提供问答+风险分级接口（REST/CLI） | T206,T304 | P0 | DONE |
+| T502 | Demo 前端/交互页 | `demo/` | 能展示回答、证据片段、风险等级与拦截提示 | T501 | P1 | DONE |
+| T503 | 部署与运行脚本 | `scripts/deploy/run_demo.sh` `docs/DEPLOY.md` | 一键拉起 Demo（本地或服务器） | T501,T502 | P1 | DONE |
+| T504 | 端到端验收报告 | `reports/e2e_acceptance.md` | 从输入问题到风险输出全链路可复现 | T503,T402 | P0 | DONE |
 | T505 | 论文图表与材料沉淀 | `reports/thesis_assets/` | 指标表、流程图、关键案例可直接入论文 | T405,T407 | P1 | TODO |
 | T506 | 答辩演示素材 | `docs/defense_outline.md` `slides/` | 覆盖问题定义、方法、实验、结论、局限 | T504,T505 | P1 | TODO |
 
