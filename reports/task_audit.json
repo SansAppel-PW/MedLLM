@@ -4,7 +4,7 @@
     "done": 42,
     "todo": 0,
     "blocked": 0,
-    "done_missing": 0
+    "done_missing": 1
   },
   "rows": [
     {
@@ -121,8 +121,10 @@
         "src/data/triple_mapper.py",
         "data/kg/triples/*.jsonl"
       ],
-      "missing_paths": [],
-      "all_paths_exist": true
+      "missing_paths": [
+        "data/kg/triples/*.jsonl"
+      ],
+      "all_paths_exist": false
     },
     {
       "id": "T106",
