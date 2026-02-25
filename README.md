@@ -46,13 +46,20 @@ python scripts/data/build_real_dataset.py \
 
 ## 训练对齐流水线（真实数据）
 ```bash
+# 默认：真实 SFT + 代理 DPO/SimPO/KTO（ALIGNMENT_MODE=proxy）
 bash scripts/train/run_real_alignment_pipeline.sh
 ```
 
 输出：
-- `reports/sft_baseline.md`
+- `checkpoints/layer_b/qwen25_7b_sft/`
+- `logs/layer_b/qwen25_7b_sft/train_log.jsonl`
+- `reports/training/layer_b_qwen25_7b_sft_metrics.json`
 - `reports/training/{dpo,simpo,kto}_metrics.json`
 - `reports/alignment_compare.md`
+
+说明：
+- `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器（当前默认）。
+- `ALIGNMENT_MODE=real`：预留给真实对齐训练器（当前会提示未实现并退出）。
 
 ## Layer-B 真实 SFT（论文主链起点）
 ```bash
