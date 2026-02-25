@@ -9,6 +9,7 @@
 
 ## 学术合规说明
 - `src/train/*.py` 当前默认流程为离线模拟训练（proxy/simulation），输出的是代理指标，不是大模型参数微调日志。
+- `src/train/real_sft_train.py` 为真实 SFT 训练入口（真实 forward/backward、loss、checkpoint、日志与实验清单）。
 - 若论文需要声明“完成 SFT/DPO/SimPO 实训”，需额外运行真实训练（含模型权重、loss 曲线、checkpoint 与推理复现）。
 - `reports/sota_compare.md` 为“代理复现实验”，不可表述为官方 HuatuoGPT/BioMistral 完整能力对比。
 
@@ -52,6 +53,17 @@ bash scripts/train/run_real_alignment_pipeline.sh
 - `reports/sft_baseline.md`
 - `reports/training/{dpo,simpo,kto}_metrics.json`
 - `reports/alignment_compare.md`
+
+## Layer-B 真实 SFT（论文主链起点）
+```bash
+bash scripts/train/run_layer_b_real_sft.sh
+```
+
+输出：
+- `checkpoints/layer_b/qwen25_7b_sft/`
+- `checkpoints/layer_b/qwen25_7b_sft/run_manifest.json`
+- `logs/layer_b/qwen25_7b_sft/train_log.jsonl`
+- `reports/training/layer_b_qwen25_7b_sft_metrics.json`
 
 ## 评测与论文资产流水线
 ```bash
