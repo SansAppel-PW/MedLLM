@@ -33,5 +33,12 @@ python scripts/data/run_data_governance_pipeline.py \
   --kg data/kg/cmekg_demo.jsonl
 ```
 
+## 运行幻觉检测评测（T201-T207）
+```bash
+python -m src.detect.evaluate_detection \
+  --benchmark data/benchmark/med_hallu_benchmark.jsonl \
+  --kg data/kg/cmekg_demo.jsonl
+```
+
 ## 当前执行清单
 - 见 `docs/EXECUTION_TASKS.md`

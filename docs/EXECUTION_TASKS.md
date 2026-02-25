@@ -34,13 +34,13 @@
 | T108 | 数据清洗质量报告 | `reports/data_cleaning_report.md` | 含剔除率、冲突类型分布、样本前后对比 | T106,T107 | P0 | DONE |
 | T109 | SFT 训练数据产出 | `data/clean/sft_train.jsonl` `data/clean/sft_dev.jsonl` | 可直接供训练脚本读取 | T108 | P0 | DONE |
 | T110 | 偏好对候选集生成 | `data/clean/pref_seed_pairs.jsonl` | 包含 `(x,y_good,y_bad_seed)` 初始对 | T109 | P0 | DONE |
-| T201 | 白盒不确定性评分 | `src/detect/whitebox_uncertainty.py` | 输出 token entropy/self-consistency/eigenscore | T109 | P0 | TODO |
-| T202 | 原子事实抽取器 | `src/detect/atomic_fact_extractor.py` | 长回答可拆为原子事实列表 | T109 | P0 | TODO |
-| T203 | 医疗证据检索模块 | `src/detect/retriever.py` | 支持本地库检索 Top-K 证据 | T202 | P0 | TODO |
-| T204 | NLI 事实核查器 | `src/detect/nli_checker.py` | 对每条原子事实输出 entail/contradict/neutral | T203 | P0 | TODO |
-| T205 | 混合风险融合引擎 | `src/detect/risk_fusion.py` | 结合白盒+黑盒输出 Low/Medium/High | T201,T204 | P0 | TODO |
-| T206 | 实时拦截与告警接口 | `src/detect/runtime_guard.py` | 高风险回答可拦截并给出替代回复 | T205,T006 | P0 | TODO |
-| T207 | 检测模块离线评测 | `reports/detection_eval.md` | 给出拦截率、召回率、误报率 | T205 | P0 | TODO |
+| T201 | 白盒不确定性评分 | `src/detect/whitebox_uncertainty.py` | 输出 token entropy/self-consistency/eigenscore | T109 | P0 | DONE |
+| T202 | 原子事实抽取器 | `src/detect/atomic_fact_extractor.py` | 长回答可拆为原子事实列表 | T109 | P0 | DONE |
+| T203 | 医疗证据检索模块 | `src/detect/retriever.py` | 支持本地库检索 Top-K 证据 | T202 | P0 | DONE |
+| T204 | NLI 事实核查器 | `src/detect/nli_checker.py` | 对每条原子事实输出 entail/contradict/neutral | T203 | P0 | DONE |
+| T205 | 混合风险融合引擎 | `src/detect/risk_fusion.py` | 结合白盒+黑盒输出 Low/Medium/High | T201,T204 | P0 | DONE |
+| T206 | 实时拦截与告警接口 | `src/detect/runtime_guard.py` | 高风险回答可拦截并给出替代回复 | T205,T006 | P0 | DONE |
+| T207 | 检测模块离线评测 | `reports/detection_eval.md` | 给出拦截率、召回率、误报率 | T205 | P0 | DONE |
 | T301 | 基座 SFT 训练 | `src/train/sft_train.py` `reports/sft_baseline.md` | 产出可用 SFT baseline 模型与基线指标 | T109,T002 | P0 | TODO |
 | T302 | 对抗性实体替换器 | `src/train/hard_negative_builder.py` | 能生成高语义相似但医学事实错误的 `y_bad` | T110,T106 | P0 | TODO |
 | T303 | DPO 训练流水线 | `src/train/dpo_train.py` `configs/train/dpo.yaml` | 跑通 DPO 并输出 checkpoint 与日志 | T301,T302 | P0 | TODO |
