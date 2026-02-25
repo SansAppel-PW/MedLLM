@@ -42,6 +42,7 @@ def main() -> int:
     meta = {
         "method": "SimPO",
         "task": args.task,
+        "simulation": True,
         "samples": len(pairs),
         "avg_margin": round(avg_margin, 6),
         "base_score": base_score,

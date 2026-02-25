@@ -1,49 +1,50 @@
 # 错误案例分析
 
 ## 总体统计
-- 主预测文件样本数: 3600
-- 误判总数: 1173
-- 漏检数: 435
-- 误报数: 738
+- 主预测文件样本数: 1200
+- 误判总数: 600
+- 漏检数: 2
+- 误报数: 598
 
 ## 误判来源分布
-- BioMistral-7B-Proxy_(whitebox): 1149
-- medllm_hybrid: 24
+- medllm_hybrid: 600
 
 ## 误判原因分布
-- 选项类样本检索噪声: 738
-- 选项错配未识别: 435
+- 选项类样本检索噪声: 596
+- 选项错配未识别: 2
+- 不确定措辞触发风险: 1
+- 长答案熵值偏高: 1
 
 ## Top 30 失败案例
 | id | 来源 | 类型 | 期望 | 预测 | 分数 | 归因 | 问题摘要 | 回答摘要 |
 |---|---|---|---|---|---:|---|---|---|
-| medqa_train_000057_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.0525 | 选项错配未识别 | A 55-year-old woman comes to the physician because of involuntary hand movements that improve with alcohol consumptio... | 正确答案: ↓ ↓ ↓ |
-| medqa_train_000658_neg | medllm_hybrid | 漏检 | high | low | 0.0904 | 选项错配未识别 | A 2-year-old boy is brought to the physician for the evaluation of fever, difficulty breathing, and coughing for the ... | 正确答案: B cells |
-| medqa_train_000833_neg | medllm_hybrid | 漏检 | high | low | 0.0904 | 选项错配未识别 | A 9-year-old boy is brought to the emergency department by his mother because of painful swelling in his right knee t... | 正确答案: Protein C |
-| medqa_train_000568_neg | medllm_hybrid | 漏检 | high | low | 0.1082 | 选项错配未识别 | A 9-year-old boy who recently emigrated from sub-Saharan Africa is brought to the physician because of a 2-day histor... | 正确答案: Immunoglobulin A action |
-| medqa_validation_000048_neg | medllm_hybrid | 漏检 | high | low | 0.1082 | 选项错配未识别 | A 35-year-old woman visits her primary care provider with complaints of easy fatigability, breathlessness on exertion... | 正确答案: Vitamin A deficiency |
-| medqa_test_000213_neg | medllm_hybrid | 漏检 | high | low | 0.1082 | 选项错配未识别 | A 23-year-old woman, gravida 2, para 1, at 28 weeks' gestation comes to the physician for a routine prenatal examinat... | 正确答案: Anti-B IgG |
-| medqa_train_000242_neg | medllm_hybrid | 漏检 | high | low | 0.1220 | 选项错配未识别 | A 40-year-old woman residing at an iodine-deficient endemic area presents to the physician with a painless and gradua... | 正确答案: Hyperplastic parafollicular C cells |
-| medqa_train_000625_neg | medllm_hybrid | 漏检 | high | low | 0.1220 | 选项错配未识别 | A study is designed to assess the functions of immune components. The investigator obtains a lymph node biopsy from a... | 正确答案: V(D)J recombination |
-| medqa_test_000119_neg | medllm_hybrid | 漏检 | high | low | 0.1220 | 选项错配未识别 | A 25-year-old woman presents generalized abdominal pain and vomiting for the past hour. She has also had watery diarr... | 正确答案: Perform a gastric lavage |
-| medqa_train_000965_neg | medllm_hybrid | 漏检 | high | low | 0.1333 | 选项错配未识别 | A 3-year-old boy is brought to the physician for presurgical evaluation before undergoing splenectomy. One year ago, ... | 正确答案: Vaccination against hepatitis B virus |
-| medqa_train_000637_neg | medllm_hybrid | 漏检 | high | low | 0.1428 | 选项错配未识别 | An 18-year-old man comes to the physician with his parents for a routine health maintenance examination. He noticed a... | 正确答案: Refer him to a methadone clinic |
-| medqa_train_000078_neg | medllm_hybrid | 漏检 | high | low | 0.1511 | 选项错配未识别 | A 65-year-old man with hypertension and type 2 diabetes mellitus is brought to the emergency department 20 minutes af... | 正确答案: Rupture of a bulla in the lung |
-| medqa_train_000147_neg | medllm_hybrid | 漏检 | high | low | 0.1511 | 选项错配未识别 | A 30-month-old boy is brought to the emergency department by his parents. He has burns over his left hand. The mother... | 正确答案: Burn as a result of poor supervision |
-| medqa_validation_000109_neg | medllm_hybrid | 漏检 | high | low | 0.1511 | 选项错配未识别 | A 57-year-old man comes to the clinic complaining of nausea and 1 episode of vomiting during the past day. He denies ... | 正确答案: Impaction of a gallstone in the ileus |
-| medqa_train_001101_neg | medllm_hybrid | 漏检 | high | low | 0.1584 | 选项错配未识别 | A 26-year-old female college student is brought back into the university clinic for acting uncharacteristically. The ... | 正确答案: The patient may have a history of mania. |
-| medqa_validation_000055_neg | medllm_hybrid | 漏检 | high | low | 0.1584 | 选项错配未识别 | A 36-year-old woman presents with a persistent cough productive of blood-streaked sputum, night sweats, and weight lo... | 正确答案: Only active pulmonary tuberculosis is a reportable disease. |
-| medqa_validation_000187_neg | medllm_hybrid | 漏检 | high | low | 0.1725 | 选项错配未识别 | A 25-year-old primigravida is admitted to the hospital at 35 weeks gestation with lower leg edema. She denies any oth... | 正确答案: Watch for a spontaneous vaginal delivery at any term from the moment of presentation |
-| medqa_train_000102_neg | medllm_hybrid | 漏检 | high | low | 0.1727 | 选项错配未识别 | A 16-year-old man with no significant past medical, surgical, or family history presents to his pediatrician with new... | 正确答案: The patient camped as a side excursion from a cruise ship. |
-| medqa_train_000209_neg | medllm_hybrid | 漏检 | high | low | 0.1727 | 选项错配未识别 | An otherwise healthy 49-year-old man presents to his primary care physician for follow-up for a high HbA1C. 3 months ... | 正确答案: Metformin added to a glucagon-like peptide 1 (GLP-1) agonist |
-| medqa_train_000369_neg | medllm_hybrid | 漏检 | high | low | 0.1760 | 选项错配未识别 | A 22-year-old woman in the intensive care unit has had persistent oozing from the margins of wounds for 2 hours that ... | 正确答案: Transfuse packed RBC and fresh frozen plasma in a 1:1 ratio |
-| medqa_train_000678_neg | medllm_hybrid | 漏检 | high | low | 0.1775 | 选项错配未识别 | An 8-year-old boy and his 26-year-old babysitter are brought into the emergency department with severe injuries cause... | 正确答案: Obtain an emergency court order from a judge to obtain consent to amputate the child’s arm |
-| medqa_train_001135_neg | medllm_hybrid | 漏检 | high | low | 0.1843 | 选项错配未识别 | A new study shows a significant association between patients with a BMI >40 and a diagnosis of diabetes (odds ratio: ... | 正确答案: A study of 1000 patients comparing rates of diabetes diagnoses and BMIs of diabetic and non-diabetic patients |
-| medqa_train_000099_pos | medllm_hybrid | 误报 | low | high | 0.8082 | 选项类样本检索噪声 | A 55-year-old woman is brought to the emergency department because of worsening upper abdominal pain for 8 hours. She... | 正确答案: D. Capillary leakage |
-| medqa_test_000296_pos | medllm_hybrid | 误报 | low | high | 0.8082 | 选项类样本检索噪声 | A 55-year-old woman is brought to the emergency department because of worsening upper abdominal pain for the past 8 h... | 正确答案: B. Capillary leakage |
-| medqa_train_000000_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A genetic population study is being conducted to find the penetrance of a certain disease. This disease is associated... | 正确答案: 40% |
-| medqa_train_000016_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 34-year-old woman with a history of depression is brought to the emergency department by her husband 45 minutes aft... | 正确答案: Fomepizole |
-| medqa_train_000017_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 30-year-old patient comes to the emergency room with a chief complaint of left chest pain and a productive cough wi... | 正确答案: Tuberculosis |
-| medqa_train_000029_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 26-year-old woman (gravida 3 para 1) with no prenatal care delivers a boy at 37 weeks gestation. His Apgar score is... | 正确答案: Gentamicin |
-| medqa_train_000030_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | An 8-year-old girl is brought to the physician because of repetitive involuntary movements, including neck twisting, ... | 正确答案: Chlorpromazine |
-| medqa_train_000031_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 55-year-old man presents to his primary care provider with increased urinary frequency. Over the past 3 months, he ... | 正确答案: Mannitol |
+| medqa_test_000037_neg | medllm_hybrid | 漏检 | high | low | 0.1404 | 选项错配未识别 | Hypoxia-inducible factor 1-alpha (HIF-1a) is a transcription factor with increased activity under conditions of cellu... | 正确答案: A Northern blot will show increased HIF-1α, compared to a normoxic control cell. |
+| medqa_validation_000219_pos | medllm_hybrid | 误报 | low | high | 0.8059 | 选项类样本检索噪声 | A 49-year-old man is undergoing an elective hernia repair. No significant past medical history or current medications... | 正确答案: C. The patient’s doctor should have included possible complications of the given operation and risks and benefi... |
+| medqa_validation_000099_pos | medllm_hybrid | 误报 | low | high | 0.8047 | 选项类样本检索噪声 | A 52-year-old man presents to the clinic complaining of blood in his urine. He had a mild respiratory illness 3 weeks... | 正确答案: B. Donor A: tA7/A5, ttB8/B2, ttC3/C8 |
+| medqa_validation_000055_pos | medllm_hybrid | 误报 | low | high | 0.8042 | 选项类样本检索噪声 | A 36-year-old woman presents with a persistent cough productive of blood-streaked sputum, night sweats, and weight lo... | 正确答案: A. If this patient is diagnosed with active pulmonary tuberculosis, it should be reported even without the pati... |
+| medqa_validation_000180_pos | medllm_hybrid | 误报 | low | high | 0.8020 | 选项类样本检索噪声 | A 19-month-old boy comes into the emergency department with his parents. He has burns on his buttocks and perineal ar... | 正确答案: D. Circular burns of equal depth restricted to the buttocks, with sparing of the hands and feet |
+| medqa_validation_000214_pos | medllm_hybrid | 误报 | low | high | 0.8017 | 选项类样本检索噪声 | A 51-year-old inmate was released from prison 1 month ago and visits his general practitioner for evaluation of a pos... | 正确答案: D. Advise the patient the positive diagnosis will be reported to the public health office, but you would also e... |
+| medqa_test_000248_pos | medllm_hybrid | 误报 | low | high | 0.8011 | 选项类样本检索噪声 | A 55-year-old male with a history of stage I colon cancer status-post left hemicolectomy presents to your office for ... | 正确答案: D. "I really haven't thought about the colonoscopy until today. Worrying before getting the results wasn't goin... |
+| medqa_test_000191_pos | medllm_hybrid | 误报 | low | high | 0.8008 | 选项类样本检索噪声 | A 29-year-old female presents to the clinic for a regular check-up. She has no specific complaints. Vital signs inclu... | 正确答案: A. These cells transform to macrophages when they migrate to peripheral tissues. |
+| medqa_validation_000084_pos | medllm_hybrid | 误报 | low | high | 0.8004 | 选项类样本检索噪声 | A 28-year-old G2P1001 presents for a routine obstetric visit in her 36th week of pregnancy. She has a history of type... | 正确答案: D. Treat with oral nitrofurantion for 10 days then continue for prophylaxis until delivery |
+| medqa_test_000037_pos | medllm_hybrid | 误报 | low | high | 0.8004 | 选项类样本检索噪声 | Hypoxia-inducible factor 1-alpha (HIF-1a) is a transcription factor with increased activity under conditions of cellu... | 正确答案: D. A Western blot will show increased HIF-1α compared to a normoxic control. |
+| medqa_test_000100_pos | medllm_hybrid | 误报 | low | high | 0.8003 | 选项类样本检索噪声 | A 14-year-old girl comes to the physician because she has not yet had her period. She is at the 10th percentile for h... | 正确答案: A. Pregnancy success rate with donor oocytes is similar to patients with primary ovarian failure |
+| medqa_test_000134_pos | medllm_hybrid | 误报 | low | high | 0.8003 | 选项类样本检索噪声 | A 17-year-old high school student was in shop class when he accidentally sawed off his pointer finger while making a ... | 正确答案: C. Wrap finger in moist gauze, put in a plastic bag, and place on ice |
+| medqa_test_000254_pos | medllm_hybrid | 误报 | low | high | 0.7999 | 选项类样本检索噪声 | A 72-year-old woman with a 40 pack-year history of smoking presents to your office with jaundice. After a thorough wo... | 正确答案: B. "I have bad news I need to share with you. Please sit down so we can discuss." |
+| medqa_test_000268_pos | medllm_hybrid | 误报 | low | high | 0.7999 | 选项类样本检索噪声 | During the normal catabolism of protein, urea and ammonia are produced as waste products. If these waste products are... | 正确答案: A. NH3 + HCO3- + 2 ATP --> carbamoyl phosphate + 2 ADP + Pi |
+| medqa_test_000171_pos | medllm_hybrid | 误报 | low | high | 0.7982 | 选项类样本检索噪声 | A 28-year-old G1P0 woman at 12 weeks estimated gestational age presents with malaise, joint pain, fever, and chills f... | 正确答案: A. It can lead to hydrops fetalis secondary to fetal anemia. |
+| medqa_test_000234_pos | medllm_hybrid | 误报 | low | high | 0.7982 | 选项类样本检索噪声 | A 72-year-old man presents to his primary care physician with a 6-month history of shortness of breath. He says that ... | 正确答案: C. Increased residual volume and decreased 1 second forced expiratory volume |
+| medqa_validation_000040_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 55-year-old woman is rushed to the emergency department after being found lying unconscious in a burning house by a... | 正确答案: A. The curve would be shifted left due to an increased oxygen binding affinity by hemoglobin. |
+| medqa_validation_000042_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 65-year-old woman with a 6-month history of acute promyelocytic leukemia managed with all-trans-retinoic acid prese... | 正确答案: C. PT: ↑ | PTT ↑ | Bleeding time: ↑ | Fibrin split products: ↑ | D-dimer: ↑| Fibrinogen: ↓ | Platelet count: ↓ |
+| medqa_validation_000044_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 66-year-old man presents with palpitation, syncope, and difficulty breathing. He has a past medical history of stro... | 正确答案: B. Amiodarone inhibits CYP2C9 leading to an increased risk of bleeding |
+| medqa_validation_000108_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A regional hospital system has decided to institute a new task group for quality improvement and patient safety. The ... | 正确答案: D. Changing the electronic medical record to only allow a maximum of 7 days per prescription |
+| medqa_validation_000109_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 57-year-old man comes to the clinic complaining of nausea and 1 episode of vomiting during the past day. He denies ... | 正确答案: A. Accumulation of N-acetyl-p-benzoquinone imine in the liver |
+| medqa_validation_000128_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 45-year-old man presents to the emergency room with fever and headache. He recently had a middle ear infection. On ... | 正确答案: D. Glucose: ↓, Proteins: ↑, Cells: 90% neutrophils, Lactic Acid (mmol/l): 4.5 |
+| medqa_validation_000156_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 42-year-old overweight restaurant waiter develops excruciating pain in the heel of his right foot. Symptoms are mos... | 正确答案: C. This was caused by excessive strain on the medial fascicle. |
+| medqa_validation_000181_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 44-year-old woman presents to the physician for evaluation of recurrent episodes of pounding headache, palpitations... | 正确答案: C. 24-h urine catecholamine by-products (vanillylmandelic acid (VMA), metanephrine, and normetanephrine) |
+| medqa_validation_000187_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 25-year-old primigravida is admitted to the hospital at 35 weeks gestation with lower leg edema. She denies any oth... | 正确答案: A. Induction of vaginal delivery at 37 weeks’ pregnancy if not begin spontaneously earlier |
+| medqa_validation_000291_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 27-year-old nullipara makes an appointment with her gynecologist to discuss the results of her cervical cancer scre... | 正确答案: B. Close follow-up with cytology and colposcopy may be considered in this patient. |
+| medqa_test_000020_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 28-year-old woman, gravida 2, para 1, at 40 weeks gestation is brought to the emergency department by her husband. ... | 正确答案: C. Treat and transfer the patient after she makes a written request |
+| medqa_test_000052_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | While traveling abroad a physician is asked to attend a meeting regarding healthcare in the region. The rate of chlam... | 正确答案: C. “I can not help you due to the ethical principle of nonmaleficence.” |
+| medqa_test_000073_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A multi-specialty physician practice is meeting to determine which compensation scheme would best serve the practice ... | 正确答案: C. Fee-for-service may incentivize physicians to increase healthcare utilization irrespective of quality |
+| medqa_test_000081_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 不确定措辞触发风险 | A 16-year-old female presents to her physician’s office after noticing a round lump in her left breast 2 months ago. ... | 正确答案: C. This mass will most likely decrease in size or disappear over time |

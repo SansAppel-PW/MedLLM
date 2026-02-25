@@ -52,8 +52,9 @@ def main() -> int:
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report = [
-        "# SFT 基线训练报告",
+        "# SFT 基线训练报告（模拟）",
         "",
+        "- 说明：本报告为离线代理指标统计，不代表真实参数微调训练结果。",
         f"- 训练样本数: {len(train_rows)}",
         f"- 验证样本数: {len(dev_rows)}",
         f"- 平均问题长度: {avg_query_len:.2f}",

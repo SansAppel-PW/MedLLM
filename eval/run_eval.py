@@ -276,6 +276,18 @@ def main() -> int:
     write_markdown(Path(args.ablation_detection), det_report + "\n")
 
     # Ablation alignment summary.
+    best_risk = min(
+        [("SFT", float(sft["avg_risk_score"])), ("DPO", float(dpo["avg_risk_score"])), ("SimPO", float(simpo["avg_risk_score"]))],
+        key=lambda x: x[1],
+    )
+    if best_risk[0] == "SFT":
+        align_conclusion = "结论：在当前样例上，SFT 的平均风险分最低，DPO/SimPO 未体现出额外安全收益。"
+    else:
+        align_conclusion = (
+            f"结论：在当前样例上，{best_risk[0]} 的平均风险分最低，"
+            "较 SFT 体现出更好的安全侧表现。"
+        )
+
     align_report = "\n".join(
         [
             "# 消融实验：SFT vs DPO vs SimPO",
@@ -286,7 +298,7 @@ def main() -> int:
             f"| DPO | {dpo['avg_factscore']:.4f} | {dpo['interception_rate']:.4f} | {dpo['avg_risk_score']:.4f} |",
             f"| SimPO | {simpo['avg_factscore']:.4f} | {simpo['interception_rate']:.4f} | {simpo['avg_risk_score']:.4f} |",
             "",
-            "结论：在当前样例上，SimPO/DPO 相较 SFT 在安全侧更稳健（风险分更低）。",
+            align_conclusion,
         ]
     )
     write_markdown(Path(args.ablation_alignment), align_report + "\n")

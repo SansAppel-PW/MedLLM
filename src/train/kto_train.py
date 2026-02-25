@@ -34,6 +34,7 @@ def main() -> int:
     meta = {
         "method": "KTO",
         "task": args.task,
+        "simulation": True,
         "samples": len(pairs),
         "good_signal_ratio": round(signal_ratio, 6),
         "base_score": base_score,

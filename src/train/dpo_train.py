@@ -43,6 +43,7 @@ def main() -> int:
     meta = {
         "method": "DPO",
         "task": args.task,
+        "simulation": True,
         "samples": len(pairs),
         "avg_pair_difficulty": round(avg_diff, 6),
         "base_score": base_score,
