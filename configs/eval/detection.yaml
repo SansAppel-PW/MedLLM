@@ -1,0 +1,22 @@
+inherits: configs/base.yaml
+
+run:
+  task: detection_eval
+  entrypoint: src/detect/runtime_guard.py
+
+detection:
+  uncertainty:
+    entropy_threshold: 2.8
+    self_consistency_threshold: 0.65
+    eigenscore_threshold: 0.55
+  retrieval:
+    top_k: 5
+    min_support_docs: 2
+  risk_fusion:
+    high_risk_score: 0.75
+    medium_risk_score: 0.45
+
+output:
+  report: reports/detection_eval.md
+  save_predictions: reports/detection_predictions.jsonl
+

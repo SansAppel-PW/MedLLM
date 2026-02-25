@@ -1,0 +1,32 @@
+project:
+  name: medllm
+  experiment: baseline
+  seed: 42
+
+paths:
+  data_root: data
+  raw_data: data/raw
+  clean_data: data/clean
+  kg_data: data/kg
+  benchmark_data: data/benchmark
+  outputs: outputs
+  checkpoints: checkpoints
+  reports: reports
+
+runtime:
+  device: auto
+  mixed_precision: bf16
+  num_workers: 4
+  log_every_n_steps: 20
+
+models:
+  sft_backbone: Qwen/Qwen2.5-7B-Instruct
+  alignment_backbone: Qwen/Qwen2.5-7B-Instruct
+  max_seq_len: 4096
+
+data:
+  train_file: data/clean/sft_train.jsonl
+  dev_file: data/clean/sft_dev.jsonl
+  preference_file: data/clean/pref_seed_pairs.jsonl
+  benchmark_file: data/benchmark/med_hallu_benchmark.jsonl
+

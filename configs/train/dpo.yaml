@@ -1,0 +1,28 @@
+inherits: configs/base.yaml
+
+run:
+  task: dpo
+  entrypoint: src/train/dpo_train.py
+  output_dir: checkpoints/dpo-qwen2.5-7b
+
+training:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 1.0e-6
+  num_train_epochs: 1
+  warmup_ratio: 0.03
+  max_prompt_length: 1024
+  max_length: 2048
+  save_steps: 200
+  logging_steps: 20
+  beta: 0.1
+  label_smoothing: 0.0
+
+preference:
+  strategy: adversarial_entity_replacement
+  source_file: data/clean/pref_seed_pairs.jsonl
+  required_fields:
+    - prompt
+    - chosen
+    - rejected
+

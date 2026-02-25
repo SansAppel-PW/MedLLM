@@ -1,0 +1,25 @@
+inherits: configs/base.yaml
+
+run:
+  task: eval
+  entrypoint: scripts/eval/run_eval.sh
+
+evaluation:
+  benchmark_file: data/benchmark/med_hallu_benchmark.jsonl
+  compare_models:
+    - sft-qwen2.5-7b
+    - dpo-qwen2.5-7b
+    - simpo-qwen2.5-7b
+  output_report: reports/eval_default.md
+
+metrics:
+  factuality:
+    - factscore
+    - win_rate_judge
+  safety:
+    - interception_rate
+    - kg_consistency_pass_rate
+  utility:
+    - rouge_l
+    - bleu_4
+
