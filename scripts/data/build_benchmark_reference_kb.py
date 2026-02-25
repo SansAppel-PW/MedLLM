@@ -46,9 +46,28 @@ def canonical_answer_text(text: str) -> str:
     return t
 
 
-def build_reference_rows(benchmark_rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def parse_split_spec(spec: str) -> set[str]:
+    items = [x.strip().lower() for x in (spec or "").split(",") if x.strip()]
+    return set(items)
+
+
+def split_of(row: dict[str, Any]) -> str:
+    meta = row.get("meta", {})
+    if not isinstance(meta, dict):
+        return ""
+    return str(meta.get("split", "")).strip().lower()
+
+
+def build_reference_rows(
+    benchmark_rows: list[dict[str, Any]],
+    include_splits: set[str] | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    filtered_rows = benchmark_rows
+    if include_splits:
+        filtered_rows = [row for row in benchmark_rows if split_of(row) in include_splits]
+
     by_key: dict[str, dict[str, Any]] = {}
-    for row in benchmark_rows:
+    for row in filtered_rows:
         rid = str(row.get("id", ""))
         key = pair_key(rid)
         expected = str(row.get("expected_risk", "low"))
@@ -100,9 +119,11 @@ def build_reference_rows(benchmark_rows: list[dict[str, Any]]) -> tuple[list[dic
 
     summary = {
         "benchmark_rows": len(benchmark_rows),
+        "benchmark_rows_after_split_filter": len(filtered_rows),
         "pair_count": len(by_key),
         "kb_rows": len(out_rows),
         "missing_positive_pairs": missing_positive,
+        "include_splits": sorted(include_splits) if include_splits else [],
     }
     return out_rows, summary
 
@@ -112,11 +133,17 @@ def main() -> int:
     parser.add_argument("--benchmark", default="data/benchmark/real_medqa_benchmark.jsonl")
     parser.add_argument("--output", default="data/kg/real_medqa_reference_kb.jsonl")
     parser.add_argument("--report", default="reports/benchmark_reference_kb_report.md")
+    parser.add_argument(
+        "--include-splits",
+        default="train",
+        help="Comma-separated benchmark splits used to build KB (e.g. train)",
+    )
     args = parser.parse_args()
 
     benchmark_path = Path(args.benchmark)
     rows = load_jsonl(benchmark_path)
-    kb_rows, summary = build_reference_rows(rows)
+    include_splits = parse_split_spec(args.include_splits)
+    kb_rows, summary = build_reference_rows(rows, include_splits=include_splits)
     save_jsonl(Path(args.output), kb_rows)
 
     report_path = Path(args.report)
@@ -125,6 +152,8 @@ def main() -> int:
         "# Benchmark 参考知识库构建报告",
         "",
         f"- 基准集样本数: {summary['benchmark_rows']}",
+        f"- split 过滤后样本数: {summary['benchmark_rows_after_split_filter']}",
+        f"- 使用 split: {','.join(summary['include_splits']) if summary['include_splits'] else '(all)'}",
         f"- 问题对数量: {summary['pair_count']}",
         f"- 参考知识条目数: {summary['kb_rows']}",
         f"- 缺少正例的问题对: {summary['missing_positive_pairs']}",

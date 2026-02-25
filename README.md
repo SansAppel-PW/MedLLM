@@ -5,7 +5,7 @@
 ## 项目目标
 - 基于真实数据构建训练集与评测集，减少 demo 级假数据依赖。
 - 基于白盒不确定性 + 检索核查的混合检测，实现高风险拦截。
-- 基于 SFT / DPO / SimPO 的对齐训练流程，支持论文实验复现。
+- 基于 SFT / DPO / SimPO 的对齐训练流程（当前仓库为轻量模拟实现），支持论文实验复现实验编排。
 
 ## 目录结构
 - `src/`: 核心代码（数据、检测、训练、服务）
@@ -51,9 +51,13 @@ bash scripts/train/run_real_alignment_pipeline.sh
 ## 评测与论文资产流水线
 ```bash
 PYTHONUNBUFFERED=1 \
+KB_SOURCE_SPLITS=train EVAL_SPLITS=validation,test \
 DET_MAX=0 EVAL_MAX=1200 SOTA_MAX=1800 LOG_EVERY=400 \
 bash scripts/eval/run_thesis_pipeline.sh
 ```
+
+说明：
+- 默认以 `train` split 构建参考 KB，并在 `validation,test` split 上评测，避免同集构建-评测泄漏。
 
 输出：
 - `reports/detection_eval.md`
@@ -66,6 +70,11 @@ bash scripts/eval/run_thesis_pipeline.sh
 ## 任务审计（开题任务对齐）
 ```bash
 python scripts/audit/check_task_completion.py
+```
+
+## 回归测试
+```bash
+python -m pytest -q tests/test_runtime_guard_regression.py tests/test_reference_kb_split_guard.py
 ```
 
 ## Demo

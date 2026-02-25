@@ -70,6 +70,15 @@ def guard_answer(
     )
 
     risk_level = fused.get("risk_level", "low")
+    risk_score = float(fused.get("risk_score", 0.0))
+    signals = dict(fused.get("signals", {}))
+
+    # Strongly overconfident clinical assertions should at least be warned.
+    if risk_level == "low" and float(whitebox.get("overconfidence_flag", 0.0)) >= 1.0:
+        risk_level = "medium"
+        risk_score = max(risk_score, medium_threshold)
+        signals["overconfidence_escalation"] = 1.0
+
     blocked = risk_level == "high"
     warning = risk_level == "medium"
 
@@ -86,8 +95,8 @@ def guard_answer(
         "final_answer": final_answer,
         "blocked": blocked,
         "risk_level": risk_level,
-        "risk_score": fused.get("risk_score", 0.0),
-        "signals": fused.get("signals", {}),
+        "risk_score": round(risk_score, 6),
+        "signals": signals,
         "facts": facts,
         "fact_checks": nli_results,
     }

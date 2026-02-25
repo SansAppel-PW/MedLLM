@@ -8,6 +8,7 @@ BENCHMARK="${BENCHMARK:-data/benchmark/med_hallu_benchmark.jsonl}"
 KG="${KG:-data/kg/cmekg_demo.jsonl}"
 MAX_SAMPLES="${MAX_SAMPLES:-0}"
 LOG_EVERY="${LOG_EVERY:-0}"
+INCLUDE_SPLITS="${INCLUDE_SPLITS:-}"
 
 python3 eval/run_eval.py \
   --benchmark "${BENCHMARK}" \
@@ -16,6 +17,7 @@ python3 eval/run_eval.py \
   --ablation-kg reports/ablation_kg.md \
   --ablation-detection reports/ablation_detection.md \
   --ablation-alignment reports/ablation_alignment.md \
+  --include-splits "${INCLUDE_SPLITS}" \
   --max-samples "${MAX_SAMPLES}" \
   --log-every "${LOG_EVERY}"
 

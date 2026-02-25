@@ -13,7 +13,7 @@ fi
 
 if [[ "${MODE}" == "api" ]]; then
   echo "[demo] starting API on http://127.0.0.1:8000"
-  python3 src/serve/app.py --serve --host 127.0.0.1 --port 8000
+  python3 -m src.serve.app --serve --host 127.0.0.1 --port 8000
   exit 0
 fi
 

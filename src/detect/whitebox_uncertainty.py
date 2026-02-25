@@ -74,6 +74,8 @@ def estimate_uncertainty(text: str) -> dict[str, float]:
     entropy = shannon_entropy(tokens)
     self_consistency = self_consistency_proxy(text, tokens)
     eigenscore = eigenscore_proxy(tokens)
+    overconfidence_flag = 1.0 if has_any(text, OVERCONFIDENT_CUES) else 0.0
+    uncertain_flag = 1.0 if has_any(text, UNCERTAIN_CUES) else 0.0
 
     # Scale entropy into [0,1] using a practical cap for short medical answers.
     entropy_norm = max(0.0, min(1.0, entropy / 3.5))
@@ -85,6 +87,8 @@ def estimate_uncertainty(text: str) -> dict[str, float]:
         "self_consistency": round(self_consistency, 6),
         "eigenscore": round(eigenscore, 6),
         "uncertainty_score": round(uncertainty_score, 6),
+        "overconfidence_flag": overconfidence_flag,
+        "uncertain_flag": uncertain_flag,
     }
 
 

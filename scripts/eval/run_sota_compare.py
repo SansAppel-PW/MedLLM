@@ -38,6 +38,17 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def parse_split_spec(spec: str) -> set[str]:
+    return {x.strip().lower() for x in (spec or "").split(",") if x.strip()}
+
+
+def split_of(row: dict[str, Any]) -> str:
+    meta = row.get("meta", {})
+    if not isinstance(meta, dict):
+        return ""
+    return str(meta.get("split", "")).strip().lower()
+
+
 def whitebox_policy(answer: str) -> dict[str, Any]:
     w = estimate_uncertainty(answer)
     score = 0.65 * float(w["entropy_norm"]) + 0.35 * (1.0 - float(w["self_consistency"]))
@@ -167,9 +178,18 @@ def main() -> int:
     parser.add_argument("--details-dir", default="reports/thesis_assets/tables/sota_details")
     parser.add_argument("--max-samples", type=int, default=0)
     parser.add_argument("--log-every", type=int, default=0)
+    parser.add_argument(
+        "--include-splits",
+        default="",
+        help="Comma-separated benchmark splits to evaluate (e.g. validation,test)",
+    )
     args = parser.parse_args()
 
     benchmark = load_jsonl(Path(args.benchmark))
+    include_splits = parse_split_spec(args.include_splits)
+    if include_splits:
+        benchmark = [row for row in benchmark if split_of(row) in include_splits]
+        print(f"[sota] split filter={sorted(include_splits)} samples={len(benchmark)}")
     if args.max_samples > 0 and len(benchmark) > args.max_samples:
         benchmark = benchmark[: args.max_samples]
         print(f"[sota] truncated benchmark to {len(benchmark)} samples")
