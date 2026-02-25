@@ -36,8 +36,8 @@ def guard_answer(
     answer: str,
     kg_path: str | Path = "data/kg/cmekg_demo.jsonl",
     top_k: int = 5,
-    high_threshold: float = 0.68,
-    medium_threshold: float = 0.42,
+    high_threshold: float = 0.45,
+    medium_threshold: float = 0.30,
 ) -> dict[str, Any]:
     answer = (answer or "").strip()
     query = (query or "").strip()

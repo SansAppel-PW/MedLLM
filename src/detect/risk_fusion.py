@@ -103,8 +103,8 @@ def main() -> int:
     parser.add_argument("--whitebox", required=True, help="whitebox jsonl")
     parser.add_argument("--nli", required=True, help="nli jsonl")
     parser.add_argument("--output", required=True, help="output jsonl")
-    parser.add_argument("--high", type=float, default=0.68)
-    parser.add_argument("--medium", type=float, default=0.42)
+    parser.add_argument("--high", type=float, default=0.45)
+    parser.add_argument("--medium", type=float, default=0.30)
     args = parser.parse_args()
 
     run_batch(Path(args.whitebox), Path(args.nli), Path(args.output), args.high, args.medium)

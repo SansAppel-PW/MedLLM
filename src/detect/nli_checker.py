@@ -14,8 +14,8 @@ except ImportError:  # pragma: no cover
     from common import jaccard_similarity, tokenize
 
 
-NEG_CUES = ["禁忌", "禁用", "避免", "不宜", "不可"]
-POS_CUES = ["治疗", "可用于", "适用", "推荐", "首选"]
+NEG_CUES = ["禁忌", "禁用", "避免", "不宜", "不可", "不应", "禁止"]
+POS_CUES = ["治疗", "可用于", "适用", "推荐", "首选", "可以", "可用", "可使用", "适合"]
 
 
 def cue_polarity(text: str) -> str:

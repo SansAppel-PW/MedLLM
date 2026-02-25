@@ -40,5 +40,32 @@ python -m src.detect.evaluate_detection \
   --kg data/kg/cmekg_demo.jsonl
 ```
 
+## 运行训练与对齐流程（T301-T306）
+```bash
+python src/train/sft_train.py
+python src/train/hard_negative_builder.py
+python src/train/dpo_train.py
+python src/train/simpo_train.py
+python src/train/kto_train.py
+python src/train/compare_alignment.py
+```
+
+## 运行综合评测与消融（T402-T405）
+```bash
+bash scripts/eval/run_eval.sh
+```
+
+## 运行小型 Demo（T501-T504）
+```bash
+# 脚本演示
+scripts/deploy/run_demo.sh
+
+# API
+scripts/deploy/run_demo.sh --api
+
+# 端到端验收报告
+python scripts/deploy/run_e2e_acceptance.py
+```
+
 ## 当前执行清单
 - 见 `docs/EXECUTION_TASKS.md`

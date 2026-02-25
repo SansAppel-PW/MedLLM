@@ -41,17 +41,17 @@
 | T205 | 混合风险融合引擎 | `src/detect/risk_fusion.py` | 结合白盒+黑盒输出 Low/Medium/High | T201,T204 | P0 | DONE |
 | T206 | 实时拦截与告警接口 | `src/detect/runtime_guard.py` | 高风险回答可拦截并给出替代回复 | T205,T006 | P0 | DONE |
 | T207 | 检测模块离线评测 | `reports/detection_eval.md` | 给出拦截率、召回率、误报率 | T205 | P0 | DONE |
-| T301 | 基座 SFT 训练 | `src/train/sft_train.py` `reports/sft_baseline.md` | 产出可用 SFT baseline 模型与基线指标 | T109,T002 | P0 | TODO |
-| T302 | 对抗性实体替换器 | `src/train/hard_negative_builder.py` | 能生成高语义相似但医学事实错误的 `y_bad` | T110,T106 | P0 | TODO |
-| T303 | DPO 训练流水线 | `src/train/dpo_train.py` `configs/train/dpo.yaml` | 跑通 DPO 并输出 checkpoint 与日志 | T301,T302 | P0 | TODO |
-| T304 | SimPO 训练流水线 | `src/train/simpo_train.py` `configs/train/simpo.yaml` | 跑通 SimPO 并输出 checkpoint 与日志 | T301,T302 | P0 | TODO |
-| T305 | 可选 KTO 实验 | `src/train/kto_train.py` | 完成 KTO 对比（可选，时间不足可降级） | T301,T302 | P2 | TODO |
-| T306 | 对齐训练对比报告 | `reports/alignment_compare.md` | DPO/SimPO/KTO 指标与案例对比 | T303,T304,T305 | P0 | TODO |
-| T401 | 医疗幻觉评测集定稿 | `data/benchmark/med_hallu_benchmark.jsonl` | 覆盖药物/疾病/检查/禁忌等场景 | T110,T202 | P0 | TODO |
-| T402 | 指标实现与脚本 | `eval/metrics.py` `scripts/eval/run_eval.sh` | 支持 FactScore/WinRate/InterceptionRate/Rouge | T401,T207 | P0 | TODO |
-| T403 | 消融一：去除 KG 清洗 | `reports/ablation_kg.md` | 对比有/无 KG 清洗后的事实错误率变化 | T301,T402 | P0 | TODO |
-| T404 | 消融二：检测机制对比 | `reports/ablation_detection.md` | 对比白盒/黑盒/混合三种检测效果 | T205,T402 | P0 | TODO |
-| T405 | 消融三：SFT vs DPO vs SimPO | `reports/ablation_alignment.md` | 结论明确：哪种策略更优及原因 | T303,T304,T402 | P0 | TODO |
+| T301 | 基座 SFT 训练 | `src/train/sft_train.py` `reports/sft_baseline.md` | 产出可用 SFT baseline 模型与基线指标 | T109,T002 | P0 | DONE |
+| T302 | 对抗性实体替换器 | `src/train/hard_negative_builder.py` | 能生成高语义相似但医学事实错误的 `y_bad` | T110,T106 | P0 | DONE |
+| T303 | DPO 训练流水线 | `src/train/dpo_train.py` `configs/train/dpo.yaml` | 跑通 DPO 并输出 checkpoint 与日志 | T301,T302 | P0 | DONE |
+| T304 | SimPO 训练流水线 | `src/train/simpo_train.py` `configs/train/simpo.yaml` | 跑通 SimPO 并输出 checkpoint 与日志 | T301,T302 | P0 | DONE |
+| T305 | 可选 KTO 实验 | `src/train/kto_train.py` | 完成 KTO 对比（可选，时间不足可降级） | T301,T302 | P2 | DONE |
+| T306 | 对齐训练对比报告 | `reports/alignment_compare.md` | DPO/SimPO/KTO 指标与案例对比 | T303,T304,T305 | P0 | DONE |
+| T401 | 医疗幻觉评测集定稿 | `data/benchmark/med_hallu_benchmark.jsonl` | 覆盖药物/疾病/检查/禁忌等场景 | T110,T202 | P0 | DONE |
+| T402 | 指标实现与脚本 | `eval/metrics.py` `scripts/eval/run_eval.sh` | 支持 FactScore/WinRate/InterceptionRate/Rouge | T401,T207 | P0 | DONE |
+| T403 | 消融一：去除 KG 清洗 | `reports/ablation_kg.md` | 对比有/无 KG 清洗后的事实错误率变化 | T301,T402 | P0 | DONE |
+| T404 | 消融二：检测机制对比 | `reports/ablation_detection.md` | 对比白盒/黑盒/混合三种检测效果 | T205,T402 | P0 | DONE |
+| T405 | 消融三：SFT vs DPO vs SimPO | `reports/ablation_alignment.md` | 结论明确：哪种策略更优及原因 | T303,T304,T402 | P0 | DONE |
 | T406 | 对标模型评测 | `reports/sota_compare.md` | 与 HuatuoGPT/BioMistral 等做统一口径对比 | T405 | P1 | TODO |
 | T407 | 错误案例分析 | `reports/error_analysis.md` | 至少覆盖 30 个失败案例并分类归因 | T405 | P1 | TODO |
 | T501 | 推理服务化 | `src/serve/app.py` | 提供问答+风险分级接口（REST/CLI） | T206,T304 | P0 | TODO |
