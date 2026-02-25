@@ -69,6 +69,9 @@ def write_report(path: Path, details: list[dict[str, Any]], m: dict[str, float])
         f"- Recall: {m['recall']:.4f}",
         f"- F1: {m['f1']:.4f}",
         f"- TP/FP/TN/FN: {m['tp']}/{m['fp']}/{m['tn']}/{m['fn']}",
+        f"- FPR: {m['fp'] / max(m['fp'] + m['tn'], 1):.4f}",
+        f"- FNR: {m['fn'] / max(m['fn'] + m['tp'], 1):.4f}",
+        f"- 样本数: {len(details)}",
         "",
         "## 样例明细（前10条）",
         "| id | expected | predicted | score |",
@@ -80,6 +83,18 @@ def write_report(path: Path, details: list[dict[str, Any]], m: dict[str, float])
             f"| {row['id']} | {row['expected_risk']} | {row['predicted_risk']} | {row['risk_score']:.4f} |"
         )
 
+    false_neg = [x for x in details if x["expected_risk"] in POSITIVE_LEVELS and x["predicted_risk"] not in POSITIVE_LEVELS]
+    false_pos = [x for x in details if x["expected_risk"] not in POSITIVE_LEVELS and x["predicted_risk"] in POSITIVE_LEVELS]
+
+    lines.extend(
+        [
+            "",
+            "## 误判统计",
+            f"- 高/中风险漏检（FN）: {len(false_neg)}",
+            f"- 低风险误报（FP）: {len(false_pos)}",
+        ]
+    )
+
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -89,11 +104,16 @@ def main() -> int:
     parser.add_argument("--kg", default="data/kg/cmekg_demo.jsonl")
     parser.add_argument("--pred-output", default="reports/detection_predictions.jsonl")
     parser.add_argument("--report", default="reports/detection_eval.md")
+    parser.add_argument("--max-samples", type=int, default=0, help="Evaluate first N samples if > 0")
     args = parser.parse_args()
 
     benchmark = load_jsonl(Path(args.benchmark))
+    if args.max_samples > 0 and len(benchmark) > args.max_samples:
+        benchmark = benchmark[: args.max_samples]
+        print(f"[detection-eval] truncated benchmark to {len(benchmark)} samples")
     preds = []
-    for row in benchmark:
+    total = len(benchmark)
+    for idx, row in enumerate(benchmark, start=1):
         out = guard_answer(
             query=str(row.get("query", "")),
             answer=str(row.get("answer", "")),
@@ -102,12 +122,16 @@ def main() -> int:
         preds.append(
             {
                 "id": row.get("id"),
+                "query": row.get("query", ""),
+                "answer": row.get("answer", ""),
                 "expected_risk": row.get("expected_risk", "low"),
                 "predicted_risk": out.get("risk_level", "low"),
                 "risk_score": float(out.get("risk_score", 0.0)),
                 "blocked": bool(out.get("blocked", False)),
             }
         )
+        if idx % 200 == 0:
+            print(f"[detection-eval] progress={idx}/{total}")
 
     m = metrics(preds)
 

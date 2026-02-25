@@ -1,0 +1,9 @@
+inherits: configs/train/simpo.yaml
+
+run:
+  task: simpo
+  entrypoint: src/train/simpo_train.py
+  kv_args:
+    pref-file: data/clean/real_pref_seed_pairs.jsonl
+    output-dir: checkpoints/simpo-real-baseline
+    metrics-out: reports/training/simpo_metrics.json

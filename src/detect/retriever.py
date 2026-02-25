@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Lightweight retrieval module over KG-style knowledge base."""
+"""Lightweight lexical retrieval over KG / reference docs."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -14,12 +15,18 @@ except ImportError:  # pragma: no cover
     from common import jaccard_similarity, tokenize
 
 
-RELATION_ZH = {
+RELATION_TEXT = {
     "treats": "可用于治疗",
     "contraindicated_for": "禁用于",
     "dosage_range_mg": "推荐剂量范围",
     "dosage": "用量",
+    "reference_answer": "参考答案",
 }
+
+
+def stable_query_hash(text: str) -> str:
+    norm = (text or "").strip().lower()
+    return hashlib.md5(norm.encode("utf-8")).hexdigest()
 
 
 def load_knowledge_docs(path: Path) -> list[dict[str, Any]]:
@@ -35,8 +42,13 @@ def load_knowledge_docs(path: Path) -> list[dict[str, Any]]:
         h = str(row.get("head", ""))
         r = str(row.get("relation", ""))
         t = str(row.get("tail", ""))
-        rel_text = RELATION_ZH.get(r, r)
-        text = f"{h}{rel_text}{t}" if h and t else str(row)
+        if row.get("text"):
+            text = str(row.get("text", "")).strip()
+        else:
+            rel_text = RELATION_TEXT.get(r, r)
+            text = f"{h}{rel_text}{t}" if h and t else str(row)
+        if not text:
+            continue
         docs.append(
             {
                 "doc_id": f"kg_{i}",
@@ -44,28 +56,52 @@ def load_knowledge_docs(path: Path) -> list[dict[str, Any]]:
                 "head": h,
                 "relation": r,
                 "tail": t,
+                "query_hash": str(row.get("query_hash", "")) or (stable_query_hash(h) if h else ""),
                 "tokens": tokenize(text),
             }
         )
     return docs
 
 
-def score_doc(query: str, doc: dict[str, Any]) -> float:
-    q_tokens = tokenize(query)
-    base = jaccard_similarity(q_tokens, doc.get("tokens", []))
+def score_doc(
+    query_tokens: list[str],
+    query_norm: str,
+    doc: dict[str, Any],
+    context_hash: str = "",
+) -> float:
+    if not query_tokens:
+        return 0.0
+    base = jaccard_similarity(query_tokens, doc.get("tokens", []))
     bonus = 0.0
-    if doc.get("head") and doc["head"] in query:
-        bonus += 0.2
-    if doc.get("tail") and doc["tail"] in query:
-        bonus += 0.2
+    head = str(doc.get("head", "")).lower()
+    tail = str(doc.get("tail", "")).lower()
+    if head and head in query_norm:
+        bonus += 0.25
+    if tail and tail in query_norm:
+        bonus += 0.15
+    if context_hash and str(doc.get("query_hash", "")) == context_hash:
+        bonus += 1.2
     return base + bonus
 
 
-def retrieve(query: str, docs: list[dict[str, Any]], top_k: int = 5) -> list[dict[str, Any]]:
+def retrieve(
+    query: str,
+    docs: list[dict[str, Any]],
+    top_k: int = 5,
+    min_score: float = 0.08,
+    context_query: str = "",
+) -> list[dict[str, Any]]:
+    merged_query = f"{context_query}\n{query}" if context_query else query
+    q_tokens = tokenize(merged_query)
+    if not q_tokens:
+        return []
+    q_norm = (merged_query or "").lower()
+    context_hash = stable_query_hash(context_query) if context_query else ""
+
     scored = []
     for doc in docs:
-        s = score_doc(query, doc)
-        if s > 0:
+        s = score_doc(q_tokens, q_norm, doc, context_hash=context_hash)
+        if s >= min_score:
             scored.append(
                 {
                     "doc_id": doc["doc_id"],

@@ -1,0 +1,10 @@
+inherits: configs/train/sft.yaml
+
+run:
+  task: sft
+  entrypoint: src/train/sft_train.py
+  kv_args:
+    train-file: data/clean/real_sft_train.jsonl
+    dev-file: data/clean/real_sft_dev.jsonl
+    output-dir: checkpoints/sft-real-baseline
+    report: reports/sft_baseline.md

@@ -68,11 +68,17 @@ def adapt_answer(mode: str, query: str, answer: str) -> str:
     return a
 
 
-def evaluate_variant(benchmark: list[dict[str, Any]], mode: str, kg_path: Path) -> dict[str, Any]:
+def evaluate_variant(
+    benchmark: list[dict[str, Any]],
+    mode: str,
+    kg_path: Path,
+    log_every: int = 0,
+) -> dict[str, Any]:
     rows = []
     quality_scores = []
 
-    for sample in benchmark:
+    total = len(benchmark)
+    for idx, sample in enumerate(benchmark, start=1):
         query = str(sample.get("query", ""))
         answer = str(sample.get("answer", ""))
         expected_risk = str(sample.get("expected_risk", "low"))
@@ -95,6 +101,8 @@ def evaluate_variant(benchmark: list[dict[str, Any]], mode: str, kg_path: Path) 
                 "utility": utility,
             }
         )
+        if log_every > 0 and idx % log_every == 0:
+            print(f"[eval:{mode}] progress={idx}/{total}")
 
     agg = {
         "mode": mode,
@@ -118,13 +126,13 @@ def risk_from_whitebox(answer: str) -> str:
     return "low"
 
 
-def risk_from_retrieval(answer: str, docs: list[dict[str, Any]]) -> str:
+def risk_from_retrieval(query: str, answer: str, docs: list[dict[str, Any]]) -> str:
     facts = extract_atomic_facts(answer)
     if not facts:
         return "low"
     contra = 0
     for fact in facts:
-        top_docs = retrieve(fact, docs, top_k=5)
+        top_docs = retrieve(fact, docs, top_k=5, context_query=query)
         result = classify_fact(fact, top_docs)
         if result.get("label") == "contradict":
             contra += 1
@@ -161,14 +169,19 @@ def main() -> int:
     parser.add_argument("--ablation-kg", default="reports/ablation_kg.md")
     parser.add_argument("--ablation-detection", default="reports/ablation_detection.md")
     parser.add_argument("--ablation-alignment", default="reports/ablation_alignment.md")
+    parser.add_argument("--max-samples", type=int, default=0, help="Evaluate first N samples if > 0")
+    parser.add_argument("--log-every", type=int, default=0, help="Progress interval for large runs")
     args = parser.parse_args()
 
     benchmark = load_jsonl(Path(args.benchmark))
+    if args.max_samples > 0 and len(benchmark) > args.max_samples:
+        benchmark = benchmark[: args.max_samples]
+        print(f"[eval] truncated benchmark to {len(benchmark)} samples")
     kg_path = Path(args.kg)
 
-    sft = evaluate_variant(benchmark, "sft", kg_path)
-    dpo = evaluate_variant(benchmark, "dpo", kg_path)
-    simpo = evaluate_variant(benchmark, "simpo", kg_path)
+    sft = evaluate_variant(benchmark, "sft", kg_path, log_every=args.log_every)
+    dpo = evaluate_variant(benchmark, "dpo", kg_path, log_every=args.log_every)
+    simpo = evaluate_variant(benchmark, "simpo", kg_path, log_every=args.log_every)
 
     default_report = "\n".join(
         [
@@ -192,7 +205,7 @@ def main() -> int:
         tmp_path = Path(tmp.name)
         tmp.write("")
 
-    sft_no_kg = evaluate_variant(benchmark, "sft", tmp_path)
+    sft_no_kg = evaluate_variant(benchmark, "sft", tmp_path, log_every=args.log_every)
     kg_report = "\n".join(
         [
             "# 消融实验：KG 清洗/校验影响",
@@ -208,11 +221,11 @@ def main() -> int:
     # Ablation detection: whitebox only vs retrieval only vs hybrid.
     docs = load_knowledge_docs(kg_path)
     det_rows = []
-    for sample in benchmark:
+    for idx, sample in enumerate(benchmark, start=1):
         answer = str(sample.get("answer", ""))
         expected = str(sample.get("expected_risk", "low"))
         w = risk_from_whitebox(answer)
-        r = risk_from_retrieval(answer, docs)
+        r = risk_from_retrieval(str(sample.get("query", "")), answer, docs)
         h = guard_answer(str(sample.get("query", "")), answer, kg_path=kg_path).get("risk_level", "low")
         det_rows.append(
             {
@@ -222,6 +235,8 @@ def main() -> int:
                 "hybrid": h,
             }
         )
+        if args.log_every > 0 and idx % args.log_every == 0:
+            print(f"[eval:detection] progress={idx}/{len(benchmark)}")
 
     wb_acc = binary_accuracy([{"expected_risk": x["expected_risk"], "predicted_risk": x["whitebox"]} for x in det_rows])
     re_acc = binary_accuracy([{"expected_risk": x["expected_risk"], "predicted_risk": x["retrieval"]} for x in det_rows])

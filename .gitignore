@@ -37,5 +37,12 @@ data/kg/entities.jsonl
 data/kg/triples/
 reports/pii_cleaning_report.json
 
+# Generated real datasets (rebuild via scripts)
+data/raw/real_sources/
+data/clean/real_sft_*.jsonl
+data/clean/real_pref_seed_pairs.jsonl
+data/benchmark/real_medqa_benchmark.jsonl
+data/kg/real_medqa_reference_kb.jsonl
+
 # Jupyter
 .ipynb_checkpoints/

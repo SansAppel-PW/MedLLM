@@ -43,3 +43,17 @@ python scripts/deploy/run_e2e_acceptance.py
 输出：
 - `reports/e2e_acceptance.md`
 - `reports/e2e_acceptance_detail.json`
+
+## 5. 论文复现实验（真实数据）
+```bash
+# 1) 真实数据构建
+python scripts/data/build_real_dataset.py
+
+# 2) 真实训练对齐
+bash scripts/train/run_real_alignment_pipeline.sh
+
+# 3) 评测与论文资产
+PYTHONUNBUFFERED=1 \
+DET_MAX=0 EVAL_MAX=1200 SOTA_MAX=1800 LOG_EVERY=400 \
+bash scripts/eval/run_thesis_pipeline.sh
+```

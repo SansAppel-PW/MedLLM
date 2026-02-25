@@ -1,0 +1,13 @@
+inherits: configs/base.yaml
+
+project:
+  experiment: real_data_thesis
+
+data:
+  train_file: data/clean/real_sft_train.jsonl
+  dev_file: data/clean/real_sft_dev.jsonl
+  preference_file: data/clean/real_pref_seed_pairs.jsonl
+  benchmark_file: data/benchmark/real_medqa_benchmark.jsonl
+
+paths:
+  kg_data: data/kg/real_medqa_reference_kb.jsonl

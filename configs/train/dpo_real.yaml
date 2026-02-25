@@ -1,0 +1,9 @@
+inherits: configs/train/dpo.yaml
+
+run:
+  task: dpo
+  entrypoint: src/train/dpo_train.py
+  kv_args:
+    pref-file: data/clean/real_pref_seed_pairs.jsonl
+    output-dir: checkpoints/dpo-real-baseline
+    metrics-out: reports/training/dpo_metrics.json

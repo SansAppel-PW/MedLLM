@@ -3,69 +3,78 @@
 面向中文医疗问答大模型的幻觉检测与缓解工程项目。
 
 ## 项目目标
-- 基于知识图谱的数据清洗，降低训练语料事实错误。
-- 基于不确定性 + RAG 的混合检测，识别并拦截高风险幻觉输出。
-- 基于 DPO/SimPO 的偏好对齐，降低模型生成医学事实错误的概率。
+- 基于真实数据构建训练集与评测集，减少 demo 级假数据依赖。
+- 基于白盒不确定性 + 检索核查的混合检测，实现高风险拦截。
+- 基于 SFT / DPO / SimPO 的对齐训练流程，支持论文实验复现。
 
 ## 目录结构
 - `src/`: 核心代码（数据、检测、训练、服务）
-- `scripts/`: 数据、评测、部署脚本
+- `scripts/`: 数据构建、训练、评测、审计脚本
 - `configs/`: 训练与评测配置
 - `data/`: 原始数据、清洗数据、KG 中间产物、评测集
-- `eval/`: 指标与评测逻辑
+- `eval/`: 综合评测逻辑
 - `reports/`: 实验与分析报告
 - `docs/`: 架构文档、数据登记、安全策略、执行清单
 
-## 快速开始
+## 环境准备
 ```bash
 make setup
 ```
 
-## 通过配置启动任务
+## 真实数据构建（论文实验）
 ```bash
-make run-config CONFIG=configs/train/sft.yaml
+python scripts/data/build_real_dataset.py \
+  --seed 42 \
+  --cmt-count 8000 \
+  --h26-count 6000 \
+  --henc-count 6000 \
+  --bench-train 1200 \
+  --bench-val 300 \
+  --bench-test 300
 ```
 
-## 运行数据治理流水线（T104-T110）
+输出：
+- `data/clean/real_sft_{train,dev,test}.jsonl`
+- `data/benchmark/real_medqa_benchmark.jsonl`
+- `reports/real_dataset_report.md`
+
+## 训练对齐流水线（真实数据）
 ```bash
-python scripts/data/run_data_governance_pipeline.py \
-  --input data/raw/schema_examples.json \
-  --kg data/kg/cmekg_demo.jsonl
+bash scripts/train/run_real_alignment_pipeline.sh
 ```
 
-## 运行幻觉检测评测（T201-T207）
+输出：
+- `reports/sft_baseline.md`
+- `reports/training/{dpo,simpo,kto}_metrics.json`
+- `reports/alignment_compare.md`
+
+## 评测与论文资产流水线
 ```bash
-python -m src.detect.evaluate_detection \
-  --benchmark data/benchmark/med_hallu_benchmark.jsonl \
-  --kg data/kg/cmekg_demo.jsonl
+PYTHONUNBUFFERED=1 \
+DET_MAX=0 EVAL_MAX=1200 SOTA_MAX=1800 LOG_EVERY=400 \
+bash scripts/eval/run_thesis_pipeline.sh
 ```
 
-## 运行训练与对齐流程（T301-T306）
+输出：
+- `reports/detection_eval.md`
+- `reports/eval_default.md`
+- `reports/ablation_*.md`
+- `reports/sota_compare.md`
+- `reports/error_analysis.md`
+- `reports/thesis_assets/`
+
+## 任务审计（开题任务对齐）
 ```bash
-python src/train/sft_train.py
-python src/train/hard_negative_builder.py
-python src/train/dpo_train.py
-python src/train/simpo_train.py
-python src/train/kto_train.py
-python src/train/compare_alignment.py
+python scripts/audit/check_task_completion.py
 ```
 
-## 运行综合评测与消融（T402-T405）
+## Demo
 ```bash
-bash scripts/eval/run_eval.sh
-```
-
-## 运行小型 Demo（T501-T504）
-```bash
-# 脚本演示
+# CLI / API / Web
 scripts/deploy/run_demo.sh
-
-# API
 scripts/deploy/run_demo.sh --api
-
-# 端到端验收报告
-python scripts/deploy/run_e2e_acceptance.py
+scripts/deploy/run_demo.sh --web
 ```
 
 ## 当前执行清单
-- 见 `docs/EXECUTION_TASKS.md`
+- `docs/EXECUTION_TASKS.md`

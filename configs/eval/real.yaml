@@ -1,0 +1,11 @@
+inherits: configs/base_real.yaml
+
+run:
+  task: real_eval
+  entrypoint: scripts/eval/run_thesis_pipeline.sh
+  runner: bash
+
+evaluation:
+  benchmark_file: data/benchmark/real_medqa_benchmark.jsonl
+  knowledge_file: data/kg/real_medqa_reference_kb.jsonl
+  output_report: reports/eval_default.md

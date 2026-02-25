@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from functools import lru_cache
 import json
 import tempfile
 from pathlib import Path
@@ -31,24 +32,33 @@ SAFE_BLOCK_MSG = (
 SAFE_WARN_SUFFIX = "\n\n[风险提示] 该回答存在不确定性，请结合专业医生建议进行复核。"
 
 
+@lru_cache(maxsize=8)
+def cached_docs(kg_path: str) -> tuple[dict[str, Any], ...]:
+    docs = load_knowledge_docs(Path(kg_path))
+    return tuple(docs)
+
+
 def guard_answer(
     query: str,
     answer: str,
     kg_path: str | Path = "data/kg/cmekg_demo.jsonl",
     top_k: int = 5,
-    high_threshold: float = 0.45,
-    medium_threshold: float = 0.30,
+    high_threshold: float = 0.58,
+    medium_threshold: float = 0.40,
 ) -> dict[str, Any]:
     answer = (answer or "").strip()
     query = (query or "").strip()
 
     whitebox = estimate_uncertainty(answer)
     facts = extract_atomic_facts(answer)
+    if not facts and answer:
+        facts = [answer]
 
-    docs = load_knowledge_docs(Path(kg_path))
+    kg_abs = str(Path(kg_path).resolve())
+    docs = list(cached_docs(kg_abs))
     nli_results = []
     for fact in facts:
-        top_docs = retrieve(fact, docs, top_k=top_k)
+        top_docs = retrieve(fact, docs, top_k=top_k, context_query=query)
         nli_results.append(classify_fact(fact, top_docs))
 
     fused = fuse_one(

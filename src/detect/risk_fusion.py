@@ -63,7 +63,8 @@ def fuse_one(
     self_consistency = float(w.get("self_consistency", 0.0))
     contradict_rate = float(n.get("contradict_rate", 0.0))
 
-    score = 0.45 * entropy_norm + 0.25 * (1.0 - self_consistency) + 0.30 * contradict_rate
+    # In medical QA, contradiction evidence should dominate final risk.
+    score = 0.15 * entropy_norm + 0.15 * (1.0 - self_consistency) + 0.70 * contradict_rate
     score = max(0.0, min(1.0, score))
 
     return {

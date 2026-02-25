@@ -16,8 +16,28 @@ except ImportError:  # pragma: no cover
     from common import has_any, tokenize
 
 
-UNCERTAIN_CUES = ["可能", "大概", "不确定", "或许", "建议咨询", "仅供参考"]
-OVERCONFIDENT_CUES = ["绝对", "一定", "完全", "100%", "保证"]
+UNCERTAIN_CUES = [
+    "可能",
+    "大概",
+    "不确定",
+    "或许",
+    "建议咨询",
+    "仅供参考",
+    "maybe",
+    "possibly",
+    "uncertain",
+    "consult",
+]
+OVERCONFIDENT_CUES = [
+    "绝对",
+    "一定",
+    "完全",
+    "100%",
+    "保证",
+    "definitely",
+    "always",
+    "guaranteed",
+]
 
 
 def shannon_entropy(tokens: list[str]) -> float:
