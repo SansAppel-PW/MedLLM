@@ -1,0 +1,19 @@
+# 对标模型评测（代理复现实验）
+
+> 说明：本报告采用统一输入答案的“系统策略代理”比较，用于离线方法学对照；
+> 不代表官方 HuatuoGPT/BioMistral 完整能力，仅用于同口径复现实验与论文方法部分说明。
+
+- Benchmark: `/Users/bibo/Desktop/MedLLM/data/benchmark/real_medqa_benchmark.jsonl`
+- Knowledge base: `/Users/bibo/Desktop/MedLLM/data/kg/real_medqa_reference_kb.jsonl`
+- 样本数: 1800
+
+| 系统 | Accuracy | Recall | Specificity | Unsafe Pass Rate | Risky Block Rate | F1 |
+|---|---:|---:|---:|---:|---:|---:|
+| MedQA-RAG-Proxy (retrieval) | 0.9928 | 0.9867 | 0.9989 | 0.0133 | 0.9867 | 0.9927 |
+| MedLLM-Hybrid (ours) | 0.9928 | 0.9867 | 0.9989 | 0.0133 | 0.9811 | 0.9927 |
+| BioMistral-7B-Proxy (whitebox) | 0.3617 | 0.5411 | 0.1822 | 0.4589 | 0.1811 | 0.4588 |
+| HuatuoGPT-7B-Proxy (raw) | 0.5000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 | 0.0000 |
+
+## 结论
+- 在当前代理评测中，`MedQA-RAG-Proxy (retrieval)` 的高风险放行率最低（Unsafe Pass Rate = 0.0133）。
+- 可作为论文中“系统级安全策略对比”的可复现实验。

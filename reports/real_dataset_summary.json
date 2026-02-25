@@ -1,0 +1,44 @@
+{
+  "sources": [
+    {
+      "name": "cmtmedqa",
+      "dataset": "Suprit/CMtMedQA",
+      "config": "default",
+      "split": "train",
+      "num_rows_total": 68023,
+      "start_offset": 47698,
+      "target_count": 8000,
+      "fetched_count": 8000,
+      "license": "MIT"
+    },
+    {
+      "name": "huatuo26m_lite",
+      "dataset": "FreedomIntelligence/Huatuo26M-Lite",
+      "config": "default",
+      "split": "train",
+      "num_rows_total": 177703,
+      "start_offset": 4826,
+      "target_count": 6000,
+      "fetched_count": 6000,
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "huatuo_encyclopedia",
+      "dataset": "FreedomIntelligence/huatuo_encyclopedia_qa",
+      "config": "default",
+      "split": "train",
+      "num_rows_total": 362420,
+      "start_offset": 25975,
+      "target_count": 6000,
+      "fetched_count": 6000,
+      "license": "Apache-2.0"
+    }
+  ],
+  "merged_before_dedup": 20000,
+  "merged_after_dedup": 19978,
+  "train_count": 15984,
+  "dev_count": 1997,
+  "test_count": 1997,
+  "benchmark_count": 3600,
+  "seed": 42
+}

@@ -1,11 +1,11 @@
 {
   "method": "DPO",
   "task": "dpo",
-  "samples": 2,
-  "avg_pair_difficulty": 1.0,
+  "samples": 15984,
+  "avg_pair_difficulty": 0.943843,
   "base_score": 0.58,
-  "aligned_score": 0.8,
-  "score_gain": 0.22,
-  "created_at_utc": "2026-02-25T13:26:38.323977+00:00",
+  "aligned_score": 0.787646,
+  "score_gain": 0.207646,
+  "created_at_utc": "2026-02-25T14:20:48.737587+00:00",
   "config": null
 }

@@ -1,0 +1,445 @@
+{
+  "summary": {
+    "total": 42,
+    "done": 42,
+    "todo": 0,
+    "blocked": 0,
+    "done_missing": 0
+  },
+  "rows": [
+    {
+      "id": "T001",
+      "task": "初始化项目目录结构",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/",
+        "scripts/",
+        "configs/",
+        "data/{raw,clean,kg,benchmark}",
+        "eval/",
+        "reports/"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T002",
+      "task": "环境与依赖管理",
+      "status": "DONE",
+      "deliverable_paths": [],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T003",
+      "task": "基础工程规范",
+      "status": "DONE",
+      "deliverable_paths": [
+        "docs/ARCH.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T004",
+      "task": "实验配置中心",
+      "status": "DONE",
+      "deliverable_paths": [
+        "configs/base.yaml",
+        "configs/train/*.yaml",
+        "configs/eval/*.yaml"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T005",
+      "task": "数据版本登记",
+      "status": "DONE",
+      "deliverable_paths": [
+        "docs/DATA_CATALOG.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T006",
+      "task": "质量与安全基线",
+      "status": "DONE",
+      "deliverable_paths": [
+        "docs/SAFETY_POLICY.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T101",
+      "task": "数据源接入脚本",
+      "status": "DONE",
+      "deliverable_paths": [
+        "scripts/data/download_datasets.sh"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T102",
+      "task": "数据统一 Schema",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/data/schema.py",
+        "data/raw/schema_examples.json"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T103",
+      "task": "PII 清洗模块",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/data/pii_cleaner.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T104",
+      "task": "医疗 NER+EL 管线",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/data/ner_el_pipeline.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T105",
+      "task": "KG 三元组映射",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/data/triple_mapper.py",
+        "data/kg/triples/*.jsonl"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T106",
+      "task": "KG 逻辑冲突检测",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/data/kg_validator.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T107",
+      "task": "低置信冲突重写",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/data/rewrite_low_conflict.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T108",
+      "task": "数据清洗质量报告",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/data_cleaning_report.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T109",
+      "task": "SFT 训练数据产出",
+      "status": "DONE",
+      "deliverable_paths": [
+        "data/clean/sft_train.jsonl",
+        "data/clean/sft_dev.jsonl"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T110",
+      "task": "偏好对候选集生成",
+      "status": "DONE",
+      "deliverable_paths": [
+        "data/clean/pref_seed_pairs.jsonl"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T201",
+      "task": "白盒不确定性评分",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/detect/whitebox_uncertainty.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T202",
+      "task": "原子事实抽取器",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/detect/atomic_fact_extractor.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T203",
+      "task": "医疗证据检索模块",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/detect/retriever.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T204",
+      "task": "NLI 事实核查器",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/detect/nli_checker.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T205",
+      "task": "混合风险融合引擎",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/detect/risk_fusion.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T206",
+      "task": "实时拦截与告警接口",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/detect/runtime_guard.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T207",
+      "task": "检测模块离线评测",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/detection_eval.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T301",
+      "task": "基座 SFT 训练",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/train/sft_train.py",
+        "reports/sft_baseline.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T302",
+      "task": "对抗性实体替换器",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/train/hard_negative_builder.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T303",
+      "task": "DPO 训练流水线",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/train/dpo_train.py",
+        "configs/train/dpo.yaml"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T304",
+      "task": "SimPO 训练流水线",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/train/simpo_train.py",
+        "configs/train/simpo.yaml"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T305",
+      "task": "可选 KTO 实验",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/train/kto_train.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T306",
+      "task": "对齐训练对比报告",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/alignment_compare.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T401",
+      "task": "医疗幻觉评测集定稿",
+      "status": "DONE",
+      "deliverable_paths": [
+        "data/benchmark/med_hallu_benchmark.jsonl"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T402",
+      "task": "指标实现与脚本",
+      "status": "DONE",
+      "deliverable_paths": [
+        "eval/metrics.py",
+        "scripts/eval/run_eval.sh"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T403",
+      "task": "消融一：去除 KG 清洗",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/ablation_kg.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T404",
+      "task": "消融二：检测机制对比",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/ablation_detection.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T405",
+      "task": "消融三：SFT vs DPO vs SimPO",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/ablation_alignment.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T406",
+      "task": "对标模型评测",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/sota_compare.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T407",
+      "task": "错误案例分析",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/error_analysis.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T501",
+      "task": "推理服务化",
+      "status": "DONE",
+      "deliverable_paths": [
+        "src/serve/app.py"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T502",
+      "task": "Demo 前端/交互页",
+      "status": "DONE",
+      "deliverable_paths": [
+        "demo/"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T503",
+      "task": "部署与运行脚本",
+      "status": "DONE",
+      "deliverable_paths": [
+        "scripts/deploy/run_demo.sh",
+        "docs/DEPLOY.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T504",
+      "task": "端到端验收报告",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/e2e_acceptance.md"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T505",
+      "task": "论文图表与材料沉淀",
+      "status": "DONE",
+      "deliverable_paths": [
+        "reports/thesis_assets/"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    },
+    {
+      "id": "T506",
+      "task": "答辩演示素材",
+      "status": "DONE",
+      "deliverable_paths": [
+        "docs/defense_outline.md",
+        "slides/"
+      ],
+      "missing_paths": [],
+      "all_paths_exist": true
+    }
+  ]
+}
