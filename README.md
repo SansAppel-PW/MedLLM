@@ -161,6 +161,9 @@ make thesis-ready
 
 输出：
 - `reports/thesis_assets/tables/main_results_small_real.csv`
+- `reports/thesis_assets/tables/main_results_real.csv`
+- `reports/thesis_assets/tables/main_results_proxy.csv`
+- `reports/thesis_assets/tables/main_results_dual_view.md`
 - `reports/thesis_assets/tables/ablation_small_real_runs.csv`
 - `reports/thesis_assets/thesis_ready_summary.md`
 - `reports/thesis_assets/thesis_ready_summary.json`

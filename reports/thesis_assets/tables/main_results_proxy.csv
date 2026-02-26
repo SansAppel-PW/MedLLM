@@ -1,0 +1,4 @@
+section,setting,method_type,metric,value,sample_count,evidence,note
+alignment,DPO (proxy),proxy,aligned_score,0.787646,15984,reports/training/dpo_metrics.json,"proxy indicator, not directly comparable to real preference accuracy"
+alignment,SimPO (proxy),proxy,aligned_score,0.816895,288,reports/training/simpo_metrics.json,"proxy indicator, not directly comparable to real preference accuracy"
+alignment,KTO (proxy),proxy,aligned_score,0.5875,288,reports/training/kto_metrics.json,"proxy indicator, not directly comparable to real preference accuracy"

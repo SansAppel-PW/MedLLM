@@ -1,10 +1,13 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-02-26T04:38:59.489265+00:00
+- Generated(UTC): 2026-02-26T05:52:17.425004+00:00
 - Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table
 - CSV: `reports/thesis_assets/tables/main_results_small_real.csv`
+- Real CSV: `reports/thesis_assets/tables/main_results_real.csv`
+- Proxy CSV: `reports/thesis_assets/tables/main_results_proxy.csv`
+- Dual View(MD): `reports/thesis_assets/tables/main_results_dual_view.md`
 
 ## Ablation/Control Table
 - CSV: `reports/thesis_assets/tables/ablation_small_real_runs.csv`
@@ -21,8 +24,8 @@
 - Error Cases: `reports/thesis_assets/cases/error_cases_top30.jsonl`
 
 ## Thesis Writing Notes
-- 主结果口径: Small-Real LoRA fallback evidence (engineering closure), not final thesis mainline.
+- 主结果口径: 主结果采用 real/proxy 双层分表；small-real 仅作为工程闭环证据，不作为最终主结论。
 - 消融口径: Across small_real_lora_v* runs to verify reproducibility and run stability.
-- 对齐口径: Small-Real DPO real-training runs (if available) as alignment evidence.
+- 对齐口径: real DPO 与 proxy SimPO/KTO 分口径呈现，禁止在论文中直接数值对比。
 - 局限性: Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment.
 - 下一步: Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package.

@@ -1,8 +1,8 @@
 run_tag,simulation,pair_count,steps,train_loss,pref_accuracy_before,pref_accuracy_after,pref_accuracy_gain,metrics_path
-dpo_real,False,288,40,0.6931219816207885,0.3645833333333333,0.3715277777777778,0.006944444444444475,reports/training/dpo_real_metrics.json
 small_real_dpo_v1,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v1_metrics.json
+small_real_dpo_v9,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v9_metrics.json
 small_real_dpo_v10,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v10_metrics.json
 small_real_dpo_v11,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v11_metrics.json
 small_real_dpo_v12,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v12_metrics.json
 small_real_dpo_v13,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v13_metrics.json
-small_real_dpo_v9,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v9_metrics.json
+dpo_real,False,288,40,0.6931219816207885,0.3645833333333333,0.3715277777777778,0.006944444444444475,reports/training/dpo_real_metrics.json
