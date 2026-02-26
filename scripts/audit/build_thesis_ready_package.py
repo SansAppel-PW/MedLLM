@@ -285,6 +285,9 @@ def main() -> int:
     kto_metrics = maybe_json(root / "reports/training/kto_metrics.json")
     qwen_blocker = root / "reports/small_real/qwen_layer_b_blocker.md"
     baseline_table = root / "reports/thesis_assets/tables/baseline_audit_table.csv"
+    baseline_real = root / "reports/thesis_assets/tables/baseline_real_mainline.csv"
+    baseline_proxy = root / "reports/thesis_assets/tables/baseline_proxy_background.csv"
+    baseline_dual = root / "reports/thesis_assets/tables/baseline_audit_dual_view.md"
     error_cases = root / "reports/thesis_assets/cases/error_cases_top30.jsonl"
 
     main_rows: list[dict[str, Any]] = []
@@ -392,6 +395,9 @@ def main() -> int:
             "real_dpo_csv": args.dpo_csv,
             "dpo_beta_ablation_csv": args.dpo_beta_csv if dpo_beta_csv.exists() else None,
             "baseline_audit_table": str(baseline_table.relative_to(root)) if baseline_table.exists() else None,
+            "baseline_real_mainline_csv": str(baseline_real.relative_to(root)) if baseline_real.exists() else None,
+            "baseline_proxy_background_csv": str(baseline_proxy.relative_to(root)) if baseline_proxy.exists() else None,
+            "baseline_dual_view_md": str(baseline_dual.relative_to(root)) if baseline_dual.exists() else None,
             "qwen_blocker": str(qwen_blocker.relative_to(root)) if qwen_blocker.exists() else None,
             "error_cases": str(error_cases.relative_to(root)) if error_cases.exists() else None,
         },
@@ -431,6 +437,9 @@ def main() -> int:
         "",
         "## Supporting Evidence",
         f"- Baseline Audit: `{payload['artifacts']['baseline_audit_table']}`",
+        f"- Baseline Real Mainline: `{payload['artifacts']['baseline_real_mainline_csv']}`",
+        f"- Baseline Proxy Background: `{payload['artifacts']['baseline_proxy_background_csv']}`",
+        f"- Baseline Dual View: `{payload['artifacts']['baseline_dual_view_md']}`",
         f"- Qwen Layer-B Blocker: `{payload['artifacts']['qwen_blocker']}`",
         f"- Error Cases: `{payload['artifacts']['error_cases']}`",
         "",

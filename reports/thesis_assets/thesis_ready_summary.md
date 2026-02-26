@@ -1,6 +1,6 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-02-26T05:52:17.425004+00:00
+- Generated(UTC): 2026-02-26T05:56:12.982413+00:00
 - Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table
@@ -20,6 +20,9 @@
 
 ## Supporting Evidence
 - Baseline Audit: `reports/thesis_assets/tables/baseline_audit_table.csv`
+- Baseline Real Mainline: `reports/thesis_assets/tables/baseline_real_mainline.csv`
+- Baseline Proxy Background: `reports/thesis_assets/tables/baseline_proxy_background.csv`
+- Baseline Dual View: `reports/thesis_assets/tables/baseline_audit_dual_view.md`
 - Qwen Layer-B Blocker: `reports/small_real/qwen_layer_b_blocker.md`
 - Error Cases: `reports/thesis_assets/cases/error_cases_top30.jsonl`
 

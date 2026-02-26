@@ -1,0 +1,17 @@
+# Baseline Audit Dual View
+
+> 口径说明：`real-mainline` 用于论文主结果路径；`proxy-background` 仅用于背景/相关工作，不与 real 指标直接数值比较。
+
+## Real Mainline
+| 模型 | 方法 | 数据 | 指标范围 | 成本 | 可复现性 | 本仓库状态 | 审计证据 | 局限 |
+|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-7B-Instruct (target mainline) | QLoRA/LoRA SFT + alignment (DPO/SimPO planned) | Repo real_* datasets + KG-governed pipeline | FactScore / safety / utility / ablation | Medium-High | High (scripts + manifests + guard) | Blocked by GPU | `reports/small_real/qwen_layer_b_blocker.md` | Needs CUDA memory to execute Layer-B full run |
+| TinyGPT2-LoRA (small-real fallback) | Offline LoRA real training fallback path | Current minimal clean split (engineering validation) | EM / Rouge-L / Char-F1 (small-real sanity metrics) | Low | High | Completed | `reports/small_real/small_real_lora_v13/eval_metrics.json` | Not thesis main model; only pipeline closure evidence |
+
+## Proxy Background
+| 模型 | 方法 | 数据 | 指标范围 | 成本 | 可复现性 | 本仓库状态 | 审计证据 | 局限 |
+|---|---|---|---|---|---|---|---|---|
+| Med-PaLM 2 | Closed-source medical instruction tuning + ensemble refinement | Internal large-scale medical corpora (not fully open) | USMLE / expert-level QA (paper-reported) | Very High | Low (closed weights/training data) | Not runnable locally | `docs/OPENING_PROPOSAL_EVIDENCE.md` | Cannot perform fair local retraining/ablation |
+| ChatDoctor | LLaMA-family supervised fine-tuning on medical dialogues | Open dialogue corpora + external medical KB | Dialogue quality / medical QA correctness | Medium | Medium (open recipe, environment-sensitive) | Background baseline (not fully rerun in this repo) | `docs/OPENING_PROPOSAL_EVIDENCE.md` | Original training stack/version drift risk |
+| HuatuoGPT / HuatuoGPT-II | Chinese medical adaptation + SFT/alignment | Chinese medical corpora and QA datasets | Chinese medical QA benchmarks | High | Medium | Proxy compared | `reports/sota_compare.md` | Current repo comparison is proxy-level, not full official reproduction |
+| DISC-MedLLM | Instruction-tuned Chinese medical LLM baseline | Chinese instruction and medical QA style corpora | Medical QA / instruction-following | High | Medium | Planned (table-level baseline) | `docs/EXPERIMENT_MASTER_PLAN.md` | No local full retraining execution yet |

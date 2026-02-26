@@ -164,6 +164,9 @@ make thesis-ready
 - `reports/thesis_assets/tables/main_results_real.csv`
 - `reports/thesis_assets/tables/main_results_proxy.csv`
 - `reports/thesis_assets/tables/main_results_dual_view.md`
+- `reports/thesis_assets/tables/baseline_real_mainline.csv`
+- `reports/thesis_assets/tables/baseline_proxy_background.csv`
+- `reports/thesis_assets/tables/baseline_audit_dual_view.md`
 - `reports/thesis_assets/tables/ablation_small_real_runs.csv`
 - `reports/thesis_assets/thesis_ready_summary.md`
 - `reports/thesis_assets/thesis_ready_summary.json`
