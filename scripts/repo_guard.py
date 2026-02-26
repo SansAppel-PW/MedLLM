@@ -37,7 +37,10 @@ def run_git(*args: str) -> str:
 
 
 def normalize_path(path: str) -> str:
-    return path.replace("\\", "/").lstrip("./")
+    normalized = path.replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized
 
 
 def parse_status_path(raw_path: str) -> str:
