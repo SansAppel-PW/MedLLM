@@ -89,6 +89,15 @@ bash scripts/train/run_layer_b_real_sft.sh
 - `logs/layer_b/qwen25_7b_sft/train_log.jsonl`
 - `reports/training/layer_b_qwen25_7b_sft_metrics.json`
 
+## Layer-B Qwen7B 自动回退训练（OOM 自愈）
+```bash
+bash scripts/train/run_layer_b_qwen_autofallback.sh
+```
+
+行为：
+- 有 GPU：自动按 3 档参数尝试（2048/16 -> 1536/32 -> 1024/64）。
+- 无 GPU：写出阻塞报告 `reports/small_real/qwen_layer_b_blocker.md`，并退出 0（不阻塞其余流程）。
+
 ## Small Real 一键闭环（prepare -> train -> eval -> visualize -> run_card）
 ```bash
 # 默认先尝试 Qwen2.5-0.5B，失败自动回退到本地 tiny-gpt2 缓存

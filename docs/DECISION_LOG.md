@@ -23,3 +23,16 @@
   3. 对论文复现实验更稳健。
 - 产物：
   - `src/train/real_sft_train.py`（兼容逻辑 + 环境快照写入 manifest）
+
+## 2026-02-26 | D003 | Qwen7B Layer-B 采用“自动回退 + 阻塞报告”机制
+- 背景：开题主线模型应以 Qwen2.5-7B/14B 为核心，但当前环境无 GPU。
+- 决策：新增 `run_layer_b_qwen_autofallback.sh`，有 GPU 时自动做 OOM 级联回退；无 GPU 时生成阻塞报告并退出 0。
+- 理由：
+  1. 不中断总流水线推进；
+  2. 保留“扩容后可一键重启”的工程状态；
+  3. 与开题的 Layer-B 主实验路径保持一致。  
+     `【PDF | 页码p12 | 段落/条目#PG012L001】` `【DOCX | 四、工作进度安排 | 段落#T04R001】`
+- 产物：
+  - `scripts/train/run_layer_b_qwen_autofallback.sh`
+  - `configs/train/sft_layer_b_qwen7b_qlora.yaml`
+  - `reports/small_real/qwen_layer_b_blocker.md`

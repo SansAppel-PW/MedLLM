@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged small-real run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged small-real qwen-layer-b run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -24,6 +24,9 @@ repo-guard-staged:
 
 small-real:
 	bash scripts/train/run_small_real_pipeline.sh
+
+qwen-layer-b:
+	bash scripts/train/run_layer_b_qwen_autofallback.sh
 
 run-config:
 	@if [ -z "$(CONFIG)" ]; then echo "Usage: make run-config CONFIG=configs/train/sft.yaml"; exit 1; fi
