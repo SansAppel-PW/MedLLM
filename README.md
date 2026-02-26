@@ -203,11 +203,20 @@ bash scripts/eval/run_thesis_pipeline.sh
 ## 任务审计（开题任务对齐）
 ```bash
 python scripts/audit/check_task_completion.py
+# 或
+make task-audit
+```
+
+## 开题一致性审计（框架/流程/指标/基线对齐）
+```bash
+python scripts/audit/check_opening_alignment.py
+# 或
+make opening-audit
 ```
 
 ## 回归测试
 ```bash
-python -m pytest -q tests/test_runtime_guard_regression.py tests/test_reference_kb_split_guard.py
+pytest -q tests
 ```
 
 ## Demo

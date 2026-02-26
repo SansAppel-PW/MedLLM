@@ -1,6 +1,6 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-02-26T05:56:12.982413+00:00
+- Generated(UTC): 2026-02-26T06:15:44.349118+00:00
 - Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table

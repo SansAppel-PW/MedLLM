@@ -73,7 +73,7 @@
       "cost_level": "Low",
       "reproducibility": "High",
       "local_run_status": "Completed",
-      "audit_evidence": "reports/small_real/small_real_lora_v13/eval_metrics.json",
+      "audit_evidence": "reports/small_real/small_real_lora_audit1/eval_metrics.json",
       "limitations": "Not thesis main model; only pipeline closure evidence",
       "evidence_layer": "real-mainline",
       "comparability": "fallback-evidence"
@@ -101,7 +101,7 @@
       "cost_level": "Low",
       "reproducibility": "High",
       "local_run_status": "Completed",
-      "audit_evidence": "reports/small_real/small_real_lora_v13/eval_metrics.json",
+      "audit_evidence": "reports/small_real/small_real_lora_audit1/eval_metrics.json",
       "limitations": "Not thesis main model; only pipeline closure evidence",
       "evidence_layer": "real-mainline",
       "comparability": "fallback-evidence"

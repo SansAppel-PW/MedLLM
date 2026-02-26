@@ -6,9 +6,9 @@
 
 | run_tag | beta | pair_count | steps | train_loss | acc_before | acc_after | gain |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| small_real_dpo_ablation_beta005 | 0.05 | 2 | 4 | 0.693198 | 0.0000 | 0.0000 | 0.0000 |
-| small_real_dpo_ablation_beta010 | 0.1 | 2 | 4 | 0.693248 | 0.0000 | 0.0000 | 0.0000 |
-| small_real_dpo_ablation_beta020 | 0.2 | 2 | 4 | 0.693349 | 0.0000 | 0.0000 | 0.0000 |
+| small_real_dpo_ablation_beta005 | 0.05 | 2 | 2 | 0.693199 | 0.0000 | 0.0000 | 0.0000 |
+| small_real_dpo_ablation_beta010 | 0.1 | 2 | 2 | 0.693250 | 0.0000 | 0.0000 | 0.0000 |
+| small_real_dpo_ablation_beta020 | 0.2 | 2 | 2 | 0.693354 | 0.0000 | 0.0000 | 0.0000 |
 
 ## 结论
 - 最优 beta: `0.05`，pref_accuracy_after=0.0000。

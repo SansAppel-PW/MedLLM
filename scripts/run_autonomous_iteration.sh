@@ -5,7 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
-RUN_TAG="${RUN_TAG:-small_real_lora_v3}"
+SMALL_RUN_TAG="${RUN_TAG:-small_real_lora_v3}"
+DPO_RUN_TAG="${DPO_RUN_TAG:-${SMALL_RUN_TAG/small_real_lora/small_real_dpo}}"
 
 echo "[loop] repo guard (preadd)"
 "${PYTHON_BIN}" scripts/repo_guard.py --mode preadd --max-size-mb 10
@@ -19,12 +20,11 @@ bash scripts/data/ensure_real_dataset.sh || {
 }
 
 echo "[loop] small real pipeline"
-RUN_TAG="${RUN_TAG}" bash scripts/train/run_small_real_pipeline.sh || {
+RUN_TAG="${SMALL_RUN_TAG}" bash scripts/train/run_small_real_pipeline.sh || {
   echo "[loop] small-real failed; continue to build non-training artifacts"
 }
 
 echo "[loop] small real dpo pipeline"
-DPO_RUN_TAG="${DPO_RUN_TAG:-${RUN_TAG/small_real_lora/small_real_dpo}}"
 RUN_TAG="${DPO_RUN_TAG}" bash scripts/train/run_small_real_dpo_pipeline.sh || {
   echo "[loop] small-real-dpo failed; continue to build non-training artifacts"
 }
@@ -50,10 +50,10 @@ bash scripts/train/run_real_alignment_pipeline.sh || {
 }
 
 echo "[loop] baseline audit table"
-"${PYTHON_BIN}" scripts/audit/build_baseline_audit_table.py --small-real-run-tag "${RUN_TAG}"
+"${PYTHON_BIN}" scripts/audit/build_baseline_audit_table.py --small-real-run-tag "${SMALL_RUN_TAG}"
 
 echo "[loop] iteration report"
-"${PYTHON_BIN}" scripts/audit/build_iteration_report.py --run-tag "${RUN_TAG}"
+"${PYTHON_BIN}" scripts/audit/build_iteration_report.py --run-tag "${SMALL_RUN_TAG}"
 
 echo "[loop] decision log"
 "${PYTHON_BIN}" scripts/audit/update_decision_log.py

@@ -10,7 +10,7 @@
 | generation | LoRA Small-Real (small_real_lora_v13) | exact_match | 0.0 | None | reports/small_real/small_real_lora_v13/eval_metrics.json | fallback small-real closure |
 | generation | LoRA Small-Real (small_real_lora_v13) | rouge_l_f1 | 0.0 | None | reports/small_real/small_real_lora_v13/eval_metrics.json | fallback small-real closure |
 | generation | LoRA Small-Real (small_real_lora_v13) | train_loss | 10.734590888023376 | None | reports/training/small_real_lora_v13_metrics.json | fallback small-real closure |
-| alignment | DPO (real) | pref_accuracy_after | 0.3715277777777778 | 288 | reports/training/dpo_real_metrics.json | real preference alignment |
+| alignment | DPO (real) | pref_accuracy_after | 0.2534722222222222 | 288 | reports/training/dpo_real_metrics.json | real preference alignment |
 
 ## Proxy Results
 | section | setting | metric | value | sample_count | evidence | note |

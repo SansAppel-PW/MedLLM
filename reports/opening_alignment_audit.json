@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "total": 11,
+    "pass": 8,
+    "partial": 3,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "id": "A01",
+      "requirement": "仓库安全防护（数据/权重/密钥不得入库）",
+      "status": "PASS",
+      "detail": "Repo Guard 与 .gitignore 关键规则存在。",
+      "evidence": [
+        "scripts/repo_guard.py",
+        ".gitignore"
+      ],
+      "source_refs": [
+        "【DOCX | 研究内容与难点 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A02",
+      "requirement": "三层闭环（数据治理-检测-对齐）可执行",
+      "status": "PASS",
+      "detail": "闭环入口齐全。",
+      "evidence": [
+        "scripts/data/run_data_governance_pipeline.py",
+        "scripts/train/run_small_real_pipeline.sh",
+        "scripts/train/run_real_alignment_pipeline.sh",
+        "scripts/eval/run_thesis_pipeline.sh",
+        "scripts/run_autonomous_iteration.sh"
+      ],
+      "source_refs": [
+        "【PDF | 页码p10 | 段落#1】",
+        "【DOCX | 题目与任务定义 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A03",
+      "requirement": "真实数据构建与版本化可追溯",
+      "status": "PASS",
+      "detail": "real数据可用 train/dev/test=288/36/36。",
+      "evidence": [
+        "reports/real_dataset_summary.json",
+        "reports/real_dataset_report.md"
+      ],
+      "source_refs": [
+        "【PDF | 页码p12 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A04",
+      "requirement": "真实训练证据链（loss/ckpt/eval/run-card）",
+      "status": "PASS",
+      "detail": "small-real 与 real DPO 证据链齐全。",
+      "evidence": [
+        "reports/training/small_real_lora_v13_metrics.json",
+        "reports/small_real/small_real_lora_v13/loss_curve.csv",
+        "reports/small_real/small_real_lora_v13/loss_curve.png",
+        "reports/small_real/small_real_lora_v13/run_card.json",
+        "reports/training/dpo_real_metrics.json"
+      ],
+      "source_refs": [
+        "【PDF | 页码p11 | 段落#1】",
+        "【DOCX | 方法与实验设计 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A05",
+      "requirement": "对齐方法覆盖（SFT + DPO/SimPO/KTO）",
+      "status": "PARTIAL",
+      "detail": "DPO为真实训练；SimPO/KTO 当前为 proxy，方法覆盖完整但真实度部分不足。",
+      "evidence": [
+        "reports/training/dpo_real_metrics.json",
+        "reports/training/simpo_metrics.json",
+        "reports/training/kto_metrics.json",
+        "reports/alignment_compare.md"
+      ],
+      "source_refs": [
+        "【PDF | 页码p11 | 段落#1】",
+        "【DOCX | 方法与实验设计 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A06",
+      "requirement": "Baseline 覆盖（Med-PaLM/ChatDoctor/HuatuoGPT/DISC/Qwen）",
+      "status": "PASS",
+      "detail": "baseline 覆盖完整。",
+      "evidence": [
+        "reports/thesis_assets/tables/baseline_audit_table.json"
+      ],
+      "source_refs": [
+        "【PDF | 页码p5 | 段落#1】",
+        "【PDF | 页码p12 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A07",
+      "requirement": "评测指标覆盖（FactScore/WinRate/Rouge-L/Interception）",
+      "status": "PASS",
+      "detail": "指标覆盖满足开题口径。",
+      "evidence": [
+        "reports/eval_default.md",
+        "reports/thesis_assets/tables/main_results_real.csv"
+      ],
+      "source_refs": [
+        "【PDF | 页码p13 | 段落#1】",
+        "【DOCX | 方法与实验设计 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A08",
+      "requirement": "WinRate 与开题 GPT-4 Judge 口径一致性",
+      "status": "PARTIAL",
+      "detail": "当前 WinRate 为离线规则口径，尚未落地 GPT-4 Judge 版本。",
+      "evidence": [
+        "eval/metrics.py",
+        "scripts/eval/run_sota_compare.py",
+        "reports/eval_default.md"
+      ],
+      "source_refs": [
+        "【PDF | 页码p13 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A09",
+      "requirement": "real/proxy 结果分层展示与口径隔离",
+      "status": "PASS",
+      "detail": "双层表已形成。",
+      "evidence": [
+        "reports/thesis_assets/tables/main_results_dual_view.md",
+        "reports/thesis_assets/tables/baseline_audit_dual_view.md"
+      ],
+      "source_refs": [
+        "【PPT | 页码15 | 要点#7】"
+      ]
+    },
+    {
+      "id": "A10",
+      "requirement": "完整规模实验可行性与阻塞可审计",
+      "status": "PARTIAL",
+      "detail": "当前环境无GPU，已输出 blocker，流程可继续但主实验结果待算力补齐。",
+      "evidence": [
+        "reports/small_real/qwen_layer_b_blocker.md",
+        "reports/training/layer_b_qwen25_7b_sft_metrics.json"
+      ],
+      "source_refs": [
+        "【PDF | 页码p13 | 段落#1】",
+        "【DOCX | 方法与实验设计 | 段落#1】"
+      ]
+    },
+    {
+      "id": "A11",
+      "requirement": "任务清单与交付物一致性",
+      "status": "PASS",
+      "detail": "任务审计显示 DONE 项交付物完整。",
+      "evidence": [
+        "reports/task_audit.json",
+        "reports/task_audit.md"
+      ],
+      "source_refs": [
+        "【DOCX | 题目与任务定义 | 段落#1】"
+      ]
+    }
+  ]
+}

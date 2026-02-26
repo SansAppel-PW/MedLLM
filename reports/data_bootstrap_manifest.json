@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-02-26T04:36:27.998298+00:00",
+  "generated_at_utc": "2026-02-26T06:10:14.623898+00:00",
   "policy": "bootstrap minimal synthetic non-sensitive assets only when missing",
   "files": {
     "schema_examples": {

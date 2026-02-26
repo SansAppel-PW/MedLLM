@@ -4,4 +4,4 @@ generation,BaseModel (tiny-gpt2),real,rouge_l_f1,0.0,1,reports/small_real/base_m
 generation,LoRA Small-Real (small_real_lora_v13),real,exact_match,0.0,,reports/small_real/small_real_lora_v13/eval_metrics.json,fallback small-real closure
 generation,LoRA Small-Real (small_real_lora_v13),real,rouge_l_f1,0.0,,reports/small_real/small_real_lora_v13/eval_metrics.json,fallback small-real closure
 generation,LoRA Small-Real (small_real_lora_v13),real,train_loss,10.734590888023376,,reports/training/small_real_lora_v13_metrics.json,fallback small-real closure
-alignment,DPO (real),real,pref_accuracy_after,0.3715277777777778,288,reports/training/dpo_real_metrics.json,real preference alignment
+alignment,DPO (real),real,pref_accuracy_after,0.2534722222222222,288,reports/training/dpo_real_metrics.json,real preference alignment

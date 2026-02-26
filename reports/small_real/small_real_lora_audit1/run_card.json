@@ -1,0 +1,91 @@
+{
+  "experiment": "small_real_lora",
+  "task": "small_real_pipeline",
+  "git_commit": "d4e75ebe112cca811486f052fc7b3663f38b9f95",
+  "model_name": "/Users/bibo/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
+  "tokenizer_name": "/Users/bibo/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
+  "seed": 42,
+  "config": "configs/train/sft_real.yaml",
+  "local_files_only": true,
+  "train_file": "data/clean/sft_train.jsonl",
+  "train_file_sha256": "f032571be5f2b989e7181e065cde956e7e94abff6f674bd168f357934b20adad",
+  "dev_file": "data/clean/sft_dev.jsonl",
+  "dev_file_sha256": "b3f76e4c1cb2c9409d41ecb0b542f97e6f001d95546d8cb416d12cc5db4df90a",
+  "train_samples": 1,
+  "dev_samples": 1,
+  "framework_versions": {
+    "python": "3.10.18 (main, Jun  3 2025, 18:23:41) [Clang 17.0.0 (clang-1700.0.13.3)]",
+    "torch": "2.10.0",
+    "transformers": "5.2.0",
+    "datasets": "4.6.0",
+    "peft": "0.18.1"
+  },
+  "cuda": {
+    "available": false,
+    "device_count": 0,
+    "device_name": null
+  },
+  "environment_snapshot": {
+    "pip_freeze": "checkpoints/small_real/small_real_lora_audit1/env_pip_freeze.txt"
+  },
+  "train_metrics": {
+    "train_runtime": 1.0782,
+    "train_samples_per_second": 1.855,
+    "train_steps_per_second": 1.855,
+    "total_flos": 145465920.0,
+    "train_loss": 10.734733581542969,
+    "epoch": 2.0,
+    "final_eval_loss": 10.736883163452148,
+    "final_eval_runtime": 0.0163,
+    "final_eval_samples_per_second": 61.444,
+    "final_eval_steps_per_second": 61.444,
+    "final_epoch": 2.0
+  },
+  "eval_metrics": {
+    "samples": 1,
+    "exact_match": 0.0,
+    "rouge_l_f1": 0.0,
+    "char_f1": 0.0,
+    "model_dir": "checkpoints/small_real/small_real_lora_audit1/final",
+    "input": "data/clean/sft_dev.jsonl",
+    "device": "cpu"
+  },
+  "artifacts": {
+    "manifest": {
+      "path": "checkpoints/small_real/small_real_lora_audit1/run_manifest.json",
+      "exists": true,
+      "size_bytes": 2533,
+      "sha256": "660209047f99e711c58f33c5aa9d773d7c59bd8afc236d5cc4b1faf9faf82c1f"
+    },
+    "train_metrics": {
+      "path": "reports/training/small_real_lora_audit1_metrics.json",
+      "exists": true,
+      "size_bytes": 361,
+      "sha256": "af7c39250107e4861d933999edf27e0889427037ecbb5a0787ad8a4b0632ee88"
+    },
+    "eval_metrics": {
+      "path": "reports/small_real/small_real_lora_audit1/eval_metrics.json",
+      "exists": true,
+      "size_bytes": 207,
+      "sha256": "a04092b36da42def7514e31f1af0104c740845967b9e1b3a4b4ae3cf34d6d4e1"
+    },
+    "loss_csv": {
+      "path": "reports/small_real/small_real_lora_audit1/loss_curve.csv",
+      "exists": true,
+      "size_bytes": 168,
+      "sha256": "7783c3b478704d2d4c7d3e6ecd89cf7c04824c228da1023c384da4ceedf3ff99"
+    },
+    "loss_png": {
+      "path": "reports/small_real/small_real_lora_audit1/loss_curve.png",
+      "exists": true,
+      "size_bytes": 15256,
+      "sha256": "f40c02e2a21107e2dae45234a45e334ffba9f45bebb52c3cb1c99fd763b75ddb"
+    },
+    "predictions": {
+      "path": "reports/small_real/small_real_lora_audit1/predictions.jsonl",
+      "exists": true,
+      "size_bytes": 771,
+      "sha256": "f68836e796868ef80b2e9286f6152a4fa360075499aafad0ac465548849ccc6f"
+    }
+  }
+}

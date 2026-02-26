@@ -1,10 +1,10 @@
 # Loop Iteration Report
 
-- 生成时间(UTC): 2026-02-26T05:57:51.397380+00:00
+- 生成时间(UTC): 2026-02-26T06:15:44.274623+00:00
 
 ## 关键结果摘要
-- train_loss: 10.734590888023376
-- final_eval_loss: 10.736875534057617
+- train_loss: 10.734733581542969
+- final_eval_loss: 10.736883163452148
 - exact_match: 0.0
 - rouge_l_f1: 0.0
 - char_f1: 0.0
@@ -17,7 +17,7 @@
 
 ## 真实对齐摘要
 - dpo_pair_count: 288
-- dpo_pref_accuracy_after: 0.3715277777777778
+- dpo_pref_accuracy_after: 0.2534722222222222
 - simpo_score_after: 0.816895
 - kto_score_after: 0.5875
 - best_alignment_method: SimPO

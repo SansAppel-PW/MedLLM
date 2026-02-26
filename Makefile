@@ -2,7 +2,7 @@ PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo pytho
 VENV := .venv
 PIP := $(PYTHON) -m pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment decision-log loop-once thesis-ready run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment decision-log loop-once thesis-ready run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -21,6 +21,12 @@ repo-guard:
 
 repo-guard-staged:
 	$(PYTHON) scripts/repo_guard.py --mode staged --max-size-mb 10
+
+opening-audit:
+	$(PYTHON) scripts/audit/check_opening_alignment.py
+
+task-audit:
+	$(PYTHON) scripts/audit/check_task_completion.py
 
 bootstrap-data:
 	$(PYTHON) scripts/data/bootstrap_minimal_assets.py

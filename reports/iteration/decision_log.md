@@ -2,6 +2,7 @@
 
 | 记录时间(UTC) | Run Tag | real train/dev/test | DPO 对数 | 最优对齐 | 决策 |
 |---|---|---|---:|---|---|
+| 2026-02-26T06:15:44.274623+00:00 | small_real_lora_audit1 | 288/36/36 | 288 | SimPO | 保持 real-data + real-DPO 路径，下一步优先申请 GPU 推进 Layer-B Qwen7B 主实验。 |
 | 2026-02-26T05:57:51.397380+00:00 | small_real_lora_v13 | 288/36/36 | 288 | SimPO | 保持 real-data + real-DPO 路径，下一步优先申请 GPU 推进 Layer-B Qwen7B 主实验。 |
 | 2026-02-26T04:38:59.450493+00:00 | small_real_lora_v13 | 288/36/36 | 288 | SimPO | 保持 real-data + real-DPO 路径，下一步优先申请 GPU 推进 Layer-B Qwen7B 主实验。 |
 

@@ -1,10 +1,10 @@
 {
   "title": "Loop Iteration Report",
-  "generated_at_utc": "2026-02-26T05:57:51.397380+00:00",
-  "run_tag": "small_real_lora_v13",
+  "generated_at_utc": "2026-02-26T06:15:44.274623+00:00",
+  "run_tag": "small_real_lora_audit1",
   "artifacts": {
-    "small_real_train_metrics": "reports/training/small_real_lora_v13_metrics.json",
-    "small_real_eval_metrics": "reports/small_real/small_real_lora_v13/eval_metrics.json",
+    "small_real_train_metrics": "reports/training/small_real_lora_audit1_metrics.json",
+    "small_real_eval_metrics": "reports/small_real/small_real_lora_audit1/eval_metrics.json",
     "baseline_json": "reports/thesis_assets/tables/baseline_audit_table.json",
     "real_dataset_summary": "reports/real_dataset_summary.json",
     "dpo_real_metrics": "reports/training/dpo_real_metrics.json",
@@ -14,8 +14,8 @@
     "baseline_table": "reports/thesis_assets/tables/baseline_audit_table.csv"
   },
   "small_real_summary": {
-    "train_loss": 10.734590888023376,
-    "final_eval_loss": 10.736875534057617,
+    "train_loss": 10.734733581542969,
+    "final_eval_loss": 10.736883163452148,
     "exact_match": 0.0,
     "rouge_l_f1": 0.0,
     "char_f1": 0.0
@@ -28,7 +28,7 @@
   },
   "real_alignment_summary": {
     "dpo_pair_count": 288,
-    "dpo_pref_accuracy_after": 0.3715277777777778,
+    "dpo_pref_accuracy_after": 0.2534722222222222,
     "simpo_score_after": 0.816895,
     "kto_score_after": 0.5875,
     "best_method": "SimPO",

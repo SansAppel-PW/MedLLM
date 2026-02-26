@@ -6,7 +6,7 @@
 | 模型 | 方法 | 数据 | 指标范围 | 成本 | 可复现性 | 本仓库状态 | 审计证据 | 局限 |
 |---|---|---|---|---|---|---|---|---|
 | Qwen2.5-7B-Instruct (target mainline) | QLoRA/LoRA SFT + alignment (DPO/SimPO planned) | Repo real_* datasets + KG-governed pipeline | FactScore / safety / utility / ablation | Medium-High | High (scripts + manifests + guard) | Blocked by GPU | `reports/small_real/qwen_layer_b_blocker.md` | Needs CUDA memory to execute Layer-B full run |
-| TinyGPT2-LoRA (small-real fallback) | Offline LoRA real training fallback path | Current minimal clean split (engineering validation) | EM / Rouge-L / Char-F1 (small-real sanity metrics) | Low | High | Completed | `reports/small_real/small_real_lora_v13/eval_metrics.json` | Not thesis main model; only pipeline closure evidence |
+| TinyGPT2-LoRA (small-real fallback) | Offline LoRA real training fallback path | Current minimal clean split (engineering validation) | EM / Rouge-L / Char-F1 (small-real sanity metrics) | Low | High | Completed | `reports/small_real/small_real_lora_audit1/eval_metrics.json` | Not thesis main model; only pipeline closure evidence |
 
 ## Proxy Background
 | 模型 | 方法 | 数据 | 指标范围 | 成本 | 可复现性 | 本仓库状态 | 审计证据 | 局限 |
