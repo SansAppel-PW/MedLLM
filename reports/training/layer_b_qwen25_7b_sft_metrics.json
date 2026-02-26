@@ -1,0 +1,10 @@
+{
+  "skipped": true,
+  "skip_reason": "FORCE_SKIP_TRAINING=true",
+  "train_runtime": 0.0,
+  "train_samples_per_second": 0.0,
+  "train_steps_per_second": 0.0,
+  "train_loss": null,
+  "final_eval_loss": null,
+  "created_at_utc": "2026-02-26T01:59:10.635669+00:00"
+}

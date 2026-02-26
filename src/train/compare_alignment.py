@@ -32,7 +32,8 @@ def main() -> int:
         rows.append(data)
 
     rows.sort(key=lambda x: float(x.get("aligned_score", 0.0)), reverse=True)
-    real_mode = any(not bool(x.get("simulation", True)) for x in rows)
+    real_mode = any((not bool(x.get("simulation", True))) and (not bool(x.get("skipped", False))) for x in rows)
+    skipped_mode = any(bool(x.get("skipped", False)) for x in rows)
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -45,26 +46,32 @@ def main() -> int:
             if real_mode
             else "> 说明：本报告基于离线代理指标比较，不等同于真实大模型参数训练效果。"
         ),
+        (
+            "> 注：存在因资源限制而跳过的训练项。"
+            if skipped_mode
+            else ""
+        ),
         "",
-        "| 方法 | 样本数 | 对齐后分数 | 提升 |",
-        "|---|---:|---:|---:|",
+        "| 方法 | 样本数 | 对齐后分数 | 提升 | 状态 |",
+        "|---|---:|---:|---:|---|",
     ]
 
     for row in rows:
+        status = "skipped" if bool(row.get("skipped", False)) else "done"
         lines.append(
             f"| {row.get('method')} | {row.get('samples', 0)} | "
-            f"{float(row.get('aligned_score', 0.0)):.4f} | {float(row.get('score_gain', 0.0)):.4f} |"
+            f"{float(row.get('aligned_score', 0.0)):.4f} | {float(row.get('score_gain', 0.0)):.4f} | {status} |"
         )
 
     if rows:
-        best = rows[0]
-        lines.extend(
-            [
-                "",
-                "## 结论",
-                f"当前最佳方法: **{best.get('method')}**，对齐后分数 {float(best.get('aligned_score', 0.0)):.4f}。",
-            ]
-        )
+        done_rows = [r for r in rows if not bool(r.get("skipped", False))]
+        lines.append("")
+        lines.append("## 结论")
+        if done_rows:
+            best = done_rows[0]
+            lines.append(f"当前最佳方法: **{best.get('method')}**，对齐后分数 {float(best.get('aligned_score', 0.0)):.4f}。")
+        else:
+            lines.append("当前所有方法均为跳过状态，待扩容后可直接复跑真实对齐训练。")
     else:
         lines.extend(["", "## 结论", "暂无可对比结果。"])
 

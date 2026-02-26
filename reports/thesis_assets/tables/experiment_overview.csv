@@ -4,6 +4,6 @@ real_dataset,train_count,15984
 real_dataset,dev_count,1997
 real_dataset,test_count,1997
 real_dataset,benchmark_count,3600
-alignment,dpo_aligned_score,0.787646
-alignment,simpo_aligned_score,0.816465
-alignment,kto_aligned_score,0.586959
+alignment,dpo_aligned_score,0.0
+alignment,simpo_aligned_score,0.0
+alignment,kto_aligned_score,0.0

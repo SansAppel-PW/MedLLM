@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env run-config clean
+.PHONY: setup install check-env run-config paper-ready clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -19,6 +19,9 @@ check-env:
 run-config:
 	@if [ -z "$(CONFIG)" ]; then echo "Usage: make run-config CONFIG=configs/train/sft.yaml"; exit 1; fi
 	$(PYTHON) scripts/run_with_config.py --config $(CONFIG) --dry-run
+
+paper-ready:
+	bash scripts/pipeline/run_paper_ready.sh
 
 clean:
 	rm -rf __pycache__ .pytest_cache .mypy_cache

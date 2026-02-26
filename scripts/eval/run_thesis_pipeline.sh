@@ -17,9 +17,23 @@ JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
 JUDGE_CACHE="${JUDGE_CACHE:-reports/eval/judge_cache.jsonl}"
 
-JUDGE_FLAG=()
+eval_cmd=(
+  python3 eval/run_eval.py
+  --benchmark "${BENCHMARK}"
+  --kg "${KB_OUT}"
+  --default-report reports/eval_default.md
+  --ablation-kg reports/ablation_kg.md
+  --ablation-detection reports/ablation_detection.md
+  --ablation-alignment reports/ablation_alignment.md
+  --include-splits "${EVAL_SPLITS}"
+  --max-samples "${EVAL_MAX}"
+  --log-every "${LOG_EVERY}"
+  --judge-model "${JUDGE_MODEL}"
+  --judge-max-samples "${JUDGE_MAX_SAMPLES}"
+  --judge-cache "${JUDGE_CACHE}"
+)
 if [[ "${ENABLE_LLM_JUDGE}" == "true" ]]; then
-  JUDGE_FLAG+=(--enable-llm-judge)
+  eval_cmd+=(--enable-llm-judge)
 fi
 
 python3 scripts/data/build_benchmark_reference_kb.py \
@@ -36,20 +50,7 @@ python3 -m src.detect.evaluate_detection \
   --include-splits "${EVAL_SPLITS}" \
   --max-samples "${DET_MAX}"
 
-python3 eval/run_eval.py \
-  --benchmark "${BENCHMARK}" \
-  --kg "${KB_OUT}" \
-  --default-report reports/eval_default.md \
-  --ablation-kg reports/ablation_kg.md \
-  --ablation-detection reports/ablation_detection.md \
-  --ablation-alignment reports/ablation_alignment.md \
-  --include-splits "${EVAL_SPLITS}" \
-  --max-samples "${EVAL_MAX}" \
-  --log-every "${LOG_EVERY}" \
-  --judge-model "${JUDGE_MODEL}" \
-  --judge-max-samples "${JUDGE_MAX_SAMPLES}" \
-  --judge-cache "${JUDGE_CACHE}" \
-  "${JUDGE_FLAG[@]}"
+"${eval_cmd[@]}"
 
 python3 scripts/eval/run_sota_compare.py \
   --benchmark "${BENCHMARK}" \

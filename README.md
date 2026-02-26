@@ -5,11 +5,12 @@
 ## 项目目标
 - 基于真实数据构建训练集与评测集，减少 demo 级假数据依赖。
 - 基于白盒不确定性 + 检索核查的混合检测，实现高风险拦截。
-- 基于 SFT / DPO / SimPO 的对齐训练流程（当前仓库为轻量模拟实现），支持论文实验复现实验编排。
+- 基于 SFT / DPO / SimPO / KTO 的对齐训练流程，支持真实训练与资源受限降级编排。
 
 ## 学术合规说明
-- `src/train/*.py` 当前默认流程为离线模拟训练（proxy/simulation），输出的是代理指标，不是大模型参数微调日志。
 - `src/train/real_sft_train.py` 为真实 SFT 训练入口（真实 forward/backward、loss、checkpoint、日志与实验清单）。
+- `src/train/real_pref_train.py` 为真实 DPO/SimPO/KTO 训练入口（真实 backward、checkpoint、日志）。
+- 在资源不足时，训练流水线会自动生成 `skipped` 证据并继续执行其余模块，避免流程中断。
 - 若论文需要声明“完成 SFT/DPO/SimPO 实训”，需额外运行真实训练（含模型权重、loss 曲线、checkpoint 与推理复现）。
 - `reports/sota_compare.md` 为“代理复现实验”，不可表述为官方 HuatuoGPT/BioMistral 完整能力对比。
 
@@ -60,7 +61,7 @@ python scripts/data/build_real_dataset.py \
 
 ## 训练对齐流水线（真实数据）
 ```bash
-# 默认：真实 SFT + 代理 DPO/SimPO/KTO（ALIGNMENT_MODE=proxy）
+# 默认：优先真实训练（ALIGNMENT_MODE=real），资源不足自动跳过训练并继续后续模块
 bash scripts/train/run_real_alignment_pipeline.sh
 ```
 
@@ -72,8 +73,12 @@ bash scripts/train/run_real_alignment_pipeline.sh
 - `reports/alignment_compare.md`
 
 说明：
-- `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器（当前默认）。
-- `ALIGNMENT_MODE=real`：预留给真实对齐训练器（当前会提示未实现并退出）。
+- `ALIGNMENT_MODE=real`：真实 DPO/SimPO/KTO（默认）。
+- `ALIGNMENT_MODE=proxy`：使用代理训练器，适合快速方法学验证。
+- 资源保护开关：
+  - `ALLOW_SKIP_TRAINING=true`：训练失败或资源不足时自动跳过训练并继续流程（默认）。
+  - `FORCE_SKIP_TRAINING=true`：强制跳过训练，仅推进其余模块。
+  - 资源报告输出：`reports/training/resource_preflight.json`。
 
 ## Layer-B 真实 SFT（论文主链起点）
 ```bash
@@ -85,6 +90,19 @@ bash scripts/train/run_layer_b_real_sft.sh
 - `checkpoints/layer_b/qwen25_7b_sft/run_manifest.json`
 - `logs/layer_b/qwen25_7b_sft/train_log.jsonl`
 - `reports/training/layer_b_qwen25_7b_sft_metrics.json`
+
+## 一键论文流水线（推荐）
+```bash
+make paper-ready
+```
+
+该入口串联：
+- 真实数据构建（缺失时自动补齐）
+- 训练对齐流水线（资源不足自动降级）
+- 论文评测与资产构建
+- Demo 端到端验收
+
+状态总览输出：`reports/pipeline/paper_ready_status.md`。
 
 ## 评测与论文资产流水线
 ```bash
@@ -125,3 +143,4 @@ scripts/deploy/run_demo.sh --web
 
 ## 当前执行清单
 - `docs/EXECUTION_TASKS.md`
+- `docs/RESOURCE_AWARE_EXECUTION.md`

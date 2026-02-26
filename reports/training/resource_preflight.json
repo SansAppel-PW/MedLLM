@@ -1,0 +1,7 @@
+{
+  "created_at_utc": "2026-02-26T01:59:09.147251+00:00",
+  "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O",
+  "accelerator": "mps",
+  "cuda_device_count": 0,
+  "cuda_total_mem_gb": 0.0
+}
