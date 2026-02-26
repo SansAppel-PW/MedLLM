@@ -147,7 +147,12 @@ make loop-once
 - 再跑 small-real 闭环；
 - 再尝试 Qwen7B Layer-B（无 GPU 时写 blocker）；
 - 再执行 real alignment（默认 `ALIGNMENT_MODE=real` 且 `SKIP_LAYER_B=1`，避免重复 Layer-B 开销）；
-- 最后自动生成 baseline 审计表、iteration 报告和 thesis-ready 汇总包。
+- 最后自动生成 baseline 审计表、iteration 报告、decision log 和 thesis-ready 汇总包。
+
+Decision log 单独更新：
+```bash
+make decision-log
+```
 
 ## 论文写作资产汇总
 ```bash

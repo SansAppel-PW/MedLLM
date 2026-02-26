@@ -2,7 +2,7 @@ PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo pytho
 VENV := .venv
 PIP := $(PYTHON) -m pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment loop-once thesis-ready run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment decision-log loop-once thesis-ready run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -42,6 +42,9 @@ qwen-layer-b:
 
 real-alignment:
 	PYTHON_BIN="$(PYTHON)" ALIGNMENT_MODE=real SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
+
+decision-log:
+	$(PYTHON) scripts/audit/update_decision_log.py
 
 loop-once:
 	PYTHON_BIN="$(PYTHON)" bash scripts/run_autonomous_iteration.sh

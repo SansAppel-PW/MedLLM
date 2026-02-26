@@ -55,6 +55,9 @@ echo "[loop] baseline audit table"
 echo "[loop] iteration report"
 "${PYTHON_BIN}" scripts/audit/build_iteration_report.py --run-tag "${RUN_TAG}"
 
+echo "[loop] decision log"
+"${PYTHON_BIN}" scripts/audit/update_decision_log.py
+
 echo "[loop] thesis ready package"
 "${PYTHON_BIN}" scripts/audit/build_thesis_ready_package.py
 
