@@ -101,6 +101,7 @@ make paper-ready
 - 训练对齐流水线（资源不足自动降级）
 - 论文评测与资产构建
 - Demo 端到端验收
+- 论文初稿材料与完备度审计
 
 状态总览输出：`reports/pipeline/paper_ready_status.md`。
 
@@ -122,6 +123,8 @@ bash scripts/eval/run_thesis_pipeline.sh
 - `reports/sota_compare.md`
 - `reports/error_analysis.md`
 - `reports/thesis_assets/`
+- `reports/thesis_support/thesis_draft_material.md`
+- `reports/thesis_support/thesis_readiness.md`
 
 ## 任务审计（开题任务对齐）
 ```bash

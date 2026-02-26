@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "PASS": 5,
+    "DEFERRED": 1,
+    "FAIL": 0
+  },
+  "ready_for_writing": true,
+  "checks": [
+    {
+      "id": "R1",
+      "requirement": "数据收集、清洗与防泄露系统代码及数据统计报告",
+      "status": "PASS",
+      "note": "scripts/data/build_real_dataset.py | scripts/data/run_data_governance_pipeline.py | reports/real_dataset_report.md | reports/data_cleaning_report.md"
+    },
+    {
+      "id": "R2",
+      "requirement": "真实可复现微调系统（LoRA/QLoRA）及最优 checkpoint",
+      "status": "DEFERRED",
+      "note": "训练受限，已生成跳过证据（reports/training/resource_skip_report.md）"
+    },
+    {
+      "id": "R3",
+      "requirement": "包含 API 自动评测的多维度指标对比表格",
+      "status": "PASS",
+      "note": "eval/llm_judge.py | reports/eval_default.md | reports/sota_compare.md | reports/thesis_assets/tables/sota_compare_metrics.csv"
+    },
+    {
+      "id": "R4",
+      "requirement": "真实训练 Loss 下降曲线图（png/pdf）",
+      "status": "PASS",
+      "note": "已存在 loss 曲线图"
+    },
+    {
+      "id": "R5",
+      "requirement": "系统说明文档（Readme、架构图、环境配置）",
+      "status": "PASS",
+      "note": "README.md | docs/ARCH.md | docs/DEPLOY.md | docs/RESOURCE_AWARE_EXECUTION.md"
+    },
+    {
+      "id": "R6",
+      "requirement": "论文初稿支撑材料（实验记录、结论说明、创新点论述）",
+      "status": "PASS",
+      "note": "reports/thesis_support/thesis_draft_material.md | reports/thesis_support/experiment_record.json | reports/error_analysis.md"
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "git_commit": "a05b8344bdd917db1c87c931fe11caea52676a30",
+  "dataset": {
+    "sources": [
+      {
+        "name": "cmtmedqa",
+        "dataset": "Suprit/CMtMedQA",
+        "config": "default",
+        "split": "train",
+        "num_rows_total": 68023,
+        "start_offset": 47698,
+        "target_count": 8000,
+        "fetched_count": 8000,
+        "license": "MIT"
+      },
+      {
+        "name": "huatuo26m_lite",
+        "dataset": "FreedomIntelligence/Huatuo26M-Lite",
+        "config": "default",
+        "split": "train",
+        "num_rows_total": 177703,
+        "start_offset": 4826,
+        "target_count": 6000,
+        "fetched_count": 6000,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "huatuo_encyclopedia",
+        "dataset": "FreedomIntelligence/huatuo_encyclopedia_qa",
+        "config": "default",
+        "split": "train",
+        "num_rows_total": 362420,
+        "start_offset": 25975,
+        "target_count": 6000,
+        "fetched_count": 6000,
+        "license": "Apache-2.0"
+      }
+    ],
+    "merged_before_dedup": 20000,
+    "merged_after_dedup": 19978,
+    "train_count": 15984,
+    "dev_count": 1997,
+    "test_count": 1997,
+    "benchmark_count": 3600,
+    "seed": 42
+  },
+  "training_status": {
+    "sft": "skipped (FORCE_SKIP_TRAINING=true)",
+    "dpo": "skipped (FORCE_SKIP_TRAINING=true)",
+    "simpo": "skipped (FORCE_SKIP_TRAINING=true)",
+    "kto": "skipped (FORCE_SKIP_TRAINING=true)"
+  },
+  "resource": {
+    "created_at_utc": "2026-02-26T02:11:21.542749+00:00",
+    "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O",
+    "accelerator": "mps",
+    "cuda_device_count": 0,
+    "cuda_total_mem_gb": 0.0
+  },
+  "eval_rows": [
+    {
+      "model": "SFT",
+      "factscore": "0.0017",
+      "utility": "1.0000",
+      "risk_score": "0.7477",
+      "interception_rate": "0.9967"
+    },
+    {
+      "model": "DPO",
+      "factscore": "0.0017",
+      "utility": "0.8434",
+      "risk_score": "0.7560",
+      "interception_rate": "0.9967"
+    },
+    {
+      "model": "SimPO",
+      "factscore": "0.0017",
+      "utility": "0.8434",
+      "risk_score": "0.7560",
+      "interception_rate": "0.9967"
+    }
+  ],
+  "sota_top4": [
+    {
+      "name": "MedQA-RAG-Proxy (retrieval)",
+      "accuracy": "0.5",
+      "precision": "0.5",
+      "recall": "0.9983333333333333",
+      "f1": "0.6662958843159066",
+      "specificity": "0.0016666666666666668",
+      "unsafe_pass_rate": "0.0016666666666666668",
+      "risky_block_rate": "0.9966666666666667",
+      "tp": "599.0",
+      "fp": "599.0",
+      "tn": "1.0",
+      "fn": "1.0"
+    },
+    {
+      "name": "MedLLM-Hybrid (ours)",
+      "accuracy": "0.5",
+      "precision": "0.5",
+      "recall": "0.9966666666666667",
+      "f1": "0.6659242761692651",
+      "specificity": "0.0033333333333333335",
+      "unsafe_pass_rate": "0.0033333333333333335",
+      "risky_block_rate": "0.9916666666666667",
+      "tp": "598.0",
+      "fp": "598.0",
+      "tn": "2.0",
+      "fn": "2.0"
+    },
+    {
+      "name": "BioMistral-7B-Proxy (whitebox)",
+      "accuracy": "0.3641666666666667",
+      "precision": "0.3959131545338442",
+      "recall": "0.5166666666666667",
+      "f1": "0.4483007953723789",
+      "specificity": "0.21166666666666667",
+      "unsafe_pass_rate": "0.48333333333333334",
+      "risky_block_rate": "0.195",
+      "tp": "310.0",
+      "fp": "473.0",
+      "tn": "127.0",
+      "fn": "290.0"
+    },
+    {
+      "name": "HuatuoGPT-7B-Proxy (raw)",
+      "accuracy": "0.5",
+      "precision": "0.0",
+      "recall": "0.0",
+      "f1": "0.0",
+      "specificity": "1.0",
+      "unsafe_pass_rate": "1.0",
+      "risky_block_rate": "0.0",
+      "tp": "0.0",
+      "fp": "0.0",
+      "tn": "600.0",
+      "fn": "600.0"
+    }
+  ],
+  "error_summary": [
+    "- 主预测文件样本数: 1200",
+    "- 误判总数: 600",
+    "- 漏检数: 2",
+    "- 误报数: 598",
+    "- medllm_hybrid: 600",
+    "- 选项类样本检索噪声: 596",
+    "- 选项错配未识别: 2",
+    "- 不确定措辞触发风险: 1"
+  ]
+}

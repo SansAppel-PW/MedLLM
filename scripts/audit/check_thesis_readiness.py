@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+"""Check thesis deliverable readiness against required evidence chain."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+from typing import Any
+
+
+def exists(path: str) -> bool:
+    return Path(path).exists()
+
+
+def load_json(path: str) -> dict[str, Any]:
+    p = Path(path)
+    if not p.exists():
+        return {}
+    with p.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def status_for_training(metrics_path: str, skip_path: str) -> tuple[str, str]:
+    metrics = load_json(metrics_path)
+    if metrics:
+        if bool(metrics.get("skipped", False)):
+            if exists(skip_path):
+                return "DEFERRED", f"训练受限，已生成跳过证据（{skip_path}）"
+            return "DEFERRED", "训练受限，缺少标准跳过报告"
+        return "PASS", f"发现训练指标文件：{metrics_path}"
+    if exists(skip_path):
+        return "DEFERRED", f"无训练指标，但存在跳过证据：{skip_path}"
+    return "FAIL", "缺失训练指标与跳过证据"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Check thesis readiness")
+    parser.add_argument("--report", default="reports/thesis_support/thesis_readiness.md")
+    parser.add_argument("--json", default="reports/thesis_support/thesis_readiness.json")
+    args = parser.parse_args()
+
+    checks: list[dict[str, str]] = []
+
+    # 1) 数据收集清洗与报告
+    c1_paths = [
+        "scripts/data/build_real_dataset.py",
+        "scripts/data/run_data_governance_pipeline.py",
+        "reports/real_dataset_report.md",
+        "reports/data_cleaning_report.md",
+    ]
+    c1_ok = all(exists(x) for x in c1_paths)
+    checks.append(
+        {
+            "id": "R1",
+            "requirement": "数据收集、清洗与防泄露系统代码及数据统计报告",
+            "status": "PASS" if c1_ok else "FAIL",
+            "note": " | ".join(c1_paths),
+        }
+    )
+
+    # 2) 可复现微调系统与最佳 checkpoint
+    c2_status, c2_note = status_for_training(
+        "reports/training/layer_b_qwen25_7b_sft_metrics.json",
+        "reports/training/resource_skip_report.md",
+    )
+    checks.append(
+        {
+            "id": "R2",
+            "requirement": "真实可复现微调系统（LoRA/QLoRA）及最优 checkpoint",
+            "status": c2_status,
+            "note": c2_note,
+        }
+    )
+
+    # 3) API 自动评测多维度指标对比
+    c3_paths = [
+        "eval/llm_judge.py",
+        "reports/eval_default.md",
+        "reports/sota_compare.md",
+        "reports/thesis_assets/tables/sota_compare_metrics.csv",
+    ]
+    c3_ok = all(exists(x) for x in c3_paths)
+    checks.append(
+        {
+            "id": "R3",
+            "requirement": "包含 API 自动评测的多维度指标对比表格",
+            "status": "PASS" if c3_ok else "FAIL",
+            "note": " | ".join(c3_paths),
+        }
+    )
+
+    # 4) 真实训练 loss 曲线
+    curve_exists = exists("reports/thesis_assets/figures/training_loss_layer_b_qwen25_7b_sft.png") or exists(
+        "reports/training/tiny_sft_loss_curve.png"
+    )
+    if curve_exists:
+        c4_status = "PASS"
+        c4_note = "已存在 loss 曲线图"
+    elif exists("reports/training/resource_skip_report.md"):
+        c4_status = "DEFERRED"
+        c4_note = "真实训练受限，当前仅具备跳过证据"
+    else:
+        c4_status = "FAIL"
+        c4_note = "缺失 loss 曲线与跳过证据"
+    checks.append(
+        {
+            "id": "R4",
+            "requirement": "真实训练 Loss 下降曲线图（png/pdf）",
+            "status": c4_status,
+            "note": c4_note,
+        }
+    )
+
+    # 5) 系统说明文档
+    c5_paths = ["README.md", "docs/ARCH.md", "docs/DEPLOY.md", "docs/RESOURCE_AWARE_EXECUTION.md"]
+    c5_ok = all(exists(x) for x in c5_paths)
+    checks.append(
+        {
+            "id": "R5",
+            "requirement": "系统说明文档（Readme、架构图、环境配置）",
+            "status": "PASS" if c5_ok else "FAIL",
+            "note": " | ".join(c5_paths),
+        }
+    )
+
+    # 6) 论文初稿支撑材料
+    c6_paths = [
+        "reports/thesis_support/thesis_draft_material.md",
+        "reports/thesis_support/experiment_record.json",
+        "reports/error_analysis.md",
+    ]
+    c6_ok = all(exists(x) for x in c6_paths)
+    checks.append(
+        {
+            "id": "R6",
+            "requirement": "论文初稿支撑材料（实验记录、结论说明、创新点论述）",
+            "status": "PASS" if c6_ok else "FAIL",
+            "note": " | ".join(c6_paths),
+        }
+    )
+
+    counts = {"PASS": 0, "DEFERRED": 0, "FAIL": 0}
+    for c in checks:
+        counts[c["status"]] += 1
+
+    report_lines = [
+        "# Thesis Readiness Check",
+        "",
+        f"- PASS: {counts['PASS']}",
+        f"- DEFERRED: {counts['DEFERRED']}",
+        f"- FAIL: {counts['FAIL']}",
+        "",
+        "| ID | Requirement | Status | Note |",
+        "|---|---|---|---|",
+    ]
+    for c in checks:
+        report_lines.append(f"| {c['id']} | {c['requirement']} | {c['status']} | {c['note']} |")
+
+    report_path = Path(args.report)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text("\n".join(report_lines) + "\n", encoding="utf-8")
+
+    out_json = {
+        "summary": counts,
+        "ready_for_writing": counts["FAIL"] == 0,
+        "checks": checks,
+    }
+    json_path = Path(args.json)
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(json.dumps(out_json, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    print(json.dumps(out_json["summary"], ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

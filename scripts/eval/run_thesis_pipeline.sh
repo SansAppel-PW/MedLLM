@@ -73,4 +73,26 @@ python3 scripts/eval/build_thesis_assets.py \
   --predictions reports/detection_predictions.jsonl \
   --sota-csv reports/thesis_assets/tables/sota_compare_metrics.csv
 
+python3 scripts/eval/build_training_figures.py \
+  --out-dir reports/thesis_assets/figures \
+  --summary-csv reports/thesis_assets/tables/training_loss_summary.csv
+
+python3 scripts/eval/generate_thesis_draft_material.py \
+  --dataset-summary reports/real_dataset_summary.json \
+  --sft reports/training/layer_b_qwen25_7b_sft_metrics.json \
+  --dpo reports/training/dpo_metrics.json \
+  --simpo reports/training/simpo_metrics.json \
+  --kto reports/training/kto_metrics.json \
+  --eval-default reports/eval_default.md \
+  --sota-csv reports/thesis_assets/tables/sota_compare_metrics.csv \
+  --error-analysis reports/error_analysis.md \
+  --resource reports/training/resource_preflight.json \
+  --skip-report reports/training/resource_skip_report.md \
+  --output-md reports/thesis_support/thesis_draft_material.md \
+  --output-json reports/thesis_support/experiment_record.json
+
+python3 scripts/audit/check_thesis_readiness.py \
+  --report reports/thesis_support/thesis_readiness.md \
+  --json reports/thesis_support/thesis_readiness.json
+
 echo "[thesis-pipeline] done"

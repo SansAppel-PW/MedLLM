@@ -83,6 +83,8 @@ data_note=""
 train_note=""
 eval_note=""
 e2e_note=""
+readiness_status="SKIPPED"
+readiness_note=""
 
 if should_build_data; then
   run_step "build_real_dataset" \
@@ -158,6 +160,29 @@ else
   e2e_note="RUN_E2E=false"
 fi
 
+if [[ -f reports/thesis_support/thesis_readiness.json ]]; then
+  read -r fail_count deferred_count < <(
+    python3 - <<'PY'
+import json
+from pathlib import Path
+p = Path("reports/thesis_support/thesis_readiness.json")
+payload = json.loads(p.read_text(encoding="utf-8"))
+summary = payload.get("summary", {})
+print(summary.get("FAIL", 0), summary.get("DEFERRED", 0))
+PY
+  )
+  if [[ "${fail_count}" == "0" ]]; then
+    readiness_status="DONE"
+    readiness_note="FAIL=0, DEFERRED=${deferred_count}"
+  else
+    readiness_status="WARN"
+    readiness_note="FAIL=${fail_count}, DEFERRED=${deferred_count}"
+  fi
+else
+  readiness_status="MISSING"
+  readiness_note="thesis_readiness.json not found"
+fi
+
 ensure_dir "$(dirname "${STATUS_REPORT}")"
 cat > "${STATUS_REPORT}" <<EOF
 # Paper-Ready Pipeline Status
@@ -172,6 +197,7 @@ cat > "${STATUS_REPORT}" <<EOF
 | Training | ${train_status} | ${train_note} |
 | Evaluation | ${eval_status} | ${eval_note} |
 | E2E Acceptance | ${e2e_status} | ${e2e_note} |
+| Thesis Readiness | ${readiness_status} | ${readiness_note} |
 
 ## Key Outputs
 - \`reports/real_dataset_report.md\`
@@ -181,6 +207,8 @@ cat > "${STATUS_REPORT}" <<EOF
 - \`reports/error_analysis.md\`
 - \`reports/thesis_assets/\`
 - \`reports/e2e_acceptance.md\`
+- \`reports/thesis_support/thesis_draft_material.md\`
+- \`reports/thesis_support/thesis_readiness.md\`
 EOF
 
 echo "[pipeline] status=${STATUS_REPORT}"

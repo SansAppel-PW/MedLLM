@@ -1,6 +1,6 @@
 # Paper-Ready Pipeline Status
 
-- Generated at (UTC): 2026-02-26T02:02:38Z
+- Generated at (UTC): 2026-02-26T02:14:56Z
 - Model target: `Qwen/Qwen2.5-7B-Instruct`
 - Alignment mode: `real`
 
@@ -10,6 +10,7 @@
 | Training | DONE | training fallback active (see resource_skip_report.md) |
 | Evaluation | DONE | thesis evaluation assets refreshed |
 | E2E Acceptance | DONE | demo e2e acceptance refreshed |
+| Thesis Readiness | DONE | FAIL=0, DEFERRED=1 |
 
 ## Key Outputs
 - `reports/real_dataset_report.md`
@@ -19,3 +20,5 @@
 - `reports/error_analysis.md`
 - `reports/thesis_assets/`
 - `reports/e2e_acceptance.md`
+- `reports/thesis_support/thesis_draft_material.md`
+- `reports/thesis_support/thesis_readiness.md`
