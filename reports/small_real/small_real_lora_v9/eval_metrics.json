@@ -1,0 +1,9 @@
+{
+  "samples": 1,
+  "exact_match": 0.0,
+  "rouge_l_f1": 0.0,
+  "char_f1": 0.0,
+  "model_dir": "checkpoints/small_real/small_real_lora_v9/final",
+  "input": "data/clean/sft_dev.jsonl",
+  "device": "cpu"
+}

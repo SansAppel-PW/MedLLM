@@ -16,6 +16,30 @@ def load_json(path: Path) -> dict[str, Any] | None:
         return json.load(f)
 
 
+def metric_value(row: dict[str, Any]) -> float:
+    if "aligned_score" in row:
+        return float(row.get("aligned_score", 0.0))
+    if "pref_accuracy_after" in row:
+        return float(row.get("pref_accuracy_after", 0.0))
+    return 0.0
+
+
+def gain_value(row: dict[str, Any]) -> float:
+    if "score_gain" in row:
+        return float(row.get("score_gain", 0.0))
+    if "pref_accuracy_gain" in row:
+        return float(row.get("pref_accuracy_gain", 0.0))
+    return 0.0
+
+
+def sample_value(row: dict[str, Any]) -> int:
+    if "samples" in row:
+        return int(row.get("samples", 0))
+    if "pair_count" in row:
+        return int(row.get("pair_count", 0))
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Compare alignment methods")
     parser.add_argument("--dpo", default="reports/training/dpo_metrics.json")
@@ -31,24 +55,26 @@ def main() -> int:
             continue
         rows.append(data)
 
-    rows.sort(key=lambda x: float(x.get("aligned_score", 0.0)), reverse=True)
+    rows.sort(key=metric_value, reverse=True)
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
 
     lines = [
-        "# 对齐训练对比报告（模拟）",
+        "# 对齐训练对比报告",
         "",
-        "> 说明：本报告基于离线代理指标比较，不等同于真实大模型参数训练效果。",
+        "> 说明：本报告支持代理指标与真实偏好准确率混合展示，需在论文中明确口径。",
         "",
-        "| 方法 | 样本数 | 对齐后分数 | 提升 |",
-        "|---|---:|---:|---:|",
+        "| 方法 | 类型 | 样本数 | 对齐后指标 | 提升 |",
+        "|---|---|---:|---:|---:|",
     ]
 
     for row in rows:
+        sim = row.get("simulation")
+        mode = "proxy" if sim is True else ("real" if sim is False else "mixed")
         lines.append(
-            f"| {row.get('method')} | {row.get('samples', 0)} | "
-            f"{float(row.get('aligned_score', 0.0)):.4f} | {float(row.get('score_gain', 0.0)):.4f} |"
+            f"| {row.get('method')} | {mode} | {sample_value(row)} | "
+            f"{metric_value(row):.4f} | {gain_value(row):.4f} |"
         )
 
     if rows:
@@ -57,7 +83,7 @@ def main() -> int:
             [
                 "",
                 "## 结论",
-                f"当前最佳方法: **{best.get('method')}**，对齐后分数 {float(best.get('aligned_score', 0.0)):.4f}。",
+                f"当前最佳方法: **{best.get('method')}**，对齐后指标 {metric_value(best):.4f}。",
             ]
         )
     else:

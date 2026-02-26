@@ -62,7 +62,7 @@
     "cost_level": "Low",
     "reproducibility": "High",
     "local_run_status": "Completed",
-    "audit_evidence": "reports/small_real/small_real_lora_v8/eval_metrics.json",
+    "audit_evidence": "reports/small_real/small_real_lora_v9/eval_metrics.json",
     "limitations": "Not thesis main model; only pipeline closure evidence"
   }
 ]

@@ -1,9 +1,11 @@
 {
-  "generated_at_utc": "2026-02-26T03:27:26.637993+00:00",
-  "latest_small_real_run": "small_real_lora_v8",
+  "generated_at_utc": "2026-02-26T03:46:10.044838+00:00",
+  "latest_small_real_run": "small_real_lora_v9",
+  "latest_small_real_dpo_run": "small_real_dpo_v9",
   "artifacts": {
     "main_results_csv": "reports/thesis_assets/tables/main_results_small_real.csv",
     "ablation_csv": "reports/thesis_assets/tables/ablation_small_real_runs.csv",
+    "real_dpo_csv": "reports/thesis_assets/tables/alignment_real_dpo_runs.csv",
     "baseline_audit_table": "reports/thesis_assets/tables/baseline_audit_table.csv",
     "qwen_blocker": "reports/small_real/qwen_layer_b_blocker.md",
     "error_cases": "reports/thesis_assets/cases/error_cases_top30.jsonl"
@@ -11,6 +13,7 @@
   "paper_ready_notes": {
     "main_result_scope": "Small-Real LoRA fallback evidence (engineering closure), not final thesis mainline.",
     "ablation_scope": "Across small_real_lora_v* runs to verify reproducibility and run stability.",
+    "alignment_scope": "Small-Real DPO real-training runs (if available) as alignment evidence.",
     "limitation": "Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment.",
     "next_action": "Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package."
   }

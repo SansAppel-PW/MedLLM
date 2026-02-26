@@ -65,3 +65,16 @@
   - `reports/thesis_assets/tables/main_results_small_real.csv`
   - `reports/thesis_assets/tables/ablation_small_real_runs.csv`
   - `reports/thesis_assets/thesis_ready_summary.{md,json}`
+
+## 2026-02-26 | D006 | 对齐阶段从纯 Proxy 升级为“真实 DPO + Proxy SimPO/KTO”
+- 背景：开题要求真实训练证据链，若对齐阶段长期停留在纯代理将削弱论文严谨性。
+  `【DOCX | 三、课题技术路线及研究方案 | 段落#T03R003】` `【PDF | 页码p13 | 段落/条目#PG013L002】`
+- 决策：新增 `src/train/real_dpo_train.py` 与 `run_small_real_dpo_pipeline.sh`，在小资源条件下先完成真实 DPO 闭环；SimPO/KTO 维持 proxy 并显式标注。
+- 理由：
+  1. 在当前算力下可落地真实偏好优化（forward/backward + checkpoint + metrics）；
+  2. 避免“对齐全代理”造成论文证据链断点；
+  3. 保持后续迁移到 Qwen7B 的参数与流程连续性。
+- 产物：
+  - `src/train/real_dpo_train.py`
+  - `scripts/train/run_small_real_dpo_pipeline.sh`
+  - `reports/training/small_real_dpo_v*/`（真实 DPO 指标）

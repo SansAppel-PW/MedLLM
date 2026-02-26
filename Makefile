@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data small-real qwen-layer-b loop-once thesis-ready run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data small-real small-real-dpo qwen-layer-b loop-once thesis-ready run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -27,6 +27,9 @@ bootstrap-data:
 
 small-real:
 	bash scripts/train/run_small_real_pipeline.sh
+
+small-real-dpo:
+	bash scripts/train/run_small_real_dpo_pipeline.sh
 
 qwen-layer-b:
 	bash scripts/train/run_layer_b_qwen_autofallback.sh

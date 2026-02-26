@@ -48,8 +48,58 @@ if [[ "${ALIGNMENT_MODE}" == "proxy" ]]; then
     --kto reports/training/kto_metrics.json \
     --output reports/alignment_compare.md
 elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
-  echo "[todo] ALIGNMENT_MODE=real requires real DPO/SimPO/KTO trainers. Not implemented yet."
-  exit 2
+  echo "[real] running real DPO + proxy SimPO/KTO hybrid alignment."
+
+  DPO_MODEL_PRIMARY="${DPO_MODEL_PRIMARY:-Qwen/Qwen2.5-0.5B-Instruct}"
+  DPO_MODEL_FALLBACK="${DPO_MODEL_FALLBACK:-${HOME}/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be}"
+
+  if ! python3 src/train/real_dpo_train.py \
+    --task real_dpo_alignment \
+    --pref-file "${PREF_FILE}" \
+    --model-name "${DPO_MODEL_PRIMARY}" \
+    --output-dir checkpoints/dpo-real-baseline \
+    --logging-dir logs/dpo-real-baseline \
+    --metrics-out reports/training/dpo_real_metrics.json \
+    --epochs "${DPO_EPOCHS:-2}" \
+    --max-steps "${DPO_MAX_STEPS:-40}" \
+    --learning-rate "${DPO_LR:-1e-5}" \
+    --max-length "${DPO_MAX_LENGTH:-256}" \
+    --seed "${DPO_SEED:-42}" \
+    --trust-remote-code true \
+    --local-files-only false; then
+    echo "[real] primary DPO model failed, fallback to local tiny model."
+    HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 src/train/real_dpo_train.py \
+      --task real_dpo_alignment_fallback \
+      --pref-file "${PREF_FILE}" \
+      --model-name "${DPO_MODEL_FALLBACK}" \
+      --output-dir checkpoints/dpo-real-baseline \
+      --logging-dir logs/dpo-real-baseline \
+      --metrics-out reports/training/dpo_real_metrics.json \
+      --epochs "${DPO_EPOCHS:-2}" \
+      --max-steps "${DPO_MAX_STEPS:-40}" \
+      --learning-rate "${DPO_LR:-1e-5}" \
+      --max-length "${DPO_MAX_LENGTH:-256}" \
+      --seed "${DPO_SEED:-42}" \
+      --trust-remote-code false \
+      --local-files-only true
+  fi
+
+  echo "[real] SimPO/KTO remain proxy in current stage."
+  python3 src/train/simpo_train.py \
+    --pref-file "${PREF_FILE}" \
+    --output-dir checkpoints/simpo-real-baseline \
+    --metrics-out reports/training/simpo_metrics.json
+
+  python3 src/train/kto_train.py \
+    --pref-file "${PREF_FILE}" \
+    --output-dir checkpoints/kto-real-baseline \
+    --metrics-out reports/training/kto_metrics.json
+
+  python3 src/train/compare_alignment.py \
+    --dpo reports/training/dpo_real_metrics.json \
+    --simpo reports/training/simpo_metrics.json \
+    --kto reports/training/kto_metrics.json \
+    --output reports/alignment_compare.md
 else
   echo "[error] ALIGNMENT_MODE must be one of: proxy, real"
   exit 1

@@ -55,6 +55,29 @@ def collect_small_real_runs(root: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def collect_dpo_runs(root: Path) -> list[dict[str, Any]]:
+    train_dir = root / "reports/training"
+    rows: list[dict[str, Any]] = []
+    for mpath in train_dir.glob("small_real_dpo_v*_metrics.json"):
+        tag = mpath.stem.replace("_metrics", "")
+        metrics = load_json(mpath)
+        rows.append(
+            {
+                "run_tag": tag,
+                "simulation": metrics.get("simulation"),
+                "pair_count": metrics.get("pair_count"),
+                "steps": metrics.get("steps"),
+                "train_loss": metrics.get("train_loss"),
+                "pref_accuracy_before": metrics.get("pref_accuracy_before"),
+                "pref_accuracy_after": metrics.get("pref_accuracy_after"),
+                "pref_accuracy_gain": metrics.get("pref_accuracy_gain"),
+                "metrics_path": str(mpath.relative_to(root)),
+            }
+        )
+    rows.sort(key=lambda x: run_order(str(x["run_tag"])))
+    return rows
+
+
 def write_csv(path: Path, rows: list[dict[str, Any]], fields: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as f:
@@ -71,11 +94,14 @@ def main() -> int:
     parser.add_argument("--out-json", default="reports/thesis_assets/thesis_ready_summary.json")
     parser.add_argument("--main-csv", default="reports/thesis_assets/tables/main_results_small_real.csv")
     parser.add_argument("--ablation-csv", default="reports/thesis_assets/tables/ablation_small_real_runs.csv")
+    parser.add_argument("--dpo-csv", default="reports/thesis_assets/tables/alignment_real_dpo_runs.csv")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
     runs = collect_small_real_runs(root)
     latest = runs[-1] if runs else None
+    dpo_runs = collect_dpo_runs(root)
+    latest_dpo = dpo_runs[-1] if dpo_runs else None
 
     base_eval = maybe_json(root / "reports/small_real/base_model_eval_metrics.json")
     qwen_blocker = root / "reports/small_real/qwen_layer_b_blocker.md"
@@ -138,13 +164,30 @@ def main() -> int:
             "eval_metrics_path",
         ],
     )
+    write_csv(
+        root / args.dpo_csv,
+        dpo_runs,
+        [
+            "run_tag",
+            "simulation",
+            "pair_count",
+            "steps",
+            "train_loss",
+            "pref_accuracy_before",
+            "pref_accuracy_after",
+            "pref_accuracy_gain",
+            "metrics_path",
+        ],
+    )
 
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "latest_small_real_run": latest["run_tag"] if latest else None,
+        "latest_small_real_dpo_run": latest_dpo["run_tag"] if latest_dpo else None,
         "artifacts": {
             "main_results_csv": args.main_csv,
             "ablation_csv": args.ablation_csv,
+            "real_dpo_csv": args.dpo_csv,
             "baseline_audit_table": str(baseline_table.relative_to(root)) if baseline_table.exists() else None,
             "qwen_blocker": str(qwen_blocker.relative_to(root)) if qwen_blocker.exists() else None,
             "error_cases": str(error_cases.relative_to(root)) if error_cases.exists() else None,
@@ -152,6 +195,7 @@ def main() -> int:
         "paper_ready_notes": {
             "main_result_scope": "Small-Real LoRA fallback evidence (engineering closure), not final thesis mainline.",
             "ablation_scope": "Across small_real_lora_v* runs to verify reproducibility and run stability.",
+            "alignment_scope": "Small-Real DPO real-training runs (if available) as alignment evidence.",
             "limitation": "Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment.",
             "next_action": "Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package.",
         },
@@ -173,6 +217,9 @@ def main() -> int:
         "## Ablation/Control Table",
         f"- CSV: `{args.ablation_csv}`",
         "",
+        "## Alignment (Real DPO) Table",
+        f"- CSV: `{args.dpo_csv}`",
+        "",
         "## Supporting Evidence",
         f"- Baseline Audit: `{payload['artifacts']['baseline_audit_table']}`",
         f"- Qwen Layer-B Blocker: `{payload['artifacts']['qwen_blocker']}`",
@@ -181,6 +228,7 @@ def main() -> int:
         "## Thesis Writing Notes",
         f"- 主结果口径: {payload['paper_ready_notes']['main_result_scope']}",
         f"- 消融口径: {payload['paper_ready_notes']['ablation_scope']}",
+        f"- 对齐口径: {payload['paper_ready_notes']['alignment_scope']}",
         f"- 局限性: {payload['paper_ready_notes']['limitation']}",
         f"- 下一步: {payload['paper_ready_notes']['next_action']}",
     ]

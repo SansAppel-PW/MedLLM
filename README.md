@@ -8,9 +8,9 @@
 - 基于 SFT / DPO / SimPO 的对齐训练流程（当前仓库为轻量模拟实现），支持论文实验复现实验编排。
 
 ## 学术合规说明
-- `src/train/*.py` 当前默认流程为离线模拟训练（proxy/simulation），输出的是代理指标，不是大模型参数微调日志。
-- `src/train/real_sft_train.py` 为真实 SFT 训练入口（真实 forward/backward、loss、checkpoint、日志与实验清单）。
-- 若论文需要声明“完成 SFT/DPO/SimPO 实训”，需额外运行真实训练（含模型权重、loss 曲线、checkpoint 与推理复现）。
+- `src/train/sft_train.py`、`src/train/dpo_train.py`、`src/train/simpo_train.py`、`src/train/kto_train.py` 为代理/模拟流程。
+- `src/train/real_sft_train.py` 与 `src/train/real_dpo_train.py` 为真实训练入口（含真实 forward/backward、loss、checkpoint、日志与 manifest）。
+- 当前 `ALIGNMENT_MODE=real` 已支持真实 DPO；SimPO/KTO 仍为代理实现（会在报告中标注）。
 - `reports/sota_compare.md` 为“代理复现实验”，不可表述为官方 HuatuoGPT/BioMistral 完整能力对比。
 
 ## 目录结构
@@ -88,7 +88,7 @@ bash scripts/train/run_real_alignment_pipeline.sh
 
 说明：
 - `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器（当前默认）。
-- `ALIGNMENT_MODE=real`：预留给真实对齐训练器（当前会提示未实现并退出）。
+- `ALIGNMENT_MODE=real`：执行真实 DPO（带回退），SimPO/KTO 暂保持代理。
 
 ## Layer-B 真实 SFT（论文主链起点）
 ```bash
