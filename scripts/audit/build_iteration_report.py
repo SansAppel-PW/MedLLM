@@ -31,6 +31,42 @@ def alignment_metric(metrics: dict[str, Any] | None) -> float | None:
     return None
 
 
+def baseline_layer_counts(payload: dict[str, Any] | list[Any] | None) -> tuple[int | None, int | None]:
+    if payload is None:
+        return None, None
+    if isinstance(payload, dict):
+        real_rows = payload.get("real_mainline")
+        proxy_rows = payload.get("proxy_background")
+        if isinstance(real_rows, list) and isinstance(proxy_rows, list):
+            return len(real_rows), len(proxy_rows)
+        all_rows = payload.get("all")
+        if isinstance(all_rows, list):
+            real = 0
+            proxy = 0
+            for row in all_rows:
+                if not isinstance(row, dict):
+                    continue
+                layer = row.get("evidence_layer")
+                if layer == "real-mainline":
+                    real += 1
+                elif layer == "proxy-background":
+                    proxy += 1
+            return real, proxy
+    if isinstance(payload, list):
+        real = 0
+        proxy = 0
+        for row in payload:
+            if not isinstance(row, dict):
+                continue
+            layer = row.get("evidence_layer")
+            if layer == "real-mainline":
+                real += 1
+            elif layer == "proxy-background":
+                proxy += 1
+        return real, proxy
+    return None, None
+
+
 def resolve_small_real_paths(run_tag: str | None) -> tuple[str, str]:
     if run_tag:
         train = Path(f"reports/training/{run_tag}_metrics.json")
@@ -52,6 +88,7 @@ def main() -> int:
     parser.add_argument("--run-tag", default=os.getenv("RUN_TAG"), help="Optional small-real run tag")
     parser.add_argument("--small-real-metrics", default=None)
     parser.add_argument("--small-real-eval", default=None)
+    parser.add_argument("--baseline-json", default="reports/thesis_assets/tables/baseline_audit_table.json")
     parser.add_argument("--real-dataset-summary", default="reports/real_dataset_summary.json")
     parser.add_argument("--dpo-real-metrics", default="reports/training/dpo_real_metrics.json")
     parser.add_argument("--simpo-metrics", default="reports/training/simpo_metrics.json")
@@ -70,6 +107,7 @@ def main() -> int:
     small_train = maybe_load_json(Path(small_real_metrics_path))
     small_eval = maybe_load_json(Path(small_real_eval_path))
     real_data = maybe_load_json(Path(args.real_dataset_summary))
+    baseline_payload = maybe_load_json(Path(args.baseline_json))
     dpo_real = maybe_load_json(Path(args.dpo_real_metrics))
     simpo_metrics = maybe_load_json(Path(args.simpo_metrics))
     kto_metrics = maybe_load_json(Path(args.kto_metrics))
@@ -79,6 +117,7 @@ def main() -> int:
     real_train_count = int(real_data.get("train_count", 0)) if real_data else 0
     real_dev_count = int(real_data.get("dev_count", 0)) if real_data else 0
     real_test_count = int(real_data.get("test_count", 0)) if real_data else 0
+    baseline_real_count, baseline_proxy_count = baseline_layer_counts(baseline_payload)
 
     alignment_rows = []
     for method, payload in (("DPO", dpo_real), ("SimPO", simpo_metrics), ("KTO", kto_metrics)):
@@ -158,6 +197,7 @@ def main() -> int:
         "artifacts": {
             "small_real_train_metrics": small_real_metrics_path,
             "small_real_eval_metrics": small_real_eval_path,
+            "baseline_json": args.baseline_json if baseline_payload else None,
             "real_dataset_summary": args.real_dataset_summary if real_data else None,
             "dpo_real_metrics": args.dpo_real_metrics if dpo_real else None,
             "simpo_metrics": args.simpo_metrics if simpo_metrics else None,
@@ -185,6 +225,10 @@ def main() -> int:
             "kto_score_after": alignment_metric(kto_metrics),
             "best_method": best_alignment["method"] if best_alignment else None,
             "best_score": best_alignment["score"] if best_alignment else None,
+        },
+        "baseline_layer_summary": {
+            "real_mainline_count": baseline_real_count,
+            "proxy_background_count": baseline_proxy_count,
         },
         "risk_assessment": risk_items,
         "paper_contribution": contribution,
@@ -233,6 +277,10 @@ def main() -> int:
         f"- kto_score_after: {payload['real_alignment_summary']['kto_score_after']}",
         f"- best_alignment_method: {payload['real_alignment_summary']['best_method']}",
         f"- best_alignment_score: {payload['real_alignment_summary']['best_score']}",
+        "",
+        "## Baseline 分层摘要",
+        f"- baseline_real_mainline_count: {payload['baseline_layer_summary']['real_mainline_count']}",
+        f"- baseline_proxy_background_count: {payload['baseline_layer_summary']['proxy_background_count']}",
         "",
         "## 风险评估",
     ]

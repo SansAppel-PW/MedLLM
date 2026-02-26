@@ -1,6 +1,6 @@
 # Loop Iteration Report
 
-- 生成时间(UTC): 2026-02-26T04:38:59.450493+00:00
+- 生成时间(UTC): 2026-02-26T05:57:51.397380+00:00
 
 ## 关键结果摘要
 - train_loss: 10.734590888023376
@@ -22,6 +22,10 @@
 - kto_score_after: 0.5875
 - best_alignment_method: SimPO
 - best_alignment_score: 0.816895
+
+## Baseline 分层摘要
+- baseline_real_mainline_count: 2
+- baseline_proxy_background_count: 4
 
 ## 风险评估
 - 技术风险（中）：对齐训练已支持真实 DPO，但 SimPO/KTO 仍为代理流程。 缓解：保持真实 DPO 持续迭代，并在后续阶段补齐 SimPO/KTO 真实训练入口。

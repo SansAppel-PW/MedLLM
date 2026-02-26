@@ -38,6 +38,14 @@ def test_iteration_report_includes_real_data_and_alignment(tmp_path: Path) -> No
         tmp_path / "reports/training/kto_metrics.json",
         {"aligned_score": 0.58},
     )
+    write_json(
+        tmp_path / "reports/thesis_assets/tables/baseline_audit_table.json",
+        {
+            "all": [],
+            "real_mainline": [{"model": "Qwen"}],
+            "proxy_background": [{"model": "ChatDoctor"}, {"model": "Med-PaLM"}],
+        },
+    )
     (tmp_path / "reports/thesis_assets/tables").mkdir(parents=True, exist_ok=True)
     (tmp_path / "reports/thesis_assets/tables/baseline_audit_table.csv").write_text("h\n", encoding="utf-8")
 
@@ -64,7 +72,10 @@ def test_iteration_report_includes_real_data_and_alignment(tmp_path: Path) -> No
     assert payload["real_alignment_summary"]["dpo_pair_count"] == 288
     assert payload["real_alignment_summary"]["best_method"] == "SimPO"
     assert payload["real_alignment_summary"]["best_score"] == 0.81
+    assert payload["baseline_layer_summary"]["real_mainline_count"] == 1
+    assert payload["baseline_layer_summary"]["proxy_background_count"] == 2
 
     md_text = out_md.read_text(encoding="utf-8")
     assert "真实数据摘要" in md_text
     assert "真实对齐摘要" in md_text
+    assert "Baseline 分层摘要" in md_text

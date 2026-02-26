@@ -1,10 +1,11 @@
 {
   "title": "Loop Iteration Report",
-  "generated_at_utc": "2026-02-26T04:38:59.450493+00:00",
+  "generated_at_utc": "2026-02-26T05:57:51.397380+00:00",
   "run_tag": "small_real_lora_v13",
   "artifacts": {
     "small_real_train_metrics": "reports/training/small_real_lora_v13_metrics.json",
     "small_real_eval_metrics": "reports/small_real/small_real_lora_v13/eval_metrics.json",
+    "baseline_json": "reports/thesis_assets/tables/baseline_audit_table.json",
     "real_dataset_summary": "reports/real_dataset_summary.json",
     "dpo_real_metrics": "reports/training/dpo_real_metrics.json",
     "simpo_metrics": "reports/training/simpo_metrics.json",
@@ -32,6 +33,10 @@
     "kto_score_after": 0.5875,
     "best_method": "SimPO",
     "best_score": 0.816895
+  },
+  "baseline_layer_summary": {
+    "real_mainline_count": 2,
+    "proxy_background_count": 4
   },
   "risk_assessment": [
     {
