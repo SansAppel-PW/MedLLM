@@ -27,6 +27,20 @@
 make setup
 ```
 
+## API 评测环境变量
+项目支持 `LLM-as-a-Judge` 自动评测，使用 `python-dotenv` 从根目录 `.env` 读取：
+
+```env
+OPENAI_BASE_URL=https://api.gptsapi.net/v1
+OPENAI_API_KEY=your_key_here
+```
+
+运行评测时开启：
+
+```bash
+ENABLE_LLM_JUDGE=true JUDGE_MODEL=gpt-4o-mini bash scripts/eval/run_eval.sh
+```
+
 ## 真实数据构建（论文实验）
 ```bash
 python scripts/data/build_real_dataset.py \

@@ -65,3 +65,6 @@ data/**/*.parquet
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Eval cache
+reports/eval/judge_cache*.jsonl

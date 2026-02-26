@@ -18,6 +18,10 @@ try:
     from eval.metrics import bleu_4, factscore_from_checks, interception_rate, rouge_l, win_rate
 except ModuleNotFoundError:  # pragma: no cover
     from metrics import bleu_4, factscore_from_checks, interception_rate, rouge_l, win_rate
+try:
+    from eval.llm_judge import judge_pair, win_rate_from_decisions
+except ModuleNotFoundError:  # pragma: no cover
+    from llm_judge import judge_pair, win_rate_from_decisions
 from src.detect.atomic_fact_extractor import extract_atomic_facts
 from src.detect.nli_checker import classify_fact
 from src.detect.retriever import load_knowledge_docs, retrieve
@@ -110,6 +114,7 @@ def evaluate_variant(
                 "risk_score": float(out.get("risk_score", 0.0)),
                 "factscore": fact_score,
                 "utility": utility,
+                "final_answer": adapted,
             }
         )
         if log_every > 0 and idx % log_every == 0:
@@ -182,6 +187,10 @@ def main() -> int:
     parser.add_argument("--ablation-alignment", default="reports/ablation_alignment.md")
     parser.add_argument("--max-samples", type=int, default=0, help="Evaluate first N samples if > 0")
     parser.add_argument("--log-every", type=int, default=0, help="Progress interval for large runs")
+    parser.add_argument("--enable-llm-judge", action="store_true", help="Enable API-based pairwise judge")
+    parser.add_argument("--judge-model", default="gpt-4o-mini")
+    parser.add_argument("--judge-max-samples", type=int, default=120)
+    parser.add_argument("--judge-cache", default="reports/eval/judge_cache.jsonl")
     parser.add_argument(
         "--include-splits",
         default="",
@@ -203,6 +212,57 @@ def main() -> int:
     dpo = evaluate_variant(benchmark, "dpo", kg_path, log_every=args.log_every)
     simpo = evaluate_variant(benchmark, "simpo", kg_path, log_every=args.log_every)
 
+    llm_judge_lines: list[str] = []
+    if args.enable_llm_judge:
+        limit = len(benchmark)
+        if args.judge_max_samples > 0:
+            limit = min(limit, args.judge_max_samples)
+        dpo_decisions = []
+        simpo_decisions = []
+        try:
+            for i in range(limit):
+                sample = benchmark[i]
+                query = str(sample.get("query", ""))
+                sft_answer = str(sft["rows"][i]["final_answer"])
+                dpo_answer = str(dpo["rows"][i]["final_answer"])
+                simpo_answer = str(simpo["rows"][i]["final_answer"])
+
+                dpo_decisions.append(
+                    judge_pair(
+                        query=query,
+                        answer_a=sft_answer,
+                        answer_b=dpo_answer,
+                        model=args.judge_model,
+                        cache_path=args.judge_cache,
+                    )
+                )
+                simpo_decisions.append(
+                    judge_pair(
+                        query=query,
+                        answer_a=sft_answer,
+                        answer_b=simpo_answer,
+                        model=args.judge_model,
+                        cache_path=args.judge_cache,
+                    )
+                )
+                if args.log_every > 0 and (i + 1) % args.log_every == 0:
+                    print(f"[eval:judge] progress={i + 1}/{limit}")
+
+            dpo_judge_win = win_rate_from_decisions(dpo_decisions, "B")
+            simpo_judge_win = win_rate_from_decisions(simpo_decisions, "B")
+            llm_judge_lines = [
+                "## LLM-as-a-Judge (API)",
+                f"- Judge model: `{args.judge_model}`",
+                f"- Judge samples: {limit}",
+                f"- DPO vs SFT: {dpo_judge_win:.4f}",
+                f"- SimPO vs SFT: {simpo_judge_win:.4f}",
+            ]
+        except Exception as exc:  # noqa: BLE001
+            llm_judge_lines = [
+                "## LLM-as-a-Judge (API)",
+                f"- 状态：执行失败（{exc}），已保留无 API 的本地指标。",
+            ]
+
     default_report = "\n".join(
         [
             "# 综合评测报告",
@@ -216,6 +276,8 @@ def main() -> int:
             "## Win Rate (quality = factscore + 1-risk)",
             f"- DPO vs SFT: {win_rate(dpo['quality_scores'], sft['quality_scores']):.4f}",
             f"- SimPO vs SFT: {win_rate(simpo['quality_scores'], sft['quality_scores']):.4f}",
+            "",
+            *llm_judge_lines,
         ]
     )
     write_markdown(Path(args.default_report), default_report + "\n")
