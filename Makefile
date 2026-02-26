@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data small-real qwen-layer-b loop-once run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data small-real qwen-layer-b loop-once thesis-ready run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -33,6 +33,9 @@ qwen-layer-b:
 
 loop-once:
 	bash scripts/run_autonomous_iteration.sh
+
+thesis-ready:
+	$(PYTHON) scripts/audit/build_thesis_ready_package.py
 
 run-config:
 	@if [ -z "$(CONFIG)" ]; then echo "Usage: make run-config CONFIG=configs/train/sft.yaml"; exit 1; fi

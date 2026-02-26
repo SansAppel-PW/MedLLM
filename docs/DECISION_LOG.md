@@ -51,3 +51,17 @@
   - `reports/data_bootstrap_manifest.json`
   - `scripts/data/run_data_governance_pipeline.py`（接入 bootstrap）
   - `data/*` tracked 文件去追踪（cached remove）
+
+## 2026-02-26 | D005 | 论文写作资产自动打包（主结果/消融/证据入口）
+- 背景：在 Qwen7B 受算力阻塞时，仍需持续交付可直接用于论文撰写的结构化资产，避免“能跑但不可写”。
+  `【DOCX | 研究目标与预期成果 | 段落#T02R003】` `【PDF | 页码p14 | 段落/条目#PG014L001】`
+- 决策：新增 `build_thesis_ready_package.py`，按最新 small-real 结果自动产出主结果表、消融表、证据索引与论文局限性段落草稿。
+- 理由：
+  1. 让每轮迭代都直接沉淀论文可用资产；
+  2. 保持“训练阻塞时其余模块仍前进”的自治策略；
+  3. 缩短实验到写作的转换成本。
+- 产物：
+  - `scripts/audit/build_thesis_ready_package.py`
+  - `reports/thesis_assets/tables/main_results_small_real.csv`
+  - `reports/thesis_assets/tables/ablation_small_real_runs.csv`
+  - `reports/thesis_assets/thesis_ready_summary.{md,json}`

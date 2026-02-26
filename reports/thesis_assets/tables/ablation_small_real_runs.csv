@@ -1,0 +1,7 @@
+run_tag,train_loss,final_eval_loss,exact_match,rouge_l_f1,char_f1,train_metrics_path,eval_metrics_path
+small_real_lora_v3,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v3_metrics.json,reports/small_real/small_real_lora_v3/eval_metrics.json
+small_real_lora_v4,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v4_metrics.json,reports/small_real/small_real_lora_v4/eval_metrics.json
+small_real_lora_v5,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v5_metrics.json,reports/small_real/small_real_lora_v5/eval_metrics.json
+small_real_lora_v6,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v6_metrics.json,reports/small_real/small_real_lora_v6/eval_metrics.json
+small_real_lora_v7,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v7_metrics.json,reports/small_real/small_real_lora_v7/eval_metrics.json
+small_real_lora_v8,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v8_metrics.json,reports/small_real/small_real_lora_v8/eval_metrics.json

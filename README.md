@@ -136,7 +136,18 @@ make loop-once
 - 先执行 Repo Guard；
 - 再跑 small-real 闭环；
 - 再尝试 Qwen7B Layer-B（无 GPU 时写 blocker）；
-- 最后自动生成 baseline 审计表与 iteration 报告。
+- 最后自动生成 baseline 审计表、iteration 报告和 thesis-ready 汇总包。
+
+## 论文写作资产汇总
+```bash
+make thesis-ready
+```
+
+输出：
+- `reports/thesis_assets/tables/main_results_small_real.csv`
+- `reports/thesis_assets/tables/ablation_small_real_runs.csv`
+- `reports/thesis_assets/thesis_ready_summary.md`
+- `reports/thesis_assets/thesis_ready_summary.json`
 
 ## 评测与论文资产流水线
 ```bash
