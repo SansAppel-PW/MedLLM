@@ -19,49 +19,41 @@ venv/
 .idea/
 .vscode/
 
-# Logs and temp
-logs/
-*.log
-*.tmp
-runs/
-wandb/
-mlruns/
-
-# Model artifacts
-checkpoints/
-outputs/
-artifacts/
-*.bin
-*.safetensors
-*.pt
-*.pth
-*.ckpt
-*.onnx
-
-# Data/cache (keep curated datasets and reports)
-data/cache/
-data/tmp/
-data/raw/normalized_records*.jsonl
-data/kg/entities.jsonl
-data/kg/triples/
-reports/pii_cleaning_report.json
-
-# Generated real datasets (rebuild via scripts)
-data/raw/real_sources/
-data/clean/real_sft_*.jsonl
-data/clean/real_pref_seed_pairs.jsonl
-data/benchmark/real_medqa_benchmark.jsonl
-data/kg/real_medqa_reference_kb.jsonl
-data/**/*.json
-data/**/*.jsonl
-data/**/*.csv
-data/**/*.tsv
-data/**/*.parquet
-
 # Secrets
 .env
 .env.*
 !.env.example
+
+# Mandatory large-asset exclusions
+data/
+datasets/
+raw/
+processed/
+checkpoints/
+models/
+outputs/
+runs/
+wandb/
+tensorboard/
+mlruns/
+logs/
+*.log
+*.tmp
+
+# Weights / archives / heavy artifacts
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
+*.parquet
+*.arrow
+*.zip
+*.tar
+*.tar.gz
+*.7z
 
 # Jupyter
 .ipynb_checkpoints/

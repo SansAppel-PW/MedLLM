@@ -27,6 +27,23 @@
 make setup
 ```
 
+## Repo Safety Guard（提交前强制）
+```bash
+# git add -A 前检查工作区候选文件
+make repo-guard
+
+# git add -A 后检查 staging 区
+make repo-guard-staged
+```
+
+若 Guard 失败，先修复 `.gitignore` 或取消追踪大文件，再继续提交。
+
+## API Key 本地注入
+```bash
+cp .env.example .env
+# 填写 THIRD_PARTY_API_KEY，默认 THIRD_PARTY_BASE_URL 为 https://api.gptsapi.net/v1
+```
+
 ## 真实数据构建（论文实验）
 ```bash
 python scripts/data/build_real_dataset.py \

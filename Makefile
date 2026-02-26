@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -15,6 +15,12 @@ install:
 check-env:
 	$(PYTHON) --version
 	$(PYTHON) -m pip --version
+
+repo-guard:
+	$(PYTHON) scripts/repo_guard.py --mode preadd --max-size-mb 10
+
+repo-guard-staged:
+	$(PYTHON) scripts/repo_guard.py --mode staged --max-size-mb 10
 
 run-config:
 	@if [ -z "$(CONFIG)" ]; then echo "Usage: make run-config CONFIG=configs/train/sft.yaml"; exit 1; fi
