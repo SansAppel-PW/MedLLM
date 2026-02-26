@@ -42,6 +42,7 @@ run_train() {
   local trust_remote_code="$3"
   local local_files_only="$4"
   local offline="$5"
+  local timeout_sec="${6:-0}"
   local -a extra_env=()
   if [[ "${offline}" == "1" ]]; then
     extra_env+=(HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1)
@@ -88,21 +89,46 @@ run_train() {
     --local-files-only "${local_files_only}"
   )
 
+  local -a final_cmd=()
   if [[ "${#extra_env[@]}" -gt 0 ]]; then
-    env "${extra_env[@]}" "${train_cmd[@]}"
+    final_cmd=(env "${extra_env[@]}" "${train_cmd[@]}")
   else
-    "${train_cmd[@]}"
+    final_cmd=("${train_cmd[@]}")
+  fi
+
+  if [[ "${timeout_sec}" -gt 0 ]]; then
+    local -a timeout_cmd=("${final_cmd[@]}")
+    (
+      "${timeout_cmd[@]}" &
+      local cmd_pid=$!
+      (
+        sleep "${timeout_sec}"
+        if kill -0 "${cmd_pid}" 2>/dev/null; then
+          echo "[small-real] timeout ${timeout_sec}s reached, terminate pid=${cmd_pid}"
+          kill "${cmd_pid}" 2>/dev/null || true
+        fi
+      ) &
+      local watchdog_pid=$!
+      wait "${cmd_pid}"
+      local rc=$?
+      kill "${watchdog_pid}" 2>/dev/null || true
+      wait "${watchdog_pid}" 2>/dev/null || true
+      exit "${rc}"
+    )
+  else
+    "${final_cmd[@]}"
   fi
 }
 
 echo "[small-real] step2 train"
-if ! run_train "${MODEL_PRIMARY}" "${PRIMARY_TARGETS}" true false 0; then
+PRIMARY_TIMEOUT="${PRIMARY_TIMEOUT:-300}"
+if ! run_train "${MODEL_PRIMARY}" "${PRIMARY_TARGETS}" true false 0 "${PRIMARY_TIMEOUT}"; then
   echo "[small-real] primary model failed, trying fallback model: ${MODEL_FALLBACK}"
   if [[ ! -d "${MODEL_FALLBACK}" ]]; then
     echo "[small-real] fallback model path not found: ${MODEL_FALLBACK}" >&2
     exit 1
   fi
-  run_train "${MODEL_FALLBACK}" "${FALLBACK_TARGETS}" false true 1
+  run_train "${MODEL_FALLBACK}" "${FALLBACK_TARGETS}" false true 1 0
 fi
 
 echo "[small-real] step3 eval"

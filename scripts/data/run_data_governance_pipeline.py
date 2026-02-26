@@ -187,6 +187,11 @@ def main() -> int:
 
     repo_root = Path(__file__).resolve().parents[2]
 
+    run_cmd(
+        [sys.executable, "scripts/data/bootstrap_minimal_assets.py", "--root", str(repo_root)],
+        cwd=repo_root,
+    )
+
     input_path = (repo_root / args.input).resolve()
     kg_path = (repo_root / args.kg).resolve()
     build_default_kg(kg_path)

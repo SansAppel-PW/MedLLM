@@ -1,0 +1,30 @@
+{
+  "generated_at_utc": "2026-02-26T03:24:09.570034+00:00",
+  "policy": "bootstrap minimal synthetic non-sensitive assets only when missing",
+  "files": {
+    "schema_examples": {
+      "path": "data/raw/schema_examples.json",
+      "bytes": 747,
+      "sha256": "9d47c720a6f011cbcbfc372011ccee2c4b0d86abef539c576ffa5f6633d428f6",
+      "created_this_run": false
+    },
+    "demo_kg": {
+      "path": "data/kg/cmekg_demo.jsonl",
+      "bytes": 549,
+      "sha256": "5c43dee30795b0036b4fc93ba34b90e86a615c3cb5d22cb000c158b12c61669e",
+      "created_this_run": false
+    },
+    "demo_benchmark": {
+      "path": "data/benchmark/med_hallu_benchmark.jsonl",
+      "bytes": 1212,
+      "sha256": "599c724e65080e3302121e4ed1e68fee2f1f25bd1791d3f854cde6aa23704344",
+      "created_this_run": false
+    },
+    "real_benchmark": {
+      "path": "data/benchmark/real_medqa_benchmark.jsonl",
+      "bytes": 1895,
+      "sha256": "40d10dc80dbb9b2cc3e9e217994a8ed944fae9c9a63714f0dcab14900090e4f1",
+      "created_this_run": false
+    }
+  }
+}

@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged small-real qwen-layer-b run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data small-real qwen-layer-b loop-once run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -22,11 +22,17 @@ repo-guard:
 repo-guard-staged:
 	$(PYTHON) scripts/repo_guard.py --mode staged --max-size-mb 10
 
+bootstrap-data:
+	$(PYTHON) scripts/data/bootstrap_minimal_assets.py
+
 small-real:
 	bash scripts/train/run_small_real_pipeline.sh
 
 qwen-layer-b:
 	bash scripts/train/run_layer_b_qwen_autofallback.sh
+
+loop-once:
+	bash scripts/run_autonomous_iteration.sh
 
 run-config:
 	@if [ -z "$(CONFIG)" ]; then echo "Usage: make run-config CONFIG=configs/train/sft.yaml"; exit 1; fi

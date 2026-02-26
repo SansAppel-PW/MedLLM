@@ -36,3 +36,18 @@
   - `scripts/train/run_layer_b_qwen_autofallback.sh`
   - `configs/train/sft_layer_b_qwen7b_qlora.yaml`
   - `reports/small_real/qwen_layer_b_blocker.md`
+
+## 2026-02-26 | D004 | 数据不入库改造：Git 去追踪 + 缺失自愈 Bootstrap
+- 背景：当前仓库历史中 `data/` 目录存在被跟踪文件，违反“医学数据不入 GitHub”的强约束；同时 fresh clone 场景需要最小资产自愈以维持可运行。
+  `【DOCX | 研究方案与技术路线 | 段落#T03R002】` `【PDF | 页码p10 | 段落/条目#PG010L002】`
+- 决策：对 `data/` 下非 `.gitkeep` 文件执行 `git rm --cached`，并新增 `scripts/data/bootstrap_minimal_assets.py` 仅在缺失时生成最小 synthetic 资产（schema/kg/benchmark）。
+- 理由：
+  1. 把数据资产与代码资产彻底隔离，符合 Repo Safety Guard 约束；
+  2. 避免运行链路依赖已入库数据，保证“无数据入库”下仍可一键闭环；
+  3. 为后续真实数据下载/构建保留标准入口，不破坏论文证据链。
+- 产物：
+  - `scripts/data/bootstrap_minimal_assets.py`
+  - `reports/data_bootstrap_report.md`
+  - `reports/data_bootstrap_manifest.json`
+  - `scripts/data/run_data_governance_pipeline.py`（接入 bootstrap）
+  - `data/*` tracked 文件去追踪（cached remove）

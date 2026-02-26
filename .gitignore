@@ -25,18 +25,18 @@ venv/
 !.env.example
 
 # Mandatory large-asset exclusions
-data/
-datasets/
-raw/
-processed/
-checkpoints/
-models/
-outputs/
-runs/
-wandb/
-tensorboard/
-mlruns/
-logs/
+/data/
+/datasets/
+/raw/
+/processed/
+/checkpoints/
+/models/
+/outputs/
+/runs/
+/wandb/
+/tensorboard/
+/mlruns/
+/logs/
 *.log
 *.tmp
 

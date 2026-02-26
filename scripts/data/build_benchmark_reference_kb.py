@@ -11,6 +11,8 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -56,6 +58,19 @@ def split_of(row: dict[str, Any]) -> str:
     if not isinstance(meta, dict):
         return ""
     return str(meta.get("split", "")).strip().lower()
+
+
+def ensure_benchmark_exists(benchmark_path: Path) -> None:
+    if benchmark_path.exists():
+        return
+    repo_root = Path(__file__).resolve().parents[2]
+    bootstrap_script = repo_root / "scripts/data/bootstrap_minimal_assets.py"
+    cmd = [sys.executable, str(bootstrap_script), "--root", str(repo_root)]
+    completed = subprocess.run(cmd, cwd=repo_root, check=False)
+    if completed.returncode != 0 or not benchmark_path.exists():
+        raise FileNotFoundError(
+            f"Benchmark file missing and bootstrap failed: {benchmark_path}"
+        )
 
 
 def build_reference_rows(
@@ -141,6 +156,7 @@ def main() -> int:
     args = parser.parse_args()
 
     benchmark_path = Path(args.benchmark)
+    ensure_benchmark_exists(benchmark_path)
     rows = load_jsonl(benchmark_path)
     include_splits = parse_split_spec(args.include_splits)
     kb_rows, summary = build_reference_rows(rows, include_splits=include_splits)

@@ -44,6 +44,18 @@ cp .env.example .env
 # 填写 THIRD_PARTY_API_KEY，默认 THIRD_PARTY_BASE_URL 为 https://api.gptsapi.net/v1
 ```
 
+## 最小数据资产自愈（缺失时自动生成）
+```bash
+make bootstrap-data
+```
+
+输出：
+- `data/raw/schema_examples.json`
+- `data/kg/cmekg_demo.jsonl`
+- `data/benchmark/med_hallu_benchmark.jsonl`
+- `reports/data_bootstrap_report.md`
+- `reports/data_bootstrap_manifest.json`
+
 ## 真实数据构建（论文实验）
 ```bash
 python scripts/data/build_real_dataset.py \
@@ -111,6 +123,20 @@ bash scripts/train/run_small_real_pipeline.sh
 - `reports/small_real/<RUN_TAG>/eval_metrics.{json,csv}`
 - `reports/small_real/<RUN_TAG>/loss_curve.{csv,png,pdf}`
 - `reports/small_real/<RUN_TAG>/run_card.{json,md}`
+
+## 自治循环（单轮）
+```bash
+RUN_TAG=small_real_lora_v6 bash scripts/run_autonomous_iteration.sh
+# 或
+bash scripts/run_autonomous_iteration.sh
+make loop-once
+```
+
+默认行为：
+- 先执行 Repo Guard；
+- 再跑 small-real 闭环；
+- 再尝试 Qwen7B Layer-B（无 GPU 时写 blocker）；
+- 最后自动生成 baseline 审计表与 iteration 报告。
 
 ## 评测与论文资产流水线
 ```bash
