@@ -32,14 +32,19 @@ def main() -> int:
         rows.append(data)
 
     rows.sort(key=lambda x: float(x.get("aligned_score", 0.0)), reverse=True)
+    real_mode = any(not bool(x.get("simulation", True)) for x in rows)
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
 
     lines = [
-        "# 对齐训练对比报告（模拟）",
+        "# 对齐训练对比报告",
         "",
-        "> 说明：本报告基于离线代理指标比较，不等同于真实大模型参数训练效果。",
+        (
+            "> 说明：本报告包含真实训练指标。"
+            if real_mode
+            else "> 说明：本报告基于离线代理指标比较，不等同于真实大模型参数训练效果。"
+        ),
         "",
         "| 方法 | 样本数 | 对齐后分数 | 提升 |",
         "|---|---:|---:|---:|",

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import inspect
 import json
 import os
 import random
@@ -157,7 +158,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--logging-steps", type=int, default=10)
     parser.add_argument("--save-steps", type=int, default=100)
     parser.add_argument("--eval-steps", type=int, default=100)
-    parser.add_argument("--save-total-limit", type=int, default=3)
+    parser.add_argument("--save-total-limit", type=int, default=2)
 
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--bf16", type=str2bool, default=True)
@@ -274,7 +275,6 @@ def main() -> int:
             max_length=args.max_length,
             padding=False,
         )
-        encoded["labels"] = [ids[:] for ids in encoded["input_ids"]]
         return encoded
 
     train_dataset = train_dataset.map(tokenize_fn, batched=True, remove_columns=train_dataset.column_names)
@@ -338,46 +338,56 @@ def main() -> int:
     evaluation_strategy = "steps" if dev_dataset is not None else "no"
     load_best_model_at_end = dev_dataset is not None
 
-    training_args = TrainingArguments(
-        output_dir=str(out_dir),
-        overwrite_output_dir=False,
-        per_device_train_batch_size=args.per_device_train_batch_size,
-        per_device_eval_batch_size=args.per_device_eval_batch_size,
-        gradient_accumulation_steps=args.gradient_accumulation_steps,
-        learning_rate=args.learning_rate,
-        weight_decay=args.weight_decay,
-        warmup_ratio=args.warmup_ratio,
-        lr_scheduler_type=args.lr_scheduler_type,
-        num_train_epochs=args.num_train_epochs,
-        max_steps=args.max_steps,
-        logging_steps=args.logging_steps,
-        save_steps=args.save_steps,
-        eval_steps=args.eval_steps,
-        evaluation_strategy=evaluation_strategy,
-        save_strategy="steps",
-        save_total_limit=args.save_total_limit,
-        bf16=args.bf16,
-        fp16=args.fp16,
-        gradient_checkpointing=args.gradient_checkpointing,
-        dataloader_num_workers=args.num_workers,
-        report_to=[],
-        optim=args.optim,
-        logging_dir=str(log_dir),
-        seed=args.seed,
-        load_best_model_at_end=load_best_model_at_end,
-        metric_for_best_model="eval_loss" if load_best_model_at_end else None,
-        greater_is_better=False if load_best_model_at_end else None,
-    )
+    training_kwargs: dict[str, Any] = {
+        "output_dir": str(out_dir),
+        "overwrite_output_dir": False,
+        "per_device_train_batch_size": args.per_device_train_batch_size,
+        "per_device_eval_batch_size": args.per_device_eval_batch_size,
+        "gradient_accumulation_steps": args.gradient_accumulation_steps,
+        "learning_rate": args.learning_rate,
+        "weight_decay": args.weight_decay,
+        "warmup_ratio": args.warmup_ratio,
+        "lr_scheduler_type": args.lr_scheduler_type,
+        "num_train_epochs": args.num_train_epochs,
+        "max_steps": args.max_steps,
+        "logging_steps": args.logging_steps,
+        "save_steps": args.save_steps,
+        "eval_steps": args.eval_steps,
+        "evaluation_strategy": evaluation_strategy,
+        "save_strategy": "steps",
+        "save_total_limit": args.save_total_limit,
+        "bf16": args.bf16,
+        "fp16": args.fp16,
+        "gradient_checkpointing": args.gradient_checkpointing,
+        "dataloader_num_workers": args.num_workers,
+        "report_to": [],
+        "optim": args.optim,
+        "logging_dir": str(log_dir),
+        "seed": args.seed,
+        "load_best_model_at_end": load_best_model_at_end,
+        "metric_for_best_model": "eval_loss" if load_best_model_at_end else None,
+        "greater_is_better": False if load_best_model_at_end else None,
+    }
+    ta_params = set(inspect.signature(TrainingArguments.__init__).parameters.keys())
+    if "evaluation_strategy" not in ta_params and "eval_strategy" in ta_params:
+        training_kwargs["eval_strategy"] = training_kwargs.pop("evaluation_strategy")
+    filtered_kwargs = {k: v for k, v in training_kwargs.items() if k in ta_params}
+    training_args = TrainingArguments(**filtered_kwargs)
 
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=dev_dataset,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-        callbacks=[JsonlLogCallback()],
-    )
+    trainer_kwargs: dict[str, Any] = {
+        "model": model,
+        "args": training_args,
+        "train_dataset": train_dataset,
+        "eval_dataset": dev_dataset,
+        "data_collator": data_collator,
+        "callbacks": [JsonlLogCallback()],
+    }
+    trainer_params = set(inspect.signature(Trainer.__init__).parameters.keys())
+    if "tokenizer" in trainer_params:
+        trainer_kwargs["tokenizer"] = tokenizer
+    elif "processing_class" in trainer_params:
+        trainer_kwargs["processing_class"] = tokenizer
+    trainer = Trainer(**{k: v for k, v in trainer_kwargs.items() if k in trainer_params})
 
     manifest = {
         "task": args.task,

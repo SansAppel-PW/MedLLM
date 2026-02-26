@@ -23,6 +23,7 @@ run:
     logging-steps: 10
     save-steps: 100
     eval-steps: 100
+    save-total-limit: 2
     seed: 42
     use-lora: true
     lora-r: 64

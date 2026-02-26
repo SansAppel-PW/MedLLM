@@ -1,13 +1,13 @@
 inherits: configs/train/simpo.yaml
 
 run:
-  task: real_simpo
+  task: real_kto
   entrypoint: src/train/real_pref_train.py
   kv_args:
-    method: simpo
+    method: kto
     model-name: Qwen/Qwen2.5-7B-Instruct
     pref-file: data/clean/real_pref_seed_pairs.jsonl
-    output-dir: checkpoints/simpo-real-baseline
-    logging-dir: logs/simpo-real-baseline
-    metrics-out: reports/training/simpo_metrics.json
+    output-dir: checkpoints/kto-real-baseline
+    logging-dir: logs/kto-real-baseline
+    metrics-out: reports/training/kto_metrics.json
     save-total-limit: 2
