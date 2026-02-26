@@ -23,11 +23,20 @@ venv/
 logs/
 *.log
 *.tmp
+runs/
+wandb/
+mlruns/
 
 # Model artifacts
 checkpoints/
 outputs/
 artifacts/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
 
 # Data/cache (keep curated datasets and reports)
 data/cache/
@@ -43,6 +52,16 @@ data/clean/real_sft_*.jsonl
 data/clean/real_pref_seed_pairs.jsonl
 data/benchmark/real_medqa_benchmark.jsonl
 data/kg/real_medqa_reference_kb.jsonl
+data/**/*.json
+data/**/*.jsonl
+data/**/*.csv
+data/**/*.tsv
+data/**/*.parquet
+
+# Secrets
+.env
+.env.*
+!.env.example
 
 # Jupyter
 .ipynb_checkpoints/
