@@ -55,5 +55,10 @@ logs/
 *.tar.gz
 *.7z
 
+# Local runtime caches
+tmp/.cache/
+tmp/mplconfig/
+reports/pii_cleaning_report.json
+
 # Jupyter
 .ipynb_checkpoints/

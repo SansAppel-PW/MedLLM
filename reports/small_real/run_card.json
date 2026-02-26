@@ -1,0 +1,91 @@
+{
+  "experiment": "small_real_lora",
+  "task": "small_real_sft_offline",
+  "git_commit": "4e07a0cdc469cfcf21c01261405ffdaa02c52495",
+  "model_name": "/Users/bibo/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
+  "tokenizer_name": "/Users/bibo/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
+  "seed": 42,
+  "config": "configs/train/sft_real.yaml",
+  "local_files_only": true,
+  "train_file": "data/clean/sft_train.jsonl",
+  "train_file_sha256": "f032571be5f2b989e7181e065cde956e7e94abff6f674bd168f357934b20adad",
+  "dev_file": "data/clean/sft_dev.jsonl",
+  "dev_file_sha256": "b3f76e4c1cb2c9409d41ecb0b542f97e6f001d95546d8cb416d12cc5db4df90a",
+  "train_samples": 1,
+  "dev_samples": 1,
+  "framework_versions": {
+    "python": "3.10.18 (main, Jun  3 2025, 18:23:41) [Clang 17.0.0 (clang-1700.0.13.3)]",
+    "torch": "2.10.0",
+    "transformers": "5.2.0",
+    "datasets": "4.6.0",
+    "peft": "0.18.1"
+  },
+  "cuda": {
+    "available": false,
+    "device_count": 0,
+    "device_name": null
+  },
+  "environment_snapshot": {
+    "pip_freeze": "checkpoints/small_real/tiny_gpt2_lora_v2/env_pip_freeze.txt"
+  },
+  "train_metrics": {
+    "train_runtime": 0.497,
+    "train_samples_per_second": 16.098,
+    "train_steps_per_second": 16.098,
+    "total_flos": 581863680.0,
+    "train_loss": 10.734709858894348,
+    "epoch": 8.0,
+    "final_eval_loss": 10.736878395080566,
+    "final_eval_runtime": 0.0116,
+    "final_eval_samples_per_second": 86.436,
+    "final_eval_steps_per_second": 86.436,
+    "final_epoch": 8.0
+  },
+  "eval_metrics": {
+    "samples": 1,
+    "exact_match": 0.0,
+    "rouge_l_f1": 0.0,
+    "char_f1": 0.0,
+    "model_dir": "checkpoints/small_real/tiny_gpt2_lora_v2/final",
+    "input": "data/clean/sft_dev.jsonl",
+    "device": "cpu"
+  },
+  "artifacts": {
+    "manifest": {
+      "path": "checkpoints/small_real/tiny_gpt2_lora_v2/run_manifest.json",
+      "exists": true,
+      "size_bytes": 2520,
+      "sha256": "b0aa47672e9902ed02ae8d698b32cc6e1d50c602d9105d6eb0b267b11d6d2c5c"
+    },
+    "train_metrics": {
+      "path": "reports/training/small_real_tiny_gpt2_lora_v2_metrics.json",
+      "exists": true,
+      "size_bytes": 362,
+      "sha256": "4078d65ebe41baeb90e028140e81bcff1fb118ad75f1cf223a2f5bcd49b7fe08"
+    },
+    "eval_metrics": {
+      "path": "reports/small_real/eval_metrics.json",
+      "exists": true,
+      "size_bytes": 202,
+      "sha256": "5ec23ee57c83ae686291eae7e6399ff522fcf61eaa232d770e8dccbe691068b8"
+    },
+    "loss_csv": {
+      "path": "reports/small_real/loss_curve.csv",
+      "exists": true,
+      "size_bytes": 378,
+      "sha256": "0a819b02acb65da961876cfedecfec45555e58eaf9c69a94adbff996e87e0f9b"
+    },
+    "loss_png": {
+      "path": "reports/small_real/loss_curve.png",
+      "exists": true,
+      "size_bytes": 18442,
+      "sha256": "8411fab266d84a68048e01337ae29b07e7096b25684bb6b43118d25dae9141a5"
+    },
+    "predictions": {
+      "path": "reports/small_real/predictions.jsonl",
+      "exists": true,
+      "size_bytes": 771,
+      "sha256": "f68836e796868ef80b2e9286f6152a4fa360075499aafad0ac465548849ccc6f"
+    }
+  }
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import inspect
 import json
 import os
 import random
@@ -50,6 +51,23 @@ def git_commit_hash() -> str | None:
     except Exception:  # noqa: BLE001
         return None
     return out.decode("utf-8").strip() or None
+
+
+def safe_module_version(module_name: str) -> str | None:
+    try:
+        mod = __import__(module_name)
+        return str(getattr(mod, "__version__", None))
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def capture_pip_freeze(out_path: Path) -> str | None:
+    try:
+        freeze = subprocess.check_output([sys.executable, "-m", "pip", "freeze"], text=True)
+    except Exception:  # noqa: BLE001
+        return None
+    out_path.write_text(freeze, encoding="utf-8")
+    return str(out_path)
 
 
 def format_user_prompt(row: dict[str, Any]) -> tuple[str, str] | None:
@@ -164,6 +182,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fp16", type=str2bool, default=False)
     parser.add_argument("--device-map-auto", type=str2bool, default=True)
     parser.add_argument("--trust-remote-code", type=str2bool, default=True)
+    parser.add_argument("--local-files-only", type=str2bool, default=False)
 
     parser.add_argument("--use-lora", type=str2bool, default=True)
     parser.add_argument("--lora-r", type=int, default=64)
@@ -198,6 +217,11 @@ def main() -> int:
     if not dev_path.exists():
         print(f"[warn] dev file not found: {dev_path}, continue without eval")
 
+    if os.getenv("HF_HUB_OFFLINE") == "1" or os.getenv("TRANSFORMERS_OFFLINE") == "1":
+        if not args.local_files_only:
+            print("[warn] offline env detected, force --local-files-only=true")
+        args.local_files_only = True
+
     stack = import_training_stack()
     torch = stack["torch"]
     Dataset = stack["Dataset"]
@@ -217,6 +241,20 @@ def main() -> int:
     set_seed(args.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
+    else:
+        # CPU fallback: disable CUDA-only options to keep the pipeline runnable.
+        if args.load_in_4bit:
+            print("[warn] CUDA not available, force --load-in-4bit=false")
+            args.load_in_4bit = False
+        if "8bit" in str(args.optim):
+            print("[warn] CUDA not available, fallback optim to adamw_torch")
+            args.optim = "adamw_torch"
+        if args.bf16:
+            print("[warn] CUDA not available, force --bf16=false")
+            args.bf16 = False
+        if args.fp16:
+            print("[warn] CUDA not available, force --fp16=false")
+            args.fp16 = False
 
     train_rows = load_jsonl(train_path)
     dev_rows = load_jsonl(dev_path) if dev_path.exists() else []
@@ -224,6 +262,7 @@ def main() -> int:
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_name,
         trust_remote_code=args.trust_remote_code,
+        local_files_only=args.local_files_only,
     )
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -301,6 +340,7 @@ def main() -> int:
         elif args.fp16:
             load_kwargs["torch_dtype"] = torch.float16
 
+    load_kwargs["local_files_only"] = args.local_files_only
     model = AutoModelForCausalLM.from_pretrained(args.model_name, **load_kwargs)
     if args.load_in_4bit:
         model = prepare_model_for_kbit_training(model)
@@ -338,46 +378,64 @@ def main() -> int:
     evaluation_strategy = "steps" if dev_dataset is not None else "no"
     load_best_model_at_end = dev_dataset is not None
 
-    training_args = TrainingArguments(
-        output_dir=str(out_dir),
-        overwrite_output_dir=False,
-        per_device_train_batch_size=args.per_device_train_batch_size,
-        per_device_eval_batch_size=args.per_device_eval_batch_size,
-        gradient_accumulation_steps=args.gradient_accumulation_steps,
-        learning_rate=args.learning_rate,
-        weight_decay=args.weight_decay,
-        warmup_ratio=args.warmup_ratio,
-        lr_scheduler_type=args.lr_scheduler_type,
-        num_train_epochs=args.num_train_epochs,
-        max_steps=args.max_steps,
-        logging_steps=args.logging_steps,
-        save_steps=args.save_steps,
-        eval_steps=args.eval_steps,
-        evaluation_strategy=evaluation_strategy,
-        save_strategy="steps",
-        save_total_limit=args.save_total_limit,
-        bf16=args.bf16,
-        fp16=args.fp16,
-        gradient_checkpointing=args.gradient_checkpointing,
-        dataloader_num_workers=args.num_workers,
-        report_to=[],
-        optim=args.optim,
-        logging_dir=str(log_dir),
-        seed=args.seed,
-        load_best_model_at_end=load_best_model_at_end,
-        metric_for_best_model="eval_loss" if load_best_model_at_end else None,
-        greater_is_better=False if load_best_model_at_end else None,
-    )
+    training_kwargs: dict[str, Any] = {
+        "output_dir": str(out_dir),
+        "per_device_train_batch_size": args.per_device_train_batch_size,
+        "per_device_eval_batch_size": args.per_device_eval_batch_size,
+        "gradient_accumulation_steps": args.gradient_accumulation_steps,
+        "learning_rate": args.learning_rate,
+        "weight_decay": args.weight_decay,
+        "warmup_ratio": args.warmup_ratio,
+        "lr_scheduler_type": args.lr_scheduler_type,
+        "num_train_epochs": args.num_train_epochs,
+        "max_steps": args.max_steps,
+        "logging_steps": args.logging_steps,
+        "save_steps": args.save_steps,
+        "eval_steps": args.eval_steps,
+        "save_strategy": "steps",
+        "save_total_limit": args.save_total_limit,
+        "bf16": args.bf16,
+        "fp16": args.fp16,
+        "gradient_checkpointing": args.gradient_checkpointing,
+        "dataloader_num_workers": args.num_workers,
+        "report_to": [],
+        "optim": args.optim,
+        "logging_dir": str(log_dir),
+        "seed": args.seed,
+        "load_best_model_at_end": load_best_model_at_end,
+        "metric_for_best_model": "eval_loss" if load_best_model_at_end else None,
+        "greater_is_better": False if load_best_model_at_end else None,
+    }
 
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=dev_dataset,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-        callbacks=[JsonlLogCallback()],
-    )
+    ta_params = inspect.signature(TrainingArguments.__init__).parameters
+    if "overwrite_output_dir" in ta_params:
+        training_kwargs["overwrite_output_dir"] = False
+    if "evaluation_strategy" in ta_params:
+        training_kwargs["evaluation_strategy"] = evaluation_strategy
+    elif "eval_strategy" in ta_params:
+        training_kwargs["eval_strategy"] = evaluation_strategy
+
+    # Drop kwargs unsupported by the installed transformers version.
+    training_kwargs = {k: v for k, v in training_kwargs.items() if k in ta_params}
+    training_args = TrainingArguments(**training_kwargs)
+
+    trainer_kwargs: dict[str, Any] = {
+        "model": model,
+        "args": training_args,
+        "train_dataset": train_dataset,
+        "eval_dataset": dev_dataset,
+        "data_collator": data_collator,
+        "callbacks": [JsonlLogCallback()],
+    }
+    trainer_params = inspect.signature(Trainer.__init__).parameters
+    if "tokenizer" in trainer_params:
+        trainer_kwargs["tokenizer"] = tokenizer
+    elif "processing_class" in trainer_params:
+        trainer_kwargs["processing_class"] = tokenizer
+
+    trainer = Trainer(**trainer_kwargs)
+
+    pip_freeze_path = capture_pip_freeze(out_dir / "env_pip_freeze.txt")
 
     manifest = {
         "task": args.task,
@@ -386,8 +444,10 @@ def main() -> int:
         "cwd": str(Path.cwd()),
         "git_commit": git_commit_hash(),
         "model_name": args.model_name,
+        "tokenizer_name": args.model_name,
         "seed": args.seed,
         "config": args.config or None,
+        "local_files_only": args.local_files_only,
         "train_file": str(train_path),
         "train_file_sha256": sha256_of_file(train_path),
         "dev_file": str(dev_path) if dev_path.exists() else None,
@@ -396,6 +456,21 @@ def main() -> int:
         "dev_samples": len(dev_examples),
         "output_dir": str(out_dir),
         "logging_dir": str(log_dir),
+        "framework_versions": {
+            "python": sys.version,
+            "torch": safe_module_version("torch"),
+            "transformers": safe_module_version("transformers"),
+            "datasets": safe_module_version("datasets"),
+            "peft": safe_module_version("peft"),
+        },
+        "cuda": {
+            "available": bool(torch.cuda.is_available()),
+            "device_count": int(torch.cuda.device_count()) if torch.cuda.is_available() else 0,
+            "device_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        },
+        "environment_snapshot": {
+            "pip_freeze": pip_freeze_path,
+        },
         "hostname": os.uname().nodename if hasattr(os, "uname") else None,
     }
     save_json(out_dir / "run_manifest.json", manifest)

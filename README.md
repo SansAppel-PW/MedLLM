@@ -89,6 +89,20 @@ bash scripts/train/run_layer_b_real_sft.sh
 - `logs/layer_b/qwen25_7b_sft/train_log.jsonl`
 - `reports/training/layer_b_qwen25_7b_sft_metrics.json`
 
+## Small Real 一键闭环（prepare -> train -> eval -> visualize -> run_card）
+```bash
+# 默认先尝试 Qwen2.5-0.5B，失败自动回退到本地 tiny-gpt2 缓存
+bash scripts/train/run_small_real_pipeline.sh
+```
+
+输出（默认 `RUN_TAG=small_real_lora_v3`）：
+- `checkpoints/small_real/<RUN_TAG>/run_manifest.json`
+- `logs/small_real/<RUN_TAG>/train_log.jsonl`
+- `reports/training/<RUN_TAG>_metrics.json`
+- `reports/small_real/<RUN_TAG>/eval_metrics.{json,csv}`
+- `reports/small_real/<RUN_TAG>/loss_curve.{csv,png,pdf}`
+- `reports/small_real/<RUN_TAG>/run_card.{json,md}`
+
 ## 评测与论文资产流水线
 ```bash
 PYTHONUNBUFFERED=1 \

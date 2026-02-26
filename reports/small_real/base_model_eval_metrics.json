@@ -1,0 +1,9 @@
+{
+  "samples": 1,
+  "exact_match": 0.0,
+  "rouge_l_f1": 0.0,
+  "char_f1": 0.0,
+  "model_dir": "/Users/bibo/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
+  "input": "data/clean/sft_dev.jsonl",
+  "device": "cpu"
+}
