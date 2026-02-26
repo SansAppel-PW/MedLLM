@@ -208,6 +208,7 @@ cat > "${STATUS_REPORT}" <<EOF
 - \`reports/thesis_assets/\`
 - \`reports/e2e_acceptance.md\`
 - \`reports/thesis_support/thesis_draft_material.md\`
+- \`reports/thesis_support/benchmark_artifact_report.md\`
 - \`reports/thesis_support/thesis_readiness.md\`
 EOF
 

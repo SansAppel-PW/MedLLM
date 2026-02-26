@@ -50,6 +50,12 @@ python3 -m src.detect.evaluate_detection \
   --include-splits "${EVAL_SPLITS}" \
   --max-samples "${DET_MAX}"
 
+python3 scripts/audit/check_benchmark_artifacts.py \
+  --benchmark "${BENCHMARK}" \
+  --include-splits "${EVAL_SPLITS}" \
+  --report reports/thesis_support/benchmark_artifact_report.md \
+  --json reports/thesis_support/benchmark_artifact_report.json
+
 "${eval_cmd[@]}"
 
 python3 scripts/eval/run_sota_compare.py \
@@ -88,6 +94,7 @@ python3 scripts/eval/generate_thesis_draft_material.py \
   --error-analysis reports/error_analysis.md \
   --resource reports/training/resource_preflight.json \
   --skip-report reports/training/resource_skip_report.md \
+  --artifact-report reports/thesis_support/benchmark_artifact_report.json \
   --output-md reports/thesis_support/thesis_draft_material.md \
   --output-json reports/thesis_support/experiment_record.json
 

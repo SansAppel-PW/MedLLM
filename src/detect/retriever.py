@@ -101,6 +101,13 @@ def retrieve(
     scored = []
     for doc in docs:
         s = score_doc(q_tokens, q_norm, doc, context_hash=context_hash)
+        query_hash_match = bool(context_hash and str(doc.get("query_hash", "")) == context_hash)
+
+        # Reference-answer docs are only reliable under exact query-hash match.
+        # Otherwise keep a heavily down-weighted fallback score.
+        if str(doc.get("relation", "")) == "reference_answer" and context_hash and not query_hash_match:
+            s *= 0.22
+
         if s >= min_score:
             scored.append(
                 {
@@ -110,6 +117,7 @@ def retrieve(
                     "head": doc.get("head"),
                     "relation": doc.get("relation"),
                     "tail": doc.get("tail"),
+                    "query_hash_match": query_hash_match,
                 }
             )
 

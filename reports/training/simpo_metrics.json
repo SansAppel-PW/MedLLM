@@ -2,7 +2,7 @@
   "method": "SimPO",
   "simulation": false,
   "skipped": true,
-  "skip_reason": "FORCE_SKIP_TRAINING=true",
+  "skip_reason": "Insufficient CUDA resources for 7B (need >= 18GB).",
   "samples": 0,
   "global_steps": 0,
   "avg_loss": null,
@@ -10,5 +10,5 @@
   "base_score": 0.0,
   "aligned_score": 0.0,
   "score_gain": 0.0,
-  "created_at_utc": "2026-02-26T02:11:23.266623+00:00"
+  "created_at_utc": "2026-02-26T03:08:37.984863+00:00"
 }

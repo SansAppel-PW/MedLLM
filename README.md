@@ -115,6 +115,7 @@ bash scripts/eval/run_thesis_pipeline.sh
 
 说明：
 - 默认以 `train` split 构建参考 KB，并在 `validation,test` split 上评测，避免同集构建-评测泄漏。
+- 流水线会自动生成基准构造偏差审计，检查答案格式是否与标签强耦合。
 
 输出：
 - `reports/detection_eval.md`
@@ -124,6 +125,7 @@ bash scripts/eval/run_thesis_pipeline.sh
 - `reports/error_analysis.md`
 - `reports/thesis_assets/`
 - `reports/thesis_support/thesis_draft_material.md`
+- `reports/thesis_support/benchmark_artifact_report.md`
 - `reports/thesis_support/thesis_readiness.md`
 
 ## 任务审计（开题任务对齐）

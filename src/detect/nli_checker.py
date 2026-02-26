@@ -211,6 +211,13 @@ def classify_fact(fact: str, docs: list[dict[str, Any]]) -> dict[str, Any]:
     for doc in docs:
         doc_score = float(doc.get("score", 0.0))
         relation = str(doc.get("relation", "") or "")
+        query_hash_match = bool(doc.get("query_hash_match", False))
+
+        # For reference-answer KB, non-matching queries are weak evidence and
+        # should not drive contradiction decisions.
+        if relation == "reference_answer" and not query_hash_match and doc_score < 0.75:
+            continue
+
         label, conf = classify_fact_with_doc(fact, str(doc.get("text", "")), doc_score, relation=relation)
         if label == "contradict":
             weighted = conf * (0.55 + 0.45 * min(doc_score, 1.0))

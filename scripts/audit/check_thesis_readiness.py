@@ -140,6 +140,34 @@ def main() -> int:
         }
     )
 
+    # 7) 评测偏差审计
+    artifact_path = "reports/thesis_support/benchmark_artifact_report.json"
+    artifact = load_json(artifact_path)
+    if not artifact:
+        c7_status = "FAIL"
+        c7_note = f"缺失审计文件：{artifact_path}"
+    else:
+        leakage = str(artifact.get("artifact_leakage_risk", "N/A")).upper()
+        gap = artifact.get("option_letter_gap_low_high", "N/A")
+        if leakage == "HIGH":
+            c7_status = "DEFERRED"
+            c7_note = f"检测到高风险构造偏差（gap={gap}），需补 benchmark v2"
+        elif leakage == "MEDIUM":
+            c7_status = "DEFERRED"
+            c7_note = f"检测到中风险构造偏差（gap={gap}），建议补充鲁棒消融"
+        else:
+            c7_status = "PASS"
+            c7_note = f"构造偏差风险可接受（gap={gap}）"
+
+    checks.append(
+        {
+            "id": "R7",
+            "requirement": "评测偏差审计（避免格式泄露导致指标虚高）",
+            "status": c7_status,
+            "note": c7_note,
+        }
+    )
+
     counts = {"PASS": 0, "DEFERRED": 0, "FAIL": 0}
     for c in checks:
         counts[c["status"]] += 1

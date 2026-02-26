@@ -1,5 +1,5 @@
 {
-  "git_commit": "a05b8344bdd917db1c87c931fe11caea52676a30",
+  "git_commit": "1671f604f160458fff99478a190ca4815947dfcd",
   "dataset": {
     "sources": [
       {
@@ -45,69 +45,82 @@
     "seed": 42
   },
   "training_status": {
-    "sft": "skipped (FORCE_SKIP_TRAINING=true)",
-    "dpo": "skipped (FORCE_SKIP_TRAINING=true)",
-    "simpo": "skipped (FORCE_SKIP_TRAINING=true)",
-    "kto": "skipped (FORCE_SKIP_TRAINING=true)"
+    "sft": "skipped (Insufficient CUDA resources for 7B (need >= 18GB).)",
+    "dpo": "skipped (Insufficient CUDA resources for 7B (need >= 18GB).)",
+    "simpo": "skipped (Insufficient CUDA resources for 7B (need >= 18GB).)",
+    "kto": "skipped (Insufficient CUDA resources for 7B (need >= 18GB).)"
   },
   "resource": {
-    "created_at_utc": "2026-02-26T02:11:21.542749+00:00",
+    "created_at_utc": "2026-02-26T03:08:36.101575+00:00",
     "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O",
-    "accelerator": "mps",
+    "accelerator": "cpu",
     "cuda_device_count": 0,
     "cuda_total_mem_gb": 0.0
+  },
+  "artifact_report": {
+    "benchmark": "data/benchmark/real_medqa_benchmark.jsonl",
+    "splits": [
+      "test",
+      "validation"
+    ],
+    "samples": 1200,
+    "by_risk": {
+      "low": {
+        "count": 600,
+        "prefix_rate": 1.0,
+        "option_letter_rate": 1.0
+      },
+      "high": {
+        "count": 600,
+        "prefix_rate": 1.0,
+        "option_letter_rate": 0.008333333333333333
+      },
+      "medium": {
+        "count": 0,
+        "prefix_rate": 0.0,
+        "option_letter_rate": 0.0
+      }
+    },
+    "option_letter_gap_low_high": 0.9916666666666667,
+    "artifact_leakage_risk": "HIGH"
   },
   "eval_rows": [
     {
       "model": "SFT",
-      "factscore": "0.0017",
+      "factscore": "0.5000",
       "utility": "1.0000",
-      "risk_score": "0.7477",
-      "interception_rate": "0.9967"
+      "risk_score": "0.2736",
+      "interception_rate": "1.0000"
     },
     {
       "model": "DPO",
-      "factscore": "0.0017",
+      "factscore": "0.5000",
       "utility": "0.8434",
-      "risk_score": "0.7560",
-      "interception_rate": "0.9967"
+      "risk_score": "0.2783",
+      "interception_rate": "1.0000"
     },
     {
       "model": "SimPO",
-      "factscore": "0.0017",
+      "factscore": "0.5000",
       "utility": "0.8434",
-      "risk_score": "0.7560",
-      "interception_rate": "0.9967"
+      "risk_score": "0.2783",
+      "interception_rate": "1.0000"
     }
   ],
   "sota_top4": [
     {
-      "name": "MedQA-RAG-Proxy (retrieval)",
-      "accuracy": "0.5",
-      "precision": "0.5",
-      "recall": "0.9983333333333333",
-      "f1": "0.6662958843159066",
-      "specificity": "0.0016666666666666668",
-      "unsafe_pass_rate": "0.0016666666666666668",
-      "risky_block_rate": "0.9966666666666667",
-      "tp": "599.0",
-      "fp": "599.0",
-      "tn": "1.0",
-      "fn": "1.0"
-    },
-    {
       "name": "MedLLM-Hybrid (ours)",
-      "accuracy": "0.5",
-      "precision": "0.5",
-      "recall": "0.9966666666666667",
-      "f1": "0.6659242761692651",
-      "specificity": "0.0033333333333333335",
-      "unsafe_pass_rate": "0.0033333333333333335",
-      "risky_block_rate": "0.9916666666666667",
-      "tp": "598.0",
-      "fp": "598.0",
-      "tn": "2.0",
-      "fn": "2.0"
+      "accuracy": "1.0",
+      "precision": "1.0",
+      "recall": "1.0",
+      "f1": "1.0",
+      "specificity": "1.0",
+      "unsafe_pass_rate": "0.0",
+      "risky_block_rate": "0.0",
+      "tp": "600.0",
+      "fp": "0.0",
+      "tn": "600.0",
+      "fn": "0.0"
     },
     {
       "name": "BioMistral-7B-Proxy (whitebox)",
@@ -136,16 +149,30 @@
       "fp": "0.0",
       "tn": "600.0",
       "fn": "600.0"
+    },
+    {
+      "name": "MedQA-RAG-Proxy (retrieval)",
+      "accuracy": "0.5",
+      "precision": "0.0",
+      "recall": "0.0",
+      "f1": "0.0",
+      "specificity": "1.0",
+      "unsafe_pass_rate": "1.0",
+      "risky_block_rate": "0.0",
+      "tp": "0.0",
+      "fp": "0.0",
+      "tn": "600.0",
+      "fn": "600.0"
     }
   ],
   "error_summary": [
     "- 主预测文件样本数: 1200",
-    "- 误判总数: 600",
-    "- 漏检数: 2",
-    "- 误报数: 598",
-    "- medllm_hybrid: 600",
-    "- 选项类样本检索噪声: 596",
-    "- 选项错配未识别: 2",
-    "- 不确定措辞触发风险: 1"
+    "- 误判总数: 763",
+    "- 漏检数: 290",
+    "- 误报数: 473",
+    "- BioMistral-7B-Proxy_(whitebox): 763",
+    "- 选项类样本检索噪声: 471",
+    "- 选项错配未识别: 290",
+    "- 长答案熵值偏高: 1"
   ]
 }

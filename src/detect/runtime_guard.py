@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from functools import lru_cache
 import json
+import re
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -30,12 +31,72 @@ SAFE_BLOCK_MSG = (
 )
 
 SAFE_WARN_SUFFIX = "\n\n[风险提示] 该回答存在不确定性，请结合专业医生建议进行复核。"
+MCQ_OPTION_RE = re.compile(r"(?im)^\s*([A-D])[\.\)]\s*(.+?)\s*$")
+ANSWER_SIGNAL_RE = re.compile(
+    r"(?is)(?:正确答案|correct answer)\s*[:：]?\s*(?:([A-D])[\.\)]\s*)?(.*)"
+)
 
 
 @lru_cache(maxsize=8)
 def cached_docs(kg_path: str) -> tuple[dict[str, Any], ...]:
     docs = load_knowledge_docs(Path(kg_path))
     return tuple(docs)
+
+
+def parse_mcq_options(query: str) -> dict[str, str]:
+    options: dict[str, str] = {}
+    for letter, text in MCQ_OPTION_RE.findall(query or ""):
+        key = (letter or "").upper()
+        content = (text or "").strip()
+        if key and content:
+            options[key] = content
+    return options
+
+
+def parse_answer_signal(answer: str) -> tuple[str | None, str]:
+    text = (answer or "").strip()
+    match = ANSWER_SIGNAL_RE.search(text)
+    if not match:
+        return None, text
+
+    letter = (match.group(1) or "").upper() or None
+    payload = (match.group(2) or "").strip()
+    if letter is None:
+        fallback = re.match(r"^\s*([A-D])[\.\)]\s*(.*)$", payload, flags=re.IGNORECASE)
+        if fallback:
+            letter = fallback.group(1).upper()
+            payload = (fallback.group(2) or "").strip()
+    return letter, payload
+
+
+def mcq_format_signal(query: str, answer: str) -> dict[str, Any]:
+    options = parse_mcq_options(query)
+    if not options:
+        return {"mcq_detected": 0.0, "format_mismatch": 0.0}
+
+    letter, payload = parse_answer_signal(answer)
+    mismatch = 0.0
+    if letter is None:
+        mismatch = 1.0
+        reason = "missing_option_letter"
+    elif letter not in options:
+        mismatch = 1.0
+        reason = "invalid_option_letter"
+    else:
+        reason = "ok"
+        option_text = options.get(letter, "")
+        if payload and option_text and payload.lower() not in option_text.lower():
+            # Payload is optional in multiple-choice short answers. Only mark a
+            # soft mismatch when explicit payload conflicts with the selected option.
+            mismatch = 0.5
+            reason = "payload_option_mismatch"
+
+    return {
+        "mcq_detected": 1.0,
+        "format_mismatch": mismatch,
+        "option_letter_present": 1.0 if letter else 0.0,
+        "format_reason": reason,
+    }
 
 
 def guard_answer(
@@ -72,12 +133,19 @@ def guard_answer(
     risk_level = fused.get("risk_level", "low")
     risk_score = float(fused.get("risk_score", 0.0))
     signals = dict(fused.get("signals", {}))
+    mcq_signal = mcq_format_signal(query, answer)
+    signals.update(mcq_signal)
 
     # Strongly overconfident clinical assertions should at least be warned.
     if risk_level == "low" and float(whitebox.get("overconfidence_flag", 0.0)) >= 1.0:
         risk_level = "medium"
         risk_score = max(risk_score, medium_threshold)
         signals["overconfidence_escalation"] = 1.0
+
+    if risk_level == "low" and float(mcq_signal.get("format_mismatch", 0.0)) >= 1.0:
+        risk_level = "medium"
+        risk_score = max(risk_score, medium_threshold + 0.05)
+        signals["mcq_format_escalation"] = 1.0
 
     blocked = risk_level == "high"
     warning = risk_level == "medium"

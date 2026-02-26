@@ -86,6 +86,7 @@ def main() -> int:
     parser.add_argument("--error-analysis", default="reports/error_analysis.md")
     parser.add_argument("--resource", default="reports/training/resource_preflight.json")
     parser.add_argument("--skip-report", default="reports/training/resource_skip_report.md")
+    parser.add_argument("--artifact-report", default="reports/thesis_support/benchmark_artifact_report.json")
     parser.add_argument("--output-md", default="reports/thesis_support/thesis_draft_material.md")
     parser.add_argument("--output-json", default="reports/thesis_support/experiment_record.json")
     args = parser.parse_args()
@@ -96,6 +97,7 @@ def main() -> int:
     simpo = load_json(Path(args.simpo))
     kto = load_json(Path(args.kto))
     resource = load_json(Path(args.resource))
+    artifact_report = load_json(Path(args.artifact_report))
     eval_rows = parse_eval_table(Path(args.eval_default))
     sota_rows = load_csv(Path(args.sota_csv))
 
@@ -168,7 +170,12 @@ def main() -> int:
             "## 6. 错误分析要点",
             *error_summary[:8],
             "",
-            "## 7. 论文撰写建议（可直接展开为章节）",
+            "## 7. 评测偏差审计",
+            f"- Artifact leakage risk: {artifact_report.get('artifact_leakage_risk', 'N/A')}",
+            f"- Option-letter gap(low vs high): {artifact_report.get('option_letter_gap_low_high', 'N/A')}",
+            f"- 审计文件: `{args.artifact_report}`",
+            "",
+            "## 8. 论文撰写建议（可直接展开为章节）",
             "1. 数据治理章节：阐述 CMeKG 校验与冲突样本处理流程。",
             "2. 检测章节：解释混合检测为何提升 recall 并分析 specificity 风险。",
             "3. 对齐章节：说明真实训练与资源受限跳过策略的证据边界。",
@@ -183,6 +190,7 @@ def main() -> int:
         "dataset": dataset,
         "training_status": training_status,
         "resource": resource,
+        "artifact_report": artifact_report,
         "eval_rows": eval_rows,
         "sota_top4": sota_rows[:4],
         "error_summary": error_summary[:8],

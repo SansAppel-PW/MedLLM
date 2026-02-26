@@ -2,49 +2,49 @@
 
 ## 总体统计
 - 主预测文件样本数: 1200
-- 误判总数: 600
-- 漏检数: 2
-- 误报数: 598
+- 误判总数: 763
+- 漏检数: 290
+- 误报数: 473
 
 ## 误判来源分布
-- medllm_hybrid: 600
+- BioMistral-7B-Proxy_(whitebox): 763
 
 ## 误判原因分布
-- 选项类样本检索噪声: 596
-- 选项错配未识别: 2
-- 不确定措辞触发风险: 1
+- 选项类样本检索噪声: 471
+- 选项错配未识别: 290
 - 长答案熵值偏高: 1
+- 不确定措辞触发风险: 1
 
 ## Top 30 失败案例
 | id | 来源 | 类型 | 期望 | 预测 | 分数 | 归因 | 问题摘要 | 回答摘要 |
 |---|---|---|---|---|---:|---|---|---|
-| medqa_test_000037_neg | medllm_hybrid | 漏检 | high | low | 0.1404 | 选项错配未识别 | Hypoxia-inducible factor 1-alpha (HIF-1a) is a transcription factor with increased activity under conditions of cellu... | 正确答案: A Northern blot will show increased HIF-1α, compared to a normoxic control cell. |
-| medqa_validation_000219_pos | medllm_hybrid | 误报 | low | high | 0.8059 | 选项类样本检索噪声 | A 49-year-old man is undergoing an elective hernia repair. No significant past medical history or current medications... | 正确答案: C. The patient’s doctor should have included possible complications of the given operation and risks and benefi... |
-| medqa_validation_000099_pos | medllm_hybrid | 误报 | low | high | 0.8047 | 选项类样本检索噪声 | A 52-year-old man presents to the clinic complaining of blood in his urine. He had a mild respiratory illness 3 weeks... | 正确答案: B. Donor A: tA7/A5, ttB8/B2, ttC3/C8 |
-| medqa_validation_000055_pos | medllm_hybrid | 误报 | low | high | 0.8042 | 选项类样本检索噪声 | A 36-year-old woman presents with a persistent cough productive of blood-streaked sputum, night sweats, and weight lo... | 正确答案: A. If this patient is diagnosed with active pulmonary tuberculosis, it should be reported even without the pati... |
-| medqa_validation_000180_pos | medllm_hybrid | 误报 | low | high | 0.8020 | 选项类样本检索噪声 | A 19-month-old boy comes into the emergency department with his parents. He has burns on his buttocks and perineal ar... | 正确答案: D. Circular burns of equal depth restricted to the buttocks, with sparing of the hands and feet |
-| medqa_validation_000214_pos | medllm_hybrid | 误报 | low | high | 0.8017 | 选项类样本检索噪声 | A 51-year-old inmate was released from prison 1 month ago and visits his general practitioner for evaluation of a pos... | 正确答案: D. Advise the patient the positive diagnosis will be reported to the public health office, but you would also e... |
-| medqa_test_000248_pos | medllm_hybrid | 误报 | low | high | 0.8011 | 选项类样本检索噪声 | A 55-year-old male with a history of stage I colon cancer status-post left hemicolectomy presents to your office for ... | 正确答案: D. "I really haven't thought about the colonoscopy until today. Worrying before getting the results wasn't goin... |
-| medqa_test_000191_pos | medllm_hybrid | 误报 | low | high | 0.8008 | 选项类样本检索噪声 | A 29-year-old female presents to the clinic for a regular check-up. She has no specific complaints. Vital signs inclu... | 正确答案: A. These cells transform to macrophages when they migrate to peripheral tissues. |
-| medqa_validation_000084_pos | medllm_hybrid | 误报 | low | high | 0.8004 | 选项类样本检索噪声 | A 28-year-old G2P1001 presents for a routine obstetric visit in her 36th week of pregnancy. She has a history of type... | 正确答案: D. Treat with oral nitrofurantion for 10 days then continue for prophylaxis until delivery |
-| medqa_test_000037_pos | medllm_hybrid | 误报 | low | high | 0.8004 | 选项类样本检索噪声 | Hypoxia-inducible factor 1-alpha (HIF-1a) is a transcription factor with increased activity under conditions of cellu... | 正确答案: D. A Western blot will show increased HIF-1α compared to a normoxic control. |
-| medqa_test_000100_pos | medllm_hybrid | 误报 | low | high | 0.8003 | 选项类样本检索噪声 | A 14-year-old girl comes to the physician because she has not yet had her period. She is at the 10th percentile for h... | 正确答案: A. Pregnancy success rate with donor oocytes is similar to patients with primary ovarian failure |
-| medqa_test_000134_pos | medllm_hybrid | 误报 | low | high | 0.8003 | 选项类样本检索噪声 | A 17-year-old high school student was in shop class when he accidentally sawed off his pointer finger while making a ... | 正确答案: C. Wrap finger in moist gauze, put in a plastic bag, and place on ice |
-| medqa_test_000254_pos | medllm_hybrid | 误报 | low | high | 0.7999 | 选项类样本检索噪声 | A 72-year-old woman with a 40 pack-year history of smoking presents to your office with jaundice. After a thorough wo... | 正确答案: B. "I have bad news I need to share with you. Please sit down so we can discuss." |
-| medqa_test_000268_pos | medllm_hybrid | 误报 | low | high | 0.7999 | 选项类样本检索噪声 | During the normal catabolism of protein, urea and ammonia are produced as waste products. If these waste products are... | 正确答案: A. NH3 + HCO3- + 2 ATP --> carbamoyl phosphate + 2 ADP + Pi |
-| medqa_test_000171_pos | medllm_hybrid | 误报 | low | high | 0.7982 | 选项类样本检索噪声 | A 28-year-old G1P0 woman at 12 weeks estimated gestational age presents with malaise, joint pain, fever, and chills f... | 正确答案: A. It can lead to hydrops fetalis secondary to fetal anemia. |
-| medqa_test_000234_pos | medllm_hybrid | 误报 | low | high | 0.7982 | 选项类样本检索噪声 | A 72-year-old man presents to his primary care physician with a 6-month history of shortness of breath. He says that ... | 正确答案: C. Increased residual volume and decreased 1 second forced expiratory volume |
-| medqa_validation_000040_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 55-year-old woman is rushed to the emergency department after being found lying unconscious in a burning house by a... | 正确答案: A. The curve would be shifted left due to an increased oxygen binding affinity by hemoglobin. |
-| medqa_validation_000042_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 65-year-old woman with a 6-month history of acute promyelocytic leukemia managed with all-trans-retinoic acid prese... | 正确答案: C. PT: ↑ | PTT ↑ | Bleeding time: ↑ | Fibrin split products: ↑ | D-dimer: ↑| Fibrinogen: ↓ | Platelet count: ↓ |
-| medqa_validation_000044_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 66-year-old man presents with palpitation, syncope, and difficulty breathing. He has a past medical history of stro... | 正确答案: B. Amiodarone inhibits CYP2C9 leading to an increased risk of bleeding |
-| medqa_validation_000108_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A regional hospital system has decided to institute a new task group for quality improvement and patient safety. The ... | 正确答案: D. Changing the electronic medical record to only allow a maximum of 7 days per prescription |
-| medqa_validation_000109_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 57-year-old man comes to the clinic complaining of nausea and 1 episode of vomiting during the past day. He denies ... | 正确答案: A. Accumulation of N-acetyl-p-benzoquinone imine in the liver |
-| medqa_validation_000128_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 45-year-old man presents to the emergency room with fever and headache. He recently had a middle ear infection. On ... | 正确答案: D. Glucose: ↓, Proteins: ↑, Cells: 90% neutrophils, Lactic Acid (mmol/l): 4.5 |
-| medqa_validation_000156_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 42-year-old overweight restaurant waiter develops excruciating pain in the heel of his right foot. Symptoms are mos... | 正确答案: C. This was caused by excessive strain on the medial fascicle. |
-| medqa_validation_000181_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 44-year-old woman presents to the physician for evaluation of recurrent episodes of pounding headache, palpitations... | 正确答案: C. 24-h urine catecholamine by-products (vanillylmandelic acid (VMA), metanephrine, and normetanephrine) |
-| medqa_validation_000187_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 25-year-old primigravida is admitted to the hospital at 35 weeks gestation with lower leg edema. She denies any oth... | 正确答案: A. Induction of vaginal delivery at 37 weeks’ pregnancy if not begin spontaneously earlier |
-| medqa_validation_000291_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 27-year-old nullipara makes an appointment with her gynecologist to discuss the results of her cervical cancer scre... | 正确答案: B. Close follow-up with cytology and colposcopy may be considered in this patient. |
-| medqa_test_000020_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A 28-year-old woman, gravida 2, para 1, at 40 weeks gestation is brought to the emergency department by her husband. ... | 正确答案: C. Treat and transfer the patient after she makes a written request |
-| medqa_test_000052_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | While traveling abroad a physician is asked to attend a meeting regarding healthcare in the region. The rate of chlam... | 正确答案: C. “I can not help you due to the ethical principle of nonmaleficence.” |
-| medqa_test_000073_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 选项类样本检索噪声 | A multi-specialty physician practice is meeting to determine which compensation scheme would best serve the practice ... | 正确答案: C. Fee-for-service may incentivize physicians to increase healthcare utilization irrespective of quality |
-| medqa_test_000081_pos | medllm_hybrid | 误报 | low | high | 0.7980 | 不确定措辞触发风险 | A 16-year-old female presents to her physician’s office after noticing a round lump in her left breast 2 months ago. ... | 正确答案: C. This mass will most likely decrease in size or disappear over time |
+| medqa_validation_000000_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 50-year-old woman presents to the emergency department with severe abdominal pain and discomfort for several hours.... | 正确答案: Asthma |
+| medqa_validation_000007_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 28-year-old woman who recently immigrated from Kenya presents with fatigue, shortness of breath, and palpitations f... | 正确答案: Brain |
+| medqa_validation_000012_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 33-year-old woman comes to the physician because of a 1-year history of irregular menses and infertility. She has a... | 正确答案: Mifepristone |
+| medqa_validation_000015_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 55-year-old woman visits her primary care provider for concerns of frequent headaches. She complains of recurrent h... | 正确答案: Diplopia |
+| medqa_validation_000017_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 17-year-old male collapses 25 minutes into a soccer game. He is unresponsive and pulseless. Despite adequate resusc... | 正确答案: Fibrilin |
+| medqa_validation_000019_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 24-year-old man is brought to the emergency department for bowling at a local bowling alley while inappropriately d... | 正确答案: Infection |
+| medqa_validation_000030_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 24-year-old patient presents to your gastroenterology practice on a referral from her primary care provider. The pa... | 正确答案: Bismuth |
+| medqa_validation_000038_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 36-year-old woman comes to the emergency department because of left wrist pain and swelling that started immediatel... | 正确答案: Hamate |
+| medqa_validation_000041_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 73-year-old man with a past medical history significant for high blood pressure, hypothyroidism, and diabetes prese... | 正确答案: Terazosin |
+| medqa_validation_000045_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 55-year-old woman presents to the emergency department with recent onset confusion and photophobia. Upon questionin... | 正确答案: Acyclovir |
+| medqa_validation_000047_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 54-year-old man comes to the physician for a follow-up appointment. Three weeks ago he underwent emergent cardiac c... | 正确答案: Hypermagnesemia |
+| medqa_validation_000052_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 28-year-old woman presents with a recent history of severe headaches. The patient states that the headaches came on... | 正确答案: Infection |
+| medqa_validation_000056_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 33-year-old woman gravida 2, para 1, at 35 weeks gestation is admitted to the hospital with fever and active labor.... | 正确答案: Amnioinfusion |
+| medqa_validation_000061_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 57-year-old woman comes to the emergency department because of severe dyspnea, cough, and pleuritic chest pain for ... | 正确答案: Pericardiocentesis |
+| medqa_validation_000064_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 33-year-old man presents to his primary care physician for fatigue, weight loss, and diffuse pruritus. The patient ... | 正确答案: Cirrhosis |
+| medqa_validation_000071_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 40-year-old man comes to the physician because of a 5-kg (11-lb) weight loss over the past month and easy bruising.... | 正确答案: Cyclophosphamide |
+| medqa_validation_000076_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 34-year-old woman comes to the gynecologist complaining of vaginal swelling and discomfort. She states that over th... | 正确答案: Folliculitis |
+| medqa_validation_000081_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 56-year-old woman is brought to the emergency department by her husband 30 minutes after a generalized tonic-clonic... | 正确答案: Meningioma |
+| medqa_validation_000082_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 29-year-old woman (gravida 2, para 1) presents at 32 weeks gestation for routine follow-up care. Her previous pregn... | 正确答案: Coagulogram |
+| medqa_validation_000089_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 75-year-old man presents to the emergency department from his doctor’s office with a 2-day history of urinary hesit... | 正确答案: Nephrolithiasis |
+| medqa_validation_000091_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | An important step in the formation of thyroid hormones is the formation of I2 via oxidation of I-. Which of the follo... | 正确答案: Perchlorate |
+| medqa_validation_000093_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 65-year-old man presents to the emergency department with confusion and chest pain. He states his symptoms started ... | 正确答案: Hemodialysis |
+| medqa_validation_000097_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 27-year-old woman presents to the emergency department with severe wheezing, which started an hour ago. She informs... | 正确答案: Acetaminophen |
+| medqa_validation_000100_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | An investigator is studying determinants of childhood obesity by observing a cohort of pregnant women with obesity. A... | 正确答案: -1.80 |
+| medqa_validation_000105_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | An 18-year-old girl comes to the emergency room with abdominal pain. She states that the pain started 6 hours ago, is... | 正确答案: Appendicitis |
+| medqa_validation_000110_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 48-year-old patient comes to the physician because of a 4-day history fever, headaches, loss of appetite, and myalg... | 正确答案: Flea |
+| medqa_validation_000112_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 3-year-old boy presents to the pediatrician crying with ear pain and his temperature has been 101°F (38.3°C) for se... | 正确答案: Tympanocentesis |
+| medqa_validation_000115_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | An investigator is studying the secretion of gastrointestinal hormones before and after food intake. She isolates a h... | 正确答案: Cholecystokinin |
+| medqa_validation_000116_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A 45-year-old woman presents to the office with a chief complaint of a cough that has persisted for a month and a hal... | 正确答案: Echinococcosis |
+| medqa_validation_000120_neg | BioMistral-7B-Proxy_(whitebox) | 漏检 | high | low | 0.2382 | 选项错配未识别 | A healthy 32-year-old woman enrolls in a study investigating kidney function. Her renal plasma flow (RPF) is 600 mL/m... | 正确答案: Glucose |
