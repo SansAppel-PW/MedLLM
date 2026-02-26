@@ -1,7 +1,7 @@
 # 论文初稿支撑材料（自动生成）
 
 - 生成时间（UTC）: N/A
-- 代码版本: `1671f604f160458fff99478a190ca4815947dfcd`
+- 代码版本: `9328f81c477951c6432c6ebd97c3a871fa1b18e7`
 
 ## 1. 研究目标与创新点映射
 - 目标一：以 KG 数据治理降低训练数据事实噪声。
@@ -19,7 +19,7 @@
 - DPO: skipped (Insufficient CUDA resources for 7B (need >= 18GB).)
 - SimPO: skipped (Insufficient CUDA resources for 7B (need >= 18GB).)
 - KTO: skipped (Insufficient CUDA resources for 7B (need >= 18GB).)
-- 资源探测: accelerator=cpu, cuda_total_mem_gb=0.0
+- 资源探测: accelerator=mps, cuda_total_mem_gb=0.0
 - 跳过报告: `reports/training/resource_skip_report.md`
 
 ## 4. 综合评测主结果
@@ -51,6 +51,9 @@
 - Artifact leakage risk: HIGH
 - Option-letter gap(low vs high): 0.9916666666666667
 - 审计文件: `reports/thesis_support/benchmark_artifact_report.json`
+- v2 leakage risk: LOW
+- v2 option-letter gap(low vs high): 0.0
+- v2 检测 Accuracy/Recall/F1: 0.5000/0.0000/0.0000
 
 ## 8. 论文撰写建议（可直接展开为章节）
 1. 数据治理章节：阐述 CMeKG 校验与冲突样本处理流程。

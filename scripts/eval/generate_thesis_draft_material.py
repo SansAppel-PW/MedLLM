@@ -13,6 +13,7 @@ from typing import Any
 
 
 TABLE_LINE_RE = re.compile(r"^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$")
+METRIC_LINE_RE = re.compile(r"^-\s*(Accuracy|Precision|Recall|F1)\s*:\s*([0-9.]+)\s*$", re.IGNORECASE)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -56,6 +57,16 @@ def parse_eval_table(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def parse_detection_metrics(path: Path) -> dict[str, float]:
+    out: dict[str, float] = {}
+    for line in load_lines(path):
+        m = METRIC_LINE_RE.match(line.strip())
+        if not m:
+            continue
+        out[m.group(1).lower()] = float(m.group(2))
+    return out
+
+
 def git_commit() -> str:
     try:
         out = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL)
@@ -87,6 +98,8 @@ def main() -> int:
     parser.add_argument("--resource", default="reports/training/resource_preflight.json")
     parser.add_argument("--skip-report", default="reports/training/resource_skip_report.md")
     parser.add_argument("--artifact-report", default="reports/thesis_support/benchmark_artifact_report.json")
+    parser.add_argument("--artifact-report-v2", default="reports/thesis_support/benchmark_artifact_report_v2_balanced.json")
+    parser.add_argument("--detection-eval-v2", default="reports/detection_eval_v2_balanced.md")
     parser.add_argument("--output-md", default="reports/thesis_support/thesis_draft_material.md")
     parser.add_argument("--output-json", default="reports/thesis_support/experiment_record.json")
     args = parser.parse_args()
@@ -98,6 +111,8 @@ def main() -> int:
     kto = load_json(Path(args.kto))
     resource = load_json(Path(args.resource))
     artifact_report = load_json(Path(args.artifact_report))
+    artifact_report_v2 = load_json(Path(args.artifact_report_v2))
+    detection_v2 = parse_detection_metrics(Path(args.detection_eval_v2))
     eval_rows = parse_eval_table(Path(args.eval_default))
     sota_rows = load_csv(Path(args.sota_csv))
 
@@ -174,6 +189,12 @@ def main() -> int:
             f"- Artifact leakage risk: {artifact_report.get('artifact_leakage_risk', 'N/A')}",
             f"- Option-letter gap(low vs high): {artifact_report.get('option_letter_gap_low_high', 'N/A')}",
             f"- 审计文件: `{args.artifact_report}`",
+            f"- v2 leakage risk: {artifact_report_v2.get('artifact_leakage_risk', 'N/A')}",
+            f"- v2 option-letter gap(low vs high): {artifact_report_v2.get('option_letter_gap_low_high', 'N/A')}",
+            f"- v2 检测 Accuracy/Recall/F1: "
+            f"{detection_v2.get('accuracy', float('nan')):.4f}/"
+            f"{detection_v2.get('recall', float('nan')):.4f}/"
+            f"{detection_v2.get('f1', float('nan')):.4f}",
             "",
             "## 8. 论文撰写建议（可直接展开为章节）",
             "1. 数据治理章节：阐述 CMeKG 校验与冲突样本处理流程。",
@@ -191,6 +212,8 @@ def main() -> int:
         "training_status": training_status,
         "resource": resource,
         "artifact_report": artifact_report,
+        "artifact_report_v2": artifact_report_v2,
+        "detection_v2": detection_v2,
         "eval_rows": eval_rows,
         "sota_top4": sota_rows[:4],
         "error_summary": error_summary[:8],

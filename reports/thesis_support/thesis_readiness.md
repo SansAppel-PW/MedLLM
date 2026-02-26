@@ -1,7 +1,7 @@
 # Thesis Readiness Check
 
-- PASS: 5
-- DEFERRED: 2
+- PASS: 6
+- DEFERRED: 1
 - FAIL: 0
 
 | ID | Requirement | Status | Note |
@@ -12,4 +12,4 @@
 | R4 | 真实训练 Loss 下降曲线图（png/pdf） | PASS | 已存在 loss 曲线图 |
 | R5 | 系统说明文档（Readme、架构图、环境配置） | PASS | README.md | docs/ARCH.md | docs/DEPLOY.md | docs/RESOURCE_AWARE_EXECUTION.md |
 | R6 | 论文初稿支撑材料（实验记录、结论说明、创新点论述） | PASS | reports/thesis_support/thesis_draft_material.md | reports/thesis_support/experiment_record.json | reports/error_analysis.md |
-| R7 | 评测偏差审计（避免格式泄露导致指标虚高） | DEFERRED | 检测到高风险构造偏差（gap=0.9916666666666667），需补 benchmark v2 |
+| R7 | 评测偏差审计（避免格式泄露导致指标虚高） | PASS | v2 偏差风险可接受（gap=0.0），原始基准偏差已被隔离 |

@@ -1,6 +1,6 @@
 # 训练跳过报告
 
-- 时间: 2026-02-26T03:08:37Z
+- 时间: 2026-02-26T03:48:38Z
 - 模型: `Qwen/Qwen2.5-7B-Instruct`
 - 模型层级: `7b`
 - 跳过原因: Insufficient CUDA resources for 7B (need >= 18GB).

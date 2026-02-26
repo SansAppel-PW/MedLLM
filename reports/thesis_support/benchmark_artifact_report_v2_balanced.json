@@ -1,0 +1,27 @@
+{
+  "benchmark": "data/benchmark/real_medqa_benchmark_v2_balanced.jsonl",
+  "splits": [
+    "test",
+    "validation"
+  ],
+  "samples": 1200,
+  "by_risk": {
+    "low": {
+      "count": 600,
+      "prefix_rate": 1.0,
+      "option_letter_rate": 1.0
+    },
+    "high": {
+      "count": 600,
+      "prefix_rate": 1.0,
+      "option_letter_rate": 1.0
+    },
+    "medium": {
+      "count": 0,
+      "prefix_rate": 0.0,
+      "option_letter_rate": 0.0
+    }
+  },
+  "option_letter_gap_low_high": 0.0,
+  "artifact_leakage_risk": "LOW"
+}

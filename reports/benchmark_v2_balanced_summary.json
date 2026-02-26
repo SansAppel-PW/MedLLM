@@ -1,0 +1,36 @@
+{
+  "total": 3600,
+  "rewritten": 1798,
+  "unresolved": 2,
+  "by_letter": 1813,
+  "by_text_exact": 1785,
+  "by_text_fuzzy": 0,
+  "unresolved_empty": 2,
+  "unresolved_no_match": 0,
+  "risk_split_letter_rate_after": {
+    "high:test": {
+      "count": 300,
+      "letter_rate_after": 1.0
+    },
+    "high:train": {
+      "count": 1200,
+      "letter_rate_after": 0.9983333333333333
+    },
+    "high:validation": {
+      "count": 300,
+      "letter_rate_after": 1.0
+    },
+    "low:test": {
+      "count": 300,
+      "letter_rate_after": 1.0
+    },
+    "low:train": {
+      "count": 1200,
+      "letter_rate_after": 1.0
+    },
+    "low:validation": {
+      "count": 300,
+      "letter_rate_after": 1.0
+    }
+  }
+}

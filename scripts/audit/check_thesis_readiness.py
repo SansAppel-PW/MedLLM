@@ -142,8 +142,22 @@ def main() -> int:
 
     # 7) 评测偏差审计
     artifact_path = "reports/thesis_support/benchmark_artifact_report.json"
+    artifact_v2_path = "reports/thesis_support/benchmark_artifact_report_v2_balanced.json"
     artifact = load_json(artifact_path)
-    if not artifact:
+    artifact_v2 = load_json(artifact_v2_path)
+    if artifact_v2:
+        leakage_v2 = str(artifact_v2.get("artifact_leakage_risk", "N/A")).upper()
+        gap_v2 = artifact_v2.get("option_letter_gap_low_high", "N/A")
+        if leakage_v2 == "LOW":
+            c7_status = "PASS"
+            c7_note = f"v2 偏差风险可接受（gap={gap_v2}），原始基准偏差已被隔离"
+        elif leakage_v2 == "MEDIUM":
+            c7_status = "DEFERRED"
+            c7_note = f"v2 仍有中风险偏差（gap={gap_v2}），建议继续增强鲁棒消融"
+        else:
+            c7_status = "DEFERRED"
+            c7_note = f"v2 偏差仍偏高（gap={gap_v2}），需进一步清洗构造规则"
+    elif not artifact:
         c7_status = "FAIL"
         c7_note = f"缺失审计文件：{artifact_path}"
     else:

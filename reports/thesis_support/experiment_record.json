@@ -1,5 +1,5 @@
 {
-  "git_commit": "1671f604f160458fff99478a190ca4815947dfcd",
+  "git_commit": "9328f81c477951c6432c6ebd97c3a871fa1b18e7",
   "dataset": {
     "sources": [
       {
@@ -51,9 +51,9 @@
     "kto": "skipped (Insufficient CUDA resources for 7B (need >= 18GB).)"
   },
   "resource": {
-    "created_at_utc": "2026-02-26T03:08:36.101575+00:00",
+    "created_at_utc": "2026-02-26T03:48:36.391163+00:00",
     "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O",
-    "accelerator": "cpu",
+    "accelerator": "mps",
     "cuda_device_count": 0,
     "cuda_total_mem_gb": 0.0
   },
@@ -83,6 +83,39 @@
     },
     "option_letter_gap_low_high": 0.9916666666666667,
     "artifact_leakage_risk": "HIGH"
+  },
+  "artifact_report_v2": {
+    "benchmark": "data/benchmark/real_medqa_benchmark_v2_balanced.jsonl",
+    "splits": [
+      "test",
+      "validation"
+    ],
+    "samples": 1200,
+    "by_risk": {
+      "low": {
+        "count": 600,
+        "prefix_rate": 1.0,
+        "option_letter_rate": 1.0
+      },
+      "high": {
+        "count": 600,
+        "prefix_rate": 1.0,
+        "option_letter_rate": 1.0
+      },
+      "medium": {
+        "count": 0,
+        "prefix_rate": 0.0,
+        "option_letter_rate": 0.0
+      }
+    },
+    "option_letter_gap_low_high": 0.0,
+    "artifact_leakage_risk": "LOW"
+  },
+  "detection_v2": {
+    "accuracy": 0.5,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
   },
   "eval_rows": [
     {

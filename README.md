@@ -119,6 +119,7 @@ bash scripts/eval/run_thesis_pipeline.sh
 
 输出：
 - `reports/detection_eval.md`
+- `reports/detection_eval_v2_balanced.md`
 - `reports/eval_default.md`
 - `reports/ablation_*.md`
 - `reports/sota_compare.md`
@@ -126,6 +127,7 @@ bash scripts/eval/run_thesis_pipeline.sh
 - `reports/thesis_assets/`
 - `reports/thesis_support/thesis_draft_material.md`
 - `reports/thesis_support/benchmark_artifact_report.md`
+- `reports/thesis_support/benchmark_artifact_report_v2_balanced.md`
 - `reports/thesis_support/thesis_readiness.md`
 
 ## 任务审计（开题任务对齐）

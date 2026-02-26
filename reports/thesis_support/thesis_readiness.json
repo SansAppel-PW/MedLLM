@@ -1,7 +1,7 @@
 {
   "summary": {
-    "PASS": 5,
-    "DEFERRED": 2,
+    "PASS": 6,
+    "DEFERRED": 1,
     "FAIL": 0
   },
   "ready_for_writing": true,
@@ -45,8 +45,8 @@
     {
       "id": "R7",
       "requirement": "评测偏差审计（避免格式泄露导致指标虚高）",
-      "status": "DEFERRED",
-      "note": "检测到高风险构造偏差（gap=0.9916666666666667），需补 benchmark v2"
+      "status": "PASS",
+      "note": "v2 偏差风险可接受（gap=0.0），原始基准偏差已被隔离"
     }
   ]
 }

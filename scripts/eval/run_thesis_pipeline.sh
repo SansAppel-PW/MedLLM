@@ -16,6 +16,7 @@ ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-false}"
 JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
 JUDGE_CACHE="${JUDGE_CACHE:-reports/eval/judge_cache.jsonl}"
+RUN_BALANCED_DETECTION_AUDIT="${RUN_BALANCED_DETECTION_AUDIT:-true}"
 
 eval_cmd=(
   python3 eval/run_eval.py
@@ -55,6 +56,14 @@ python3 scripts/audit/check_benchmark_artifacts.py \
   --include-splits "${EVAL_SPLITS}" \
   --report reports/thesis_support/benchmark_artifact_report.md \
   --json reports/thesis_support/benchmark_artifact_report.json
+
+if [[ "${RUN_BALANCED_DETECTION_AUDIT}" == "true" ]]; then
+  BENCHMARK_SRC="${BENCHMARK}" \
+  KB_SOURCE_SPLITS="${KB_SOURCE_SPLITS}" \
+  EVAL_SPLITS="${EVAL_SPLITS}" \
+  DET_MAX="${DET_MAX}" \
+  bash scripts/eval/run_detection_robustness.sh
+fi
 
 "${eval_cmd[@]}"
 
