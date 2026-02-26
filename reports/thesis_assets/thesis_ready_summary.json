@@ -1,11 +1,12 @@
 {
-  "generated_at_utc": "2026-02-26T03:47:46.905240+00:00",
-  "latest_small_real_run": "small_real_lora_v9",
+  "generated_at_utc": "2026-02-26T03:52:40.112613+00:00",
+  "latest_small_real_run": "small_real_lora_v10",
   "latest_small_real_dpo_run": "small_real_dpo_v9",
   "artifacts": {
     "main_results_csv": "reports/thesis_assets/tables/main_results_small_real.csv",
     "ablation_csv": "reports/thesis_assets/tables/ablation_small_real_runs.csv",
     "real_dpo_csv": "reports/thesis_assets/tables/alignment_real_dpo_runs.csv",
+    "dpo_beta_ablation_csv": "reports/thesis_assets/tables/dpo_beta_ablation.csv",
     "baseline_audit_table": "reports/thesis_assets/tables/baseline_audit_table.csv",
     "qwen_blocker": "reports/small_real/qwen_layer_b_blocker.md",
     "error_cases": "reports/thesis_assets/cases/error_cases_top30.jsonl"

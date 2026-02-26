@@ -91,3 +91,17 @@
   - `scripts/train/run_real_alignment_pipeline.sh`（跳过与回退逻辑）
   - `reports/training/dpo_real_metrics.json`
   - `reports/alignment_compare.md`
+
+## 2026-02-26 | D008 | 新增 DPO Beta 消融自动化（真实训练）
+- 背景：论文要求至少1组可审计消融，当前仅有 small-real 版本迭代对照，缺少对齐超参控制变量实验。
+  `【DOCX | 研究内容与关键问题 | 段落#T02R002】` `【PDF | 页码p14 | 段落/条目#PG014L002】`
+- 决策：新增 `run_small_real_dpo_ablation.sh` 与 `build_dpo_ablation_report.py`，对 `beta` 做固定其余变量的控制实验并自动落盘表格。
+- 理由：
+  1. 直接形成“对齐算法超参 → 结果变化”的论文证据；
+  2. 运行成本低，适合当前受限算力下持续迭代；
+  3. 可无缝并入 thesis-ready 汇总包。
+- 产物：
+  - `scripts/train/run_small_real_dpo_ablation.sh`
+  - `scripts/audit/build_dpo_ablation_report.py`
+  - `reports/thesis_assets/tables/dpo_beta_ablation.{csv,json}`
+  - `reports/dpo_beta_ablation.md`

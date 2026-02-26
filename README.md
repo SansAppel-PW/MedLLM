@@ -149,6 +149,16 @@ make thesis-ready
 - `reports/thesis_assets/thesis_ready_summary.md`
 - `reports/thesis_assets/thesis_ready_summary.json`
 
+## 真实对齐消融（DPO beta）
+```bash
+make dpo-ablation
+```
+
+输出：
+- `reports/thesis_assets/tables/dpo_beta_ablation.csv`
+- `reports/thesis_assets/tables/dpo_beta_ablation.json`
+- `reports/dpo_beta_ablation.md`
+
 ## 评测与论文资产流水线
 ```bash
 PYTHONUNBUFFERED=1 \

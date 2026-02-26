@@ -100,9 +100,11 @@ def main() -> int:
     parser.add_argument("--main-csv", default="reports/thesis_assets/tables/main_results_small_real.csv")
     parser.add_argument("--ablation-csv", default="reports/thesis_assets/tables/ablation_small_real_runs.csv")
     parser.add_argument("--dpo-csv", default="reports/thesis_assets/tables/alignment_real_dpo_runs.csv")
+    parser.add_argument("--dpo-beta-csv", default="reports/thesis_assets/tables/dpo_beta_ablation.csv")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
+    dpo_beta_csv = root / args.dpo_beta_csv
     runs = collect_small_real_runs(root)
     latest = runs[-1] if runs else None
     dpo_runs = collect_dpo_runs(root)
@@ -193,6 +195,7 @@ def main() -> int:
             "main_results_csv": args.main_csv,
             "ablation_csv": args.ablation_csv,
             "real_dpo_csv": args.dpo_csv,
+            "dpo_beta_ablation_csv": args.dpo_beta_csv if dpo_beta_csv.exists() else None,
             "baseline_audit_table": str(baseline_table.relative_to(root)) if baseline_table.exists() else None,
             "qwen_blocker": str(qwen_blocker.relative_to(root)) if qwen_blocker.exists() else None,
             "error_cases": str(error_cases.relative_to(root)) if error_cases.exists() else None,
@@ -224,6 +227,9 @@ def main() -> int:
         "",
         "## Alignment (Real DPO) Table",
         f"- CSV: `{args.dpo_csv}`",
+        "",
+        "## DPO Beta Ablation",
+        f"- CSV: `{args.dpo_beta_csv}`",
         "",
         "## Supporting Evidence",
         f"- Baseline Audit: `{payload['artifacts']['baseline_audit_table']}`",

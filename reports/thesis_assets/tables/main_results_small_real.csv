@@ -1,3 +1,3 @@
 setting,run_tag,exact_match,rouge_l_f1,char_f1,train_loss,final_eval_loss,evidence
 BaseModel (tiny-gpt2),base_model,0.0,0.0,0.0,,,reports/small_real/base_model_eval_metrics.json
-LoRA Small-Real,small_real_lora_v9,0.0,0.0,0.0,10.734590888023376,10.736875534057617,reports/small_real/small_real_lora_v9/eval_metrics.json
+LoRA Small-Real,small_real_lora_v10,0.0,0.0,0.0,10.735022703806559,10.73687744140625,reports/small_real/small_real_lora_v10/eval_metrics.json

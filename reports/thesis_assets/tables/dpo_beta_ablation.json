@@ -1,0 +1,35 @@
+[
+  {
+    "run_tag": "small_real_dpo_ablation_beta005",
+    "beta": 0.05,
+    "pair_count": 2,
+    "steps": 4,
+    "train_loss": 0.6931976675987244,
+    "pref_accuracy_before": 0.0,
+    "pref_accuracy_after": 0.0,
+    "pref_accuracy_gain": 0.0,
+    "metrics_path": "reports/training/small_real_dpo_ablation_beta005_metrics.json"
+  },
+  {
+    "run_tag": "small_real_dpo_ablation_beta010",
+    "beta": 0.1,
+    "pair_count": 2,
+    "steps": 4,
+    "train_loss": 0.6932482272386551,
+    "pref_accuracy_before": 0.0,
+    "pref_accuracy_after": 0.0,
+    "pref_accuracy_gain": 0.0,
+    "metrics_path": "reports/training/small_real_dpo_ablation_beta010_metrics.json"
+  },
+  {
+    "run_tag": "small_real_dpo_ablation_beta020",
+    "beta": 0.2,
+    "pair_count": 2,
+    "steps": 4,
+    "train_loss": 0.6933491826057434,
+    "pref_accuracy_before": 0.0,
+    "pref_accuracy_after": 0.0,
+    "pref_accuracy_gain": 0.0,
+    "metrics_path": "reports/training/small_real_dpo_ablation_beta020_metrics.json"
+  }
+]

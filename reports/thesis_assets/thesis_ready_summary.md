@@ -1,7 +1,7 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-02-26T03:47:46.905240+00:00
-- Latest Small-Real Run: small_real_lora_v9
+- Generated(UTC): 2026-02-26T03:52:40.112613+00:00
+- Latest Small-Real Run: small_real_lora_v10
 
 ## Main Result Table
 - CSV: `reports/thesis_assets/tables/main_results_small_real.csv`
@@ -11,6 +11,9 @@
 
 ## Alignment (Real DPO) Table
 - CSV: `reports/thesis_assets/tables/alignment_real_dpo_runs.csv`
+
+## DPO Beta Ablation
+- CSV: `reports/thesis_assets/tables/dpo_beta_ablation.csv`
 
 ## Supporting Evidence
 - Baseline Audit: `reports/thesis_assets/tables/baseline_audit_table.csv`
