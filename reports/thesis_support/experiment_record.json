@@ -1,5 +1,5 @@
 {
-  "git_commit": "9328f81c477951c6432c6ebd97c3a871fa1b18e7",
+  "git_commit": "6c10af70161de466cbec6615a6762d238251213d",
   "dataset": {
     "sources": [
       {
@@ -116,6 +116,12 @@
     "precision": 0.0,
     "recall": 0.0,
     "f1": 0.0
+  },
+  "detection_llm_judge": {
+    "accuracy": 0.725,
+    "precision": 0.6731,
+    "recall": 0.875,
+    "f1": 0.7609
   },
   "eval_rows": [
     {

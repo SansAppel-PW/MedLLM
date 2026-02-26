@@ -68,3 +68,4 @@ data/**/*.parquet
 
 # Eval cache
 reports/eval/judge_cache*.jsonl
+reports/eval/judge_risk_cache*.jsonl

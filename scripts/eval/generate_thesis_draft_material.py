@@ -100,6 +100,7 @@ def main() -> int:
     parser.add_argument("--artifact-report", default="reports/thesis_support/benchmark_artifact_report.json")
     parser.add_argument("--artifact-report-v2", default="reports/thesis_support/benchmark_artifact_report_v2_balanced.json")
     parser.add_argument("--detection-eval-v2", default="reports/detection_eval_v2_balanced.md")
+    parser.add_argument("--detection-eval-llm-judge", default="reports/detection_eval_llm_judge.md")
     parser.add_argument("--output-md", default="reports/thesis_support/thesis_draft_material.md")
     parser.add_argument("--output-json", default="reports/thesis_support/experiment_record.json")
     args = parser.parse_args()
@@ -113,6 +114,7 @@ def main() -> int:
     artifact_report = load_json(Path(args.artifact_report))
     artifact_report_v2 = load_json(Path(args.artifact_report_v2))
     detection_v2 = parse_detection_metrics(Path(args.detection_eval_v2))
+    detection_llm = parse_detection_metrics(Path(args.detection_eval_llm_judge))
     eval_rows = parse_eval_table(Path(args.eval_default))
     sota_rows = load_csv(Path(args.sota_csv))
 
@@ -195,6 +197,10 @@ def main() -> int:
             f"{detection_v2.get('accuracy', float('nan')):.4f}/"
             f"{detection_v2.get('recall', float('nan')):.4f}/"
             f"{detection_v2.get('f1', float('nan')):.4f}",
+            f"- LLM Judge 检测 Accuracy/Recall/F1: "
+            f"{detection_llm.get('accuracy', float('nan')):.4f}/"
+            f"{detection_llm.get('recall', float('nan')):.4f}/"
+            f"{detection_llm.get('f1', float('nan')):.4f}",
             "",
             "## 8. 论文撰写建议（可直接展开为章节）",
             "1. 数据治理章节：阐述 CMeKG 校验与冲突样本处理流程。",
@@ -214,6 +220,7 @@ def main() -> int:
         "artifact_report": artifact_report,
         "artifact_report_v2": artifact_report_v2,
         "detection_v2": detection_v2,
+        "detection_llm_judge": detection_llm,
         "eval_rows": eval_rows,
         "sota_top4": sota_rows[:4],
         "error_summary": error_summary[:8],

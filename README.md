@@ -116,10 +116,13 @@ bash scripts/eval/run_thesis_pipeline.sh
 说明：
 - 默认以 `train` split 构建参考 KB，并在 `validation,test` split 上评测，避免同集构建-评测泄漏。
 - 流水线会自动生成基准构造偏差审计，检查答案格式是否与标签强耦合。
+- 可选开启 API 风险评测基线（默认关闭）：
+  `ENABLE_LLM_RISK_JUDGE=true LLM_RISK_MAX_SAMPLES=200 bash scripts/eval/run_thesis_pipeline.sh`
 
 输出：
 - `reports/detection_eval.md`
 - `reports/detection_eval_v2_balanced.md`
+- `reports/detection_eval_llm_judge.md`（可选）
 - `reports/eval_default.md`
 - `reports/ablation_*.md`
 - `reports/sota_compare.md`

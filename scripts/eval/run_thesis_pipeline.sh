@@ -17,6 +17,10 @@ JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
 JUDGE_CACHE="${JUDGE_CACHE:-reports/eval/judge_cache.jsonl}"
 RUN_BALANCED_DETECTION_AUDIT="${RUN_BALANCED_DETECTION_AUDIT:-true}"
+ENABLE_LLM_RISK_JUDGE="${ENABLE_LLM_RISK_JUDGE:-false}"
+LLM_RISK_MODEL="${LLM_RISK_MODEL:-gpt-4o-mini}"
+LLM_RISK_MAX_SAMPLES="${LLM_RISK_MAX_SAMPLES:-200}"
+LLM_RISK_CACHE="${LLM_RISK_CACHE:-reports/eval/judge_risk_cache.jsonl}"
 
 eval_cmd=(
   python3 eval/run_eval.py
@@ -63,6 +67,18 @@ if [[ "${RUN_BALANCED_DETECTION_AUDIT}" == "true" ]]; then
   EVAL_SPLITS="${EVAL_SPLITS}" \
   DET_MAX="${DET_MAX}" \
   bash scripts/eval/run_detection_robustness.sh
+fi
+
+if [[ "${ENABLE_LLM_RISK_JUDGE}" == "true" ]]; then
+  python3 scripts/eval/run_detection_llm_judge.py \
+    --benchmark "${BENCHMARK}" \
+    --pred-output reports/detection_predictions_llm_judge.jsonl \
+    --report reports/detection_eval_llm_judge.md \
+    --model "${LLM_RISK_MODEL}" \
+    --cache "${LLM_RISK_CACHE}" \
+    --max-samples "${LLM_RISK_MAX_SAMPLES}" \
+    --include-splits "${EVAL_SPLITS}" \
+    --log-every "${LOG_EVERY}"
 fi
 
 "${eval_cmd[@]}"
