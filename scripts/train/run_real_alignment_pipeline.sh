@@ -4,22 +4,37 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
+PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 TRAIN_FILE="${TRAIN_FILE:-data/clean/real_sft_train.jsonl}"
 DEV_FILE="${DEV_FILE:-data/clean/real_sft_dev.jsonl}"
 PREF_FILE="${PREF_FILE:-data/clean/real_pref_seed_pairs.jsonl}"
 KB_FILE="${KB_FILE:-data/kg/real_medqa_reference_kb.jsonl}"
 ALIGNMENT_MODE="${ALIGNMENT_MODE:-proxy}"  # proxy | real
 
-# Step 1: real SFT (Layer-B baseline)
-TRAIN_FILE="${TRAIN_FILE}" \
-DEV_FILE="${DEV_FILE}" \
-OUTPUT_DIR="${OUTPUT_DIR:-checkpoints/layer_b/qwen25_7b_sft}" \
-LOGGING_DIR="${LOGGING_DIR:-logs/layer_b/qwen25_7b_sft}" \
-METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_sft_metrics.json}" \
-bash scripts/train/run_layer_b_real_sft.sh
+# Step 1: real SFT (Layer-B baseline), skip automatically when no GPU.
+if command -v nvidia-smi >/dev/null 2>&1 && [[ "${SKIP_LAYER_B:-0}" != "1" ]]; then
+  TRAIN_FILE="${TRAIN_FILE}" \
+  DEV_FILE="${DEV_FILE}" \
+  OUTPUT_DIR="${OUTPUT_DIR:-checkpoints/layer_b/qwen25_7b_sft}" \
+  LOGGING_DIR="${LOGGING_DIR:-logs/layer_b/qwen25_7b_sft}" \
+  METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_sft_metrics.json}" \
+  bash scripts/train/run_layer_b_real_sft.sh
+else
+  echo "[warn] skip Layer-B SFT (no GPU or SKIP_LAYER_B=1), continue alignment stage."
+  if [[ ! -f "${TRAIN_FILE}" ]]; then
+    echo "[warn] train file missing: ${TRAIN_FILE}, fallback to small-real data."
+    TRAIN_FILE="data/clean/sft_train.jsonl"
+    DEV_FILE="data/clean/sft_dev.jsonl"
+    "${PYTHON_BIN}" scripts/data/run_data_governance_pipeline.py --seed 42
+  fi
+  if [[ ! -f "${KB_FILE}" ]]; then
+    echo "[warn] kb file missing: ${KB_FILE}, fallback to demo kg."
+    KB_FILE="data/kg/cmekg_demo.jsonl"
+  fi
+fi
 
 # Step 2: build preference pairs
-python3 src/train/hard_negative_builder.py \
+"${PYTHON_BIN}" src/train/hard_negative_builder.py \
   --input "${TRAIN_FILE}" \
   --kg "${KB_FILE}" \
   --output "${PREF_FILE}"
@@ -27,22 +42,22 @@ python3 src/train/hard_negative_builder.py \
 if [[ "${ALIGNMENT_MODE}" == "proxy" ]]; then
   echo "[warn] ALIGNMENT_MODE=proxy: DPO/SimPO/KTO will run simulated trainers."
 
-  python3 src/train/dpo_train.py \
+  "${PYTHON_BIN}" src/train/dpo_train.py \
     --pref-file "${PREF_FILE}" \
     --output-dir checkpoints/dpo-real-baseline \
     --metrics-out reports/training/dpo_metrics.json
 
-  python3 src/train/simpo_train.py \
+  "${PYTHON_BIN}" src/train/simpo_train.py \
     --pref-file "${PREF_FILE}" \
     --output-dir checkpoints/simpo-real-baseline \
     --metrics-out reports/training/simpo_metrics.json
 
-  python3 src/train/kto_train.py \
+  "${PYTHON_BIN}" src/train/kto_train.py \
     --pref-file "${PREF_FILE}" \
     --output-dir checkpoints/kto-real-baseline \
     --metrics-out reports/training/kto_metrics.json
 
-  python3 src/train/compare_alignment.py \
+  "${PYTHON_BIN}" src/train/compare_alignment.py \
     --dpo reports/training/dpo_metrics.json \
     --simpo reports/training/simpo_metrics.json \
     --kto reports/training/kto_metrics.json \
@@ -53,7 +68,7 @@ elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
   DPO_MODEL_PRIMARY="${DPO_MODEL_PRIMARY:-Qwen/Qwen2.5-0.5B-Instruct}"
   DPO_MODEL_FALLBACK="${DPO_MODEL_FALLBACK:-${HOME}/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be}"
 
-  if ! python3 src/train/real_dpo_train.py \
+  if ! "${PYTHON_BIN}" src/train/real_dpo_train.py \
     --task real_dpo_alignment \
     --pref-file "${PREF_FILE}" \
     --model-name "${DPO_MODEL_PRIMARY}" \
@@ -68,7 +83,7 @@ elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
     --trust-remote-code true \
     --local-files-only false; then
     echo "[real] primary DPO model failed, fallback to local tiny model."
-    HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 src/train/real_dpo_train.py \
+    HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 "${PYTHON_BIN}" src/train/real_dpo_train.py \
       --task real_dpo_alignment_fallback \
       --pref-file "${PREF_FILE}" \
       --model-name "${DPO_MODEL_FALLBACK}" \
@@ -85,17 +100,17 @@ elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
   fi
 
   echo "[real] SimPO/KTO remain proxy in current stage."
-  python3 src/train/simpo_train.py \
+  "${PYTHON_BIN}" src/train/simpo_train.py \
     --pref-file "${PREF_FILE}" \
     --output-dir checkpoints/simpo-real-baseline \
     --metrics-out reports/training/simpo_metrics.json
 
-  python3 src/train/kto_train.py \
+  "${PYTHON_BIN}" src/train/kto_train.py \
     --pref-file "${PREF_FILE}" \
     --output-dir checkpoints/kto-real-baseline \
     --metrics-out reports/training/kto_metrics.json
 
-  python3 src/train/compare_alignment.py \
+  "${PYTHON_BIN}" src/train/compare_alignment.py \
     --dpo reports/training/dpo_real_metrics.json \
     --simpo reports/training/simpo_metrics.json \
     --kto reports/training/kto_metrics.json \

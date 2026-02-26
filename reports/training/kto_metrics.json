@@ -2,11 +2,11 @@
   "method": "KTO",
   "task": "kto",
   "simulation": true,
-  "samples": 15984,
-  "good_signal_ratio": 0.038664,
+  "samples": 1,
+  "good_signal_ratio": 0.0,
   "base_score": 0.58,
-  "aligned_score": 0.586959,
-  "score_gain": 0.006959,
-  "created_at_utc": "2026-02-25T19:52:13.968155+00:00",
+  "aligned_score": 0.58,
+  "score_gain": 0.0,
+  "created_at_utc": "2026-02-26T03:47:35.399875+00:00",
   "config": null
 }

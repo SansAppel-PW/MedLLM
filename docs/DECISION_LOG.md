@@ -78,3 +78,16 @@
   - `src/train/real_dpo_train.py`
   - `scripts/train/run_small_real_dpo_pipeline.sh`
   - `reports/training/small_real_dpo_v*/`（真实 DPO 指标）
+
+## 2026-02-26 | D007 | Real Alignment Pipeline 加入“无 GPU 跳过 Layer-B 仍继续”
+- 背景：`run_real_alignment_pipeline.sh` 原流程在无 GPU 环境下会被 Layer-B SFT 阻塞，无法进入后续对齐步骤。
+  `【DOCX | 四、工作进度安排 | 段落#T04R002】` `【PDF | 页码p12 | 段落/条目#PG012L002】`
+- 决策：脚本加入 `SKIP_LAYER_B`/无 GPU 自愈分支；当 Layer-B 不可跑时，自动回退到 small-real 数据并继续执行 real DPO + proxy SimPO/KTO。
+- 理由：
+  1. 满足“物理限制时跳过阻塞步骤，其他模块持续推进”的自治约束；
+  2. 确保 alignment 比较表在受限环境也可持续更新；
+  3. 为扩容后恢复 Layer-B 保留同一入口脚本与参数接口。
+- 产物：
+  - `scripts/train/run_real_alignment_pipeline.sh`（跳过与回退逻辑）
+  - `reports/training/dpo_real_metrics.json`
+  - `reports/alignment_compare.md`

@@ -58,7 +58,12 @@ def collect_small_real_runs(root: Path) -> list[dict[str, Any]]:
 def collect_dpo_runs(root: Path) -> list[dict[str, Any]]:
     train_dir = root / "reports/training"
     rows: list[dict[str, Any]] = []
-    for mpath in train_dir.glob("small_real_dpo_v*_metrics.json"):
+    dpo_files = list(train_dir.glob("small_real_dpo_v*_metrics.json"))
+    mainline = train_dir / "dpo_real_metrics.json"
+    if mainline.exists():
+        dpo_files.append(mainline)
+
+    for mpath in dpo_files:
         tag = mpath.stem.replace("_metrics", "")
         metrics = load_json(mpath)
         rows.append(
