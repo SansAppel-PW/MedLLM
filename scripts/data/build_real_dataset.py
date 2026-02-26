@@ -282,9 +282,27 @@ def split_rows(rows: list[dict[str, Any]], seed: int) -> tuple[list[dict[str, An
     data = rows[:]
     rng.shuffle(data)
     n = len(data)
-    n_test = max(1000, int(n * 0.1))
-    n_dev = max(1000, int(n * 0.1))
-    n_train = max(0, n - n_dev - n_test)
+    if n == 0:
+        return [], [], []
+    if n < 3:
+        return data, [], []
+
+    # For large-scale builds keep >=1000 dev/test; for small-scale smoke builds keep non-zero train/dev/test.
+    min_split = 1000 if n >= 15000 else 1
+    n_test = max(min_split, int(n * 0.1))
+    n_dev = max(min_split, int(n * 0.1))
+
+    if n_dev + n_test >= n:
+        n_dev = max(1, n // 10)
+        n_test = max(1, n // 10)
+    if n_dev + n_test >= n:
+        n_dev = 1
+        n_test = 1
+
+    n_train = max(1, n - n_dev - n_test)
+    n_dev = min(n_dev, n - n_train - 1)
+    n_test = n - n_train - n_dev
+
     train = data[:n_train]
     dev = data[n_train : n_train + n_dev]
     test = data[n_train + n_dev :]

@@ -2,11 +2,11 @@
   "method": "SimPO",
   "task": "simpo",
   "simulation": true,
-  "samples": 1,
-  "avg_margin": 0.5625,
+  "samples": 288,
+  "avg_margin": 0.947579,
   "base_score": 0.58,
-  "aligned_score": 0.720625,
-  "score_gain": 0.140625,
-  "created_at_utc": "2026-02-26T03:47:35.364897+00:00",
+  "aligned_score": 0.816895,
+  "score_gain": 0.236895,
+  "created_at_utc": "2026-02-26T03:55:44.628563+00:00",
   "config": null
 }
