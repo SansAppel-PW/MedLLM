@@ -7,3 +7,6 @@ small_real_lora_v7,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/tra
 small_real_lora_v8,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v8_metrics.json,reports/small_real/small_real_lora_v8/eval_metrics.json
 small_real_lora_v9,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v9_metrics.json,reports/small_real/small_real_lora_v9/eval_metrics.json
 small_real_lora_v10,10.735022703806559,10.73687744140625,0.0,0.0,0.0,reports/training/small_real_lora_v10_metrics.json,reports/small_real/small_real_lora_v10/eval_metrics.json
+small_real_lora_v11,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v11_metrics.json,reports/small_real/small_real_lora_v11/eval_metrics.json
+small_real_lora_v12,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v12_metrics.json,reports/small_real/small_real_lora_v12/eval_metrics.json
+small_real_lora_v13,10.734590888023376,10.736875534057617,0.0,0.0,0.0,reports/training/small_real_lora_v13_metrics.json,reports/small_real/small_real_lora_v13/eval_metrics.json

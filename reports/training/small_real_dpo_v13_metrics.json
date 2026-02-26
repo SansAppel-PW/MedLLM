@@ -1,17 +1,17 @@
 {
   "method": "DPO",
   "simulation": false,
-  "task": "small_real_dpo_ablation_beta010",
+  "task": "small_real_dpo_v13",
   "pair_count": 2,
   "steps": 4,
-  "train_runtime_sec": 0.521,
+  "train_runtime_sec": 0.6458,
   "train_loss": 0.6932482272386551,
   "pref_accuracy_before": 0.0,
   "pref_accuracy_after": 0.0,
   "pref_accuracy_gain": 0.0,
   "model_name": "/Users/bibo/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
-  "output_dir": "checkpoints/alignment/small_real_dpo_ablation_beta010",
-  "final_model_dir": "checkpoints/alignment/small_real_dpo_ablation_beta010/final",
-  "log_jsonl": "logs/alignment/small_real_dpo_ablation_beta010/train_log.jsonl",
+  "output_dir": "checkpoints/alignment/small_real_dpo_v13",
+  "final_model_dir": "checkpoints/alignment/small_real_dpo_v13/final",
+  "log_jsonl": "logs/alignment/small_real_dpo_v13/train_log.jsonl",
   "device": "mps"
 }

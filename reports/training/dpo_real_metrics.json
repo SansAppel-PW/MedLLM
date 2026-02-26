@@ -1,10 +1,10 @@
 {
   "method": "DPO",
   "simulation": false,
-  "task": "real_dpo_alignment",
+  "task": "real_dpo_alignment_fallback",
   "pair_count": 288,
   "steps": 40,
-  "train_runtime_sec": 10.1874,
+  "train_runtime_sec": 7.8637,
   "train_loss": 0.6931219816207885,
   "pref_accuracy_before": 0.3645833333333333,
   "pref_accuracy_after": 0.3715277777777778,

@@ -1,0 +1,2 @@
+samples,exact_match,rouge_l_f1,char_f1,device
+1,0.000000,0.000000,0.000000,cpu

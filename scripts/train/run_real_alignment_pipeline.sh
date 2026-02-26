@@ -67,8 +67,10 @@ elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
 
   DPO_MODEL_PRIMARY="${DPO_MODEL_PRIMARY:-Qwen/Qwen2.5-0.5B-Instruct}"
   DPO_MODEL_FALLBACK="${DPO_MODEL_FALLBACK:-${HOME}/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be}"
+  DPO_PRIMARY_TIMEOUT="${DPO_PRIMARY_TIMEOUT:-300}"
 
-  if ! "${PYTHON_BIN}" src/train/real_dpo_train.py \
+  dpo_primary_cmd=(
+    "${PYTHON_BIN}" src/train/real_dpo_train.py
     --task real_dpo_alignment \
     --pref-file "${PREF_FILE}" \
     --model-name "${DPO_MODEL_PRIMARY}" \
@@ -81,7 +83,34 @@ elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
     --max-length "${DPO_MAX_LENGTH:-256}" \
     --seed "${DPO_SEED:-42}" \
     --trust-remote-code true \
-    --local-files-only false; then
+    --local-files-only false
+  )
+
+  timeout_prefix=()
+  if [[ "${DPO_PRIMARY_TIMEOUT}" -gt 0 ]]; then
+    if command -v gtimeout >/dev/null 2>&1; then
+      timeout_prefix=(gtimeout "${DPO_PRIMARY_TIMEOUT}")
+    elif command -v timeout >/dev/null 2>&1; then
+      timeout_prefix=(timeout "${DPO_PRIMARY_TIMEOUT}")
+    fi
+  fi
+
+  run_primary_ok=0
+  if [[ ${#timeout_prefix[@]} -gt 0 ]]; then
+    if "${timeout_prefix[@]}" "${dpo_primary_cmd[@]}"; then
+      run_primary_ok=1
+    else
+      echo "[real] primary DPO run failed or timed out (${DPO_PRIMARY_TIMEOUT}s)."
+    fi
+  else
+    if "${dpo_primary_cmd[@]}"; then
+      run_primary_ok=1
+    else
+      echo "[real] primary DPO run failed."
+    fi
+  fi
+
+  if [[ "${run_primary_ok}" -ne 1 ]]; then
     echo "[real] primary DPO model failed, fallback to local tiny model."
     HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 "${PYTHON_BIN}" src/train/real_dpo_train.py \
       --task real_dpo_alignment_fallback \

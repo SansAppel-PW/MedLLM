@@ -1,8 +1,8 @@
-PYTHON := python3
+PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 VENV := .venv
-PIP := $(VENV)/bin/pip
+PIP := $(PYTHON) -m pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data small-real small-real-dpo dpo-ablation qwen-layer-b loop-once thesis-ready run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment loop-once thesis-ready run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -25,6 +25,9 @@ repo-guard-staged:
 bootstrap-data:
 	$(PYTHON) scripts/data/bootstrap_minimal_assets.py
 
+ensure-real-data:
+	PYTHON_BIN="$(PYTHON)" bash scripts/data/ensure_real_dataset.sh
+
 small-real:
 	bash scripts/train/run_small_real_pipeline.sh
 
@@ -37,8 +40,11 @@ dpo-ablation:
 qwen-layer-b:
 	bash scripts/train/run_layer_b_qwen_autofallback.sh
 
+real-alignment:
+	PYTHON_BIN="$(PYTHON)" ALIGNMENT_MODE=real SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
+
 loop-once:
-	bash scripts/run_autonomous_iteration.sh
+	PYTHON_BIN="$(PYTHON)" bash scripts/run_autonomous_iteration.sh
 
 thesis-ready:
 	$(PYTHON) scripts/audit/build_thesis_ready_package.py

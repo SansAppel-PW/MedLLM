@@ -73,6 +73,15 @@ python scripts/data/build_real_dataset.py \
 - `data/benchmark/real_medqa_benchmark.jsonl`
 - `reports/real_dataset_report.md`
 
+## 真实数据自愈（自治循环优先使用）
+```bash
+make ensure-real-data
+```
+
+说明：
+- 当 `real_sft_{train,dev,test}.jsonl` 不存在或样本量低于阈值时自动重建；
+- 默认使用中等规模采样参数，避免每轮循环都全量抓取。
+
 ## 训练对齐流水线（真实数据）
 ```bash
 # 默认：真实 SFT + 代理 DPO/SimPO/KTO（ALIGNMENT_MODE=proxy）
@@ -134,8 +143,10 @@ make loop-once
 
 默认行为：
 - 先执行 Repo Guard；
+- 先自愈真实数据（缺失时自动抓取）；
 - 再跑 small-real 闭环；
 - 再尝试 Qwen7B Layer-B（无 GPU 时写 blocker）；
+- 再执行 real alignment（默认 `ALIGNMENT_MODE=real` 且 `SKIP_LAYER_B=1`，避免重复 Layer-B 开销）；
 - 最后自动生成 baseline 审计表、iteration 报告和 thesis-ready 汇总包。
 
 ## 论文写作资产汇总

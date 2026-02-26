@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-02-26T03:52:25.418503+00:00",
+  "generated_at_utc": "2026-02-26T04:36:27.998298+00:00",
   "policy": "bootstrap minimal synthetic non-sensitive assets only when missing",
   "files": {
     "schema_examples": {
@@ -22,8 +22,8 @@
     },
     "real_benchmark": {
       "path": "data/benchmark/real_medqa_benchmark.jsonl",
-      "bytes": 1895,
-      "sha256": "40d10dc80dbb9b2cc3e9e217994a8ed944fae9c9a63714f0dcab14900090e4f1",
+      "bytes": 210115,
+      "sha256": "7d643c157e0ae303168b2a9732d7a0c86ecadb29c0cb53f3efa5a0323da95bde",
       "created_this_run": false
     }
   }

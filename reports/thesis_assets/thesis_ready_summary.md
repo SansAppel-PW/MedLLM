@@ -1,7 +1,7 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-02-26T03:52:40.112613+00:00
-- Latest Small-Real Run: small_real_lora_v10
+- Generated(UTC): 2026-02-26T04:38:59.489265+00:00
+- Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table
 - CSV: `reports/thesis_assets/tables/main_results_small_real.csv`

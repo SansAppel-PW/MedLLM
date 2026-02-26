@@ -8,10 +8,15 @@ PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 RUN_TAG="${RUN_TAG:-small_real_lora_v3}"
 
 echo "[loop] repo guard (preadd)"
-python3 scripts/repo_guard.py --mode preadd --max-size-mb 10
+"${PYTHON_BIN}" scripts/repo_guard.py --mode preadd --max-size-mb 10
 
 echo "[loop] bootstrap minimal data assets"
 "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py
+
+echo "[loop] ensure real dataset"
+bash scripts/data/ensure_real_dataset.sh || {
+  echo "[loop] ensure-real-dataset failed; continue with minimal assets"
+}
 
 echo "[loop] small real pipeline"
 RUN_TAG="${RUN_TAG}" bash scripts/train/run_small_real_pipeline.sh || {
@@ -32,6 +37,16 @@ bash scripts/train/run_small_real_dpo_ablation.sh || {
 echo "[loop] qwen layer-b (autofallback/blocker)"
 bash scripts/train/run_layer_b_qwen_autofallback.sh || {
   echo "[loop] qwen layer-b failed (non-recoverable this round)"
+}
+
+echo "[loop] real alignment pipeline"
+ALIGNMENT_MODE="${ALIGNMENT_MODE:-real}" \
+SKIP_LAYER_B="${SKIP_LAYER_B:-1}" \
+DPO_MAX_STEPS="${DPO_MAX_STEPS:-40}" \
+DPO_EPOCHS="${DPO_EPOCHS:-1}" \
+DPO_MAX_LENGTH="${DPO_MAX_LENGTH:-192}" \
+bash scripts/train/run_real_alignment_pipeline.sh || {
+  echo "[loop] real-alignment failed; continue to build non-training artifacts"
 }
 
 echo "[loop] baseline audit table"

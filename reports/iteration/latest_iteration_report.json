@@ -1,26 +1,44 @@
 {
   "title": "Loop Iteration Report",
-  "generated_at_utc": "2026-02-26T03:52:40.069855+00:00",
-  "run_tag": "small_real_lora_v10",
+  "generated_at_utc": "2026-02-26T04:38:59.450493+00:00",
+  "run_tag": "small_real_lora_v13",
   "artifacts": {
-    "small_real_train_metrics": "reports/training/small_real_lora_v10_metrics.json",
-    "small_real_eval_metrics": "reports/small_real/small_real_lora_v10/eval_metrics.json",
+    "small_real_train_metrics": "reports/training/small_real_lora_v13_metrics.json",
+    "small_real_eval_metrics": "reports/small_real/small_real_lora_v13/eval_metrics.json",
+    "real_dataset_summary": "reports/real_dataset_summary.json",
+    "dpo_real_metrics": "reports/training/dpo_real_metrics.json",
+    "simpo_metrics": "reports/training/simpo_metrics.json",
+    "kto_metrics": "reports/training/kto_metrics.json",
     "qwen_blocker": "reports/small_real/qwen_layer_b_blocker.md",
     "baseline_table": "reports/thesis_assets/tables/baseline_audit_table.csv"
   },
   "small_real_summary": {
-    "train_loss": 10.735022703806559,
-    "final_eval_loss": 10.73687744140625,
+    "train_loss": 10.734590888023376,
+    "final_eval_loss": 10.736875534057617,
     "exact_match": 0.0,
     "rouge_l_f1": 0.0,
     "char_f1": 0.0
+  },
+  "real_data_summary": {
+    "train_count": 288,
+    "dev_count": 36,
+    "test_count": 36,
+    "benchmark_count": 200
+  },
+  "real_alignment_summary": {
+    "dpo_pair_count": 288,
+    "dpo_pref_accuracy_after": 0.3715277777777778,
+    "simpo_score_after": 0.816895,
+    "kto_score_after": 0.5875,
+    "best_method": "SimPO",
+    "best_score": 0.816895
   },
   "risk_assessment": [
     {
       "type": "技术风险",
       "level": "中",
-      "summary": "对齐训练（DPO/SimPO/KTO）仍以代理流程为主，真实对齐未完成。",
-      "mitigation": "保留脚本接口并优先推进 Qwen7B Layer-B SFT 真实训练后再接真实偏好训练。"
+      "summary": "对齐训练已支持真实 DPO，但 SimPO/KTO 仍为代理流程。",
+      "mitigation": "保持真实 DPO 持续迭代，并在后续阶段补齐 SimPO/KTO 真实训练入口。"
     },
     {
       "type": "算力风险",
@@ -30,9 +48,9 @@
     },
     {
       "type": "数据风险",
-      "level": "中",
-      "summary": "small-real 当前样本规模小，不能用于论文主结论。",
-      "mitigation": "迁移到 real_* 数据并扩容后再产出主结果表与消融。"
+      "level": "低",
+      "summary": "real_* 数据集已构建且可用于真实训练与评测。",
+      "mitigation": "继续提升数据规模与多源覆盖，并记录许可与偏差分析。"
     },
     {
       "type": "论文逻辑风险",
@@ -48,7 +66,7 @@
     },
     {
       "question": "是否产出论文可用图表/数据/表格？",
-      "answer": "是，已产出 loss 曲线、eval 指标、run card、baseline 审计表。"
+      "answer": "是，已产出 loss 曲线、eval 指标、run card、baseline 审计表，并补充 real alignment 指标。"
     },
     {
       "question": "是否增强创新性或严谨性？体现在哪里？",
@@ -61,7 +79,7 @@
   ],
   "next_min_loop": [
     "在 GPU 环境运行 Qwen7B Layer-B 自动回退训练脚本并产出真实 loss/ckpt/eval。",
-    "补齐真实 DPO/SimPO 训练入口并执行至少 1 组消融。",
+    "保持真实 DPO，继续扩容偏好对并执行至少 1 组 real-alignment 消融。",
     "更新 baseline 对比表为“真实主结果 + 代理背景”双层表述。"
   ]
 }
