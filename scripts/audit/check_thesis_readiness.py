@@ -266,6 +266,8 @@ def main() -> int:
         f"- PASS: {counts['PASS']}",
         f"- DEFERRED: {counts['DEFERRED']}",
         f"- FAIL: {counts['FAIL']}",
+        f"- Ready (strict, no deferred): {counts['FAIL'] == 0 and counts['DEFERRED'] == 0}",
+        f"- Ready (allow deferred): {counts['FAIL'] == 0}",
         "",
         "| ID | Requirement | Status | Note |",
         "|---|---|---|---|",
@@ -279,7 +281,8 @@ def main() -> int:
 
     out_json = {
         "summary": counts,
-        "ready_for_writing": counts["FAIL"] == 0,
+        "ready_for_writing": counts["FAIL"] == 0 and counts["DEFERRED"] == 0,
+        "ready_with_deferred": counts["FAIL"] == 0,
         "checks": checks,
     }
     json_path = Path(args.json)

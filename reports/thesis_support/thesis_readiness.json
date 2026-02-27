@@ -4,7 +4,8 @@
     "DEFERRED": 2,
     "FAIL": 0
   },
-  "ready_for_writing": true,
+  "ready_for_writing": false,
+  "ready_with_deferred": true,
   "checks": [
     {
       "id": "R1",

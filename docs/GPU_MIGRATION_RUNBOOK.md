@@ -40,6 +40,7 @@ bash scripts/migration/run_gpu_thesis_experiment.sh
 
 默认行为：
 - 要求检测到 CUDA（未检测到会直接退出，防止伪“真实训练”）
+- 若启用 API 评测（LLM Judge / 风险判别 / LLM 回退），会检查 `.env` 或 `OPENAI_API_KEY` 是否存在
 - `ALIGNMENT_MODE=real`
 - 启用 v2 偏差审计
 - 默认执行严格完成性校验（`scripts/migration/check_gpu_completion.py`，要求真实训练非 skipped）

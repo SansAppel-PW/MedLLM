@@ -1,9 +1,9 @@
 # GPU Migration Handoff Manifest
 
-- Generated at (UTC): 2026-02-27T14:42:56.253116+00:00
+- Generated at (UTC): 2026-02-27T14:56:05.178727+00:00
 - Branch: `codex/worktree`
-- Commit: `fd365af0c1332c0e76e3109e68019571791a886a`
-- Worktree clean: `True`
+- Commit: `d471c5a88b2f0fa125444c34dc4b14ea540d4cfe`
+- Worktree clean: `False`
 
 ## Target Run
 - Model: `Qwen/Qwen2.5-7B-Instruct`
@@ -25,11 +25,11 @@
 |---|---|---:|---|
 | requirements.txt | True | 395 | c56bcc108b770dd0bd38cdc595d189d71130dc905d1ca1e05d304ffe5eafa2cd |
 | Makefile | True | 1031 | de1cc685f57ee8a3f417aac4c22ab48a5f695ee14eda1a9cc8b30681012002fb |
-| README.md | True | 6185 | 8e0b08d32f21d5e7e11ccfc424c28d341572c5c3f371661f741460794d727acb |
-| docs/GPU_MIGRATION_RUNBOOK.md | True | 2274 | 53d2aaa34bdcff41341e50aee295aebd780a1624e531d69d40c46584023bf642 |
+| README.md | True | 6455 | e08fc44dd1faed90c46481ae1b9d9871a82d35ff4087e0f4885f8e126f5689bb |
+| docs/GPU_MIGRATION_RUNBOOK.md | True | 2393 | c7b38e6e10e78a798a7ef50cbc62f490747ece3d33e2c14f51290e49e98c7590 |
 | docs/RESOURCE_AWARE_EXECUTION.md | True | 1243 | 6aaeb99f3fa369e71bf466abf5cfd9265ffabc85a4c230bc67e8e39c796c0e1f |
 | scripts/migration/bootstrap_gpu_env.sh | True | 1900 | d5a673a30bd46ea90fa00150ed672ada1137cb6f7d58ff52c8811be888a8971b |
-| scripts/migration/run_gpu_thesis_experiment.sh | True | 5214 | c2c5c495058d384894ebf1058fc26271e5a19cf62761582728cac2ec8ec5cb90 |
+| scripts/migration/run_gpu_thesis_experiment.sh | True | 5718 | 650821010b6e4442e85fbada99653f114d1b114183efb4e0cfea8103a7f7b5ae |
 | scripts/migration/check_handoff_readiness.py | True | 2245 | 1b57b0e5c5b1eb40258fe02df42ec0fdabd6fed13fab82ba9be51182b98514c6 |
 | scripts/migration/check_gpu_completion.py | True | 6377 | d581953d0ea64d292cf982d75dabaa4dc2c66b62927a789027ce020f37f23831 |
 | scripts/train/run_real_alignment_pipeline.sh | True | 12932 | e9c846d45efae5a4df9799085017357d079310e816bc8822709fd8f04eecb951 |

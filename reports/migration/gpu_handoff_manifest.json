@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-02-27T14:42:56.253116+00:00",
+  "generated_at_utc": "2026-02-27T14:56:05.178727+00:00",
   "repo_root": "/Users/bibo/Desktop/MedLLM_codex",
   "git": {
     "branch": "codex/worktree",
-    "commit": "fd365af0c1332c0e76e3109e68019571791a886a",
-    "worktree_clean": true
+    "commit": "d471c5a88b2f0fa125444c34dc4b14ea540d4cfe",
+    "worktree_clean": false
   },
   "target": {
     "model_name": "Qwen/Qwen2.5-7B-Instruct",
@@ -37,14 +37,14 @@
     {
       "path": "README.md",
       "exists": true,
-      "size_bytes": 6185,
-      "sha256": "8e0b08d32f21d5e7e11ccfc424c28d341572c5c3f371661f741460794d727acb"
+      "size_bytes": 6455,
+      "sha256": "e08fc44dd1faed90c46481ae1b9d9871a82d35ff4087e0f4885f8e126f5689bb"
     },
     {
       "path": "docs/GPU_MIGRATION_RUNBOOK.md",
       "exists": true,
-      "size_bytes": 2274,
-      "sha256": "53d2aaa34bdcff41341e50aee295aebd780a1624e531d69d40c46584023bf642"
+      "size_bytes": 2393,
+      "sha256": "c7b38e6e10e78a798a7ef50cbc62f490747ece3d33e2c14f51290e49e98c7590"
     },
     {
       "path": "docs/RESOURCE_AWARE_EXECUTION.md",
@@ -61,8 +61,8 @@
     {
       "path": "scripts/migration/run_gpu_thesis_experiment.sh",
       "exists": true,
-      "size_bytes": 5214,
-      "sha256": "c2c5c495058d384894ebf1058fc26271e5a19cf62761582728cac2ec8ec5cb90"
+      "size_bytes": 5718,
+      "sha256": "650821010b6e4442e85fbada99653f114d1b114183efb4e0cfea8103a7f7b5ae"
     },
     {
       "path": "scripts/migration/check_handoff_readiness.py",

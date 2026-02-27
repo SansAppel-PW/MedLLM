@@ -50,6 +50,19 @@ if [[ "${DRY_RUN}" == "true" ]]; then
   exit 0
 fi
 
+api_required=false
+if [[ "${ENABLE_LLM_JUDGE}" == "true" ]] || [[ "${ENABLE_LLM_RISK_JUDGE}" == "true" ]] || [[ "${ENABLE_V2_LLM_FALLBACK}" == "true" ]]; then
+  api_required=true
+fi
+
+if [[ "${api_required}" == "true" ]]; then
+  if [[ ! -f ".env" && -z "${OPENAI_API_KEY:-}" ]]; then
+    echo "[gpu-run] API evaluation enabled but .env and OPENAI_API_KEY are missing."
+    echo "[gpu-run] either provide .env or set ENABLE_LLM_JUDGE/ENABLE_LLM_RISK_JUDGE/ENABLE_V2_LLM_FALLBACK=false"
+    exit 1
+  fi
+fi
+
 python - <<'PY'
 import json
 try:

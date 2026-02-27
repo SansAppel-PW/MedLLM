@@ -1,5 +1,1 @@
 name,points,min_loss,max_loss,final_loss,final_step,source_log,figure
-tiny_sft,9,10.797189712524414,10.803969383239746,10.802509307861328,8,logs/layer_b/tiny_sft/train_log.jsonl,reports/thesis_assets/figures/training_loss_tiny_sft.png
-dpo,12,0.6931162476539612,0.6932216286659241,0.6931663155555725,12,logs/tiny/dpo/train_log.jsonl,reports/thesis_assets/figures/training_loss_dpo.png
-simpo,12,0.7184278964996338,0.7185360193252563,0.7184792757034302,12,logs/tiny/simpo/train_log.jsonl,reports/thesis_assets/figures/training_loss_simpo.png
-kto,12,0.832933783531189,0.8330100774765015,0.8329607248306274,12,logs/tiny/kto/train_log.jsonl,reports/thesis_assets/figures/training_loss_kto.png

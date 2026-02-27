@@ -62,11 +62,7 @@ def main() -> int:
             "logs/layer_b/qwen25_7b_sft/train_log.jsonl,"
             "logs/dpo-real-baseline/train_log.jsonl,"
             "logs/simpo-real-baseline/train_log.jsonl,"
-            "logs/kto-real-baseline/train_log.jsonl,"
-            "logs/layer_b/tiny_sft/train_log.jsonl,"
-            "logs/tiny/dpo/train_log.jsonl,"
-            "logs/tiny/simpo/train_log.jsonl,"
-            "logs/tiny/kto/train_log.jsonl"
+            "logs/kto-real-baseline/train_log.jsonl"
         ),
     )
     args = parser.parse_args()

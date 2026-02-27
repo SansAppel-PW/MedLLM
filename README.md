@@ -22,6 +22,7 @@
 - `eval/`: 综合评测逻辑
 - `reports/`: 实验与分析报告
 - `docs/`: 架构文档、数据登记、安全策略、执行清单
+- `docs/PROJECT_STRUCTURE.md`: 论文主链结构说明（精简后）
 
 ## 环境准备
 ```bash
@@ -136,6 +137,11 @@ make gpu-complete-check
 ```
 
 详见：`docs/GPU_MIGRATION_RUNBOOK.md`。
+
+说明：
+- `reports/thesis_support/thesis_readiness.json` 中
+  - `ready_for_writing` = 严格口径（`FAIL=0` 且 `DEFERRED=0`）
+  - `ready_with_deferred` = 过渡口径（仅要求 `FAIL=0`）
 
 ## 评测与论文资产流水线
 ```bash

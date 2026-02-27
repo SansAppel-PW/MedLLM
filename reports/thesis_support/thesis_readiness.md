@@ -3,6 +3,8 @@
 - PASS: 5
 - DEFERRED: 2
 - FAIL: 0
+- Ready (strict, no deferred): False
+- Ready (allow deferred): True
 
 | ID | Requirement | Status | Note |
 |---|---|---|---|
