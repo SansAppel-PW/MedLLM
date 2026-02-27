@@ -207,4 +207,5 @@ scripts/deploy/run_demo.sh --web
 - `docs/GPU_MIGRATION_RUNBOOK.md`
 - `docs/USAGE_MANUAL_FULL.md`
 - `docs/PROJECT_STRUCTURE.md`
+- `docs/PROJECT_MASTER_DOSSIER.md`
 - `reports/thesis_support/thesis_writing_material_full.md`
