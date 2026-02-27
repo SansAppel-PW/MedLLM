@@ -1,9 +1,9 @@
 # GPU Migration Handoff Manifest
 
-- Generated at (UTC): 2026-02-27T14:56:05.178727+00:00
+- Generated at (UTC): 2026-02-27T14:57:04.555290+00:00
 - Branch: `codex/worktree`
-- Commit: `d471c5a88b2f0fa125444c34dc4b14ea540d4cfe`
-- Worktree clean: `False`
+- Commit: `41191d782c147486e16e2f47b67b155e6a794ec2`
+- Worktree clean: `True`
 
 ## Target Run
 - Model: `Qwen/Qwen2.5-7B-Instruct`
