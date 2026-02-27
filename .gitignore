@@ -39,6 +39,7 @@ artifacts/
 *.onnx
 
 # Data/cache (keep curated datasets and reports)
+CM3KG/
 data/cache/
 data/tmp/
 data/raw/normalized_records*.jsonl
@@ -71,3 +72,9 @@ reports/eval/judge_cache*.jsonl
 reports/eval/judge_risk_cache*.jsonl
 reports/migration/day1_gpu_run.log
 reports/migration/day1_run_summary.md
+reports/migration/*.pid
+
+# Local temp scratch
+tmp/*.txt
+tmp/test_*.jsonl
+tmp/test_*.md

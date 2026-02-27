@@ -1,7 +1,7 @@
 # GPU Handoff Readiness
 
-- Ready: True
-- Missing count: 0
+- Ready: False
+- Missing count: 2
 
 | path | exists |
 |---|---|
@@ -16,5 +16,5 @@
 | scripts/eval/run_thesis_pipeline.sh | True |
 | scripts/eval/analyze_llm_fallback_impact.py | True |
 | scripts/pipeline/run_paper_ready.sh | True |
-| reports/pipeline/paper_ready_status.md | True |
-| reports/thesis_support/thesis_readiness.md | True |
+| reports/pipeline/paper_ready_status.md | False |
+| reports/thesis_support/thesis_readiness.md | False |

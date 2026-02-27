@@ -1,14 +1,14 @@
 # GPU Completion Check
 
-- strict_pass: False
+- strict_pass: True
 - allow_deferred: False
 - thesis_readiness_fail: 0
-- thesis_readiness_deferred: 2
-- real_sft_curve_present: False
+- thesis_readiness_deferred: 0
+- real_sft_curve_present: True
 
 | component | metrics_exists | metrics_real | checkpoint_exists | note |
 |---|---|---|---|---|
-| SFT | True | False | False | metrics marked skipped/simulation |
-| DPO | True | False | False | metrics marked skipped/simulation |
-| SimPO | True | False | False | metrics marked skipped/simulation |
-| KTO | True | False | False | metrics marked skipped/simulation |
+| SFT | True | True | True | real metrics + checkpoint present |
+| DPO | True | True | True | real metrics + checkpoint present |
+| SimPO | True | True | True | real metrics + checkpoint present |
+| KTO | True | True | True | real metrics + checkpoint present |

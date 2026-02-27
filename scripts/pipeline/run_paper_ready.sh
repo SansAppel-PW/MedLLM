@@ -16,7 +16,7 @@ ALLOW_SKIP_TRAINING="${ALLOW_SKIP_TRAINING:-true}"
 FORCE_SKIP_TRAINING="${FORCE_SKIP_TRAINING:-false}"
 
 ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-false}"
-JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
+JUDGE_MODEL="${JUDGE_MODEL:-gemini-2.5-flash}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
 JUDGE_CACHE="${JUDGE_CACHE:-reports/eval/judge_cache.jsonl}"
 
@@ -31,6 +31,7 @@ DATA_SEED="${DATA_SEED:-42}"
 DATA_CMT_COUNT="${DATA_CMT_COUNT:-20000}"
 DATA_H26_COUNT="${DATA_H26_COUNT:-15000}"
 DATA_HENC_COUNT="${DATA_HENC_COUNT:-15000}"
+DATA_MEDQA_COUNT="${DATA_MEDQA_COUNT:-6000}"
 DATA_BENCH_TRAIN="${DATA_BENCH_TRAIN:-2000}"
 DATA_BENCH_VAL="${DATA_BENCH_VAL:-600}"
 DATA_BENCH_TEST="${DATA_BENCH_TEST:-600}"
@@ -93,6 +94,7 @@ if should_build_data; then
       --cmt-count "${DATA_CMT_COUNT}" \
       --h26-count "${DATA_H26_COUNT}" \
       --henc-count "${DATA_HENC_COUNT}" \
+      --medqa-count "${DATA_MEDQA_COUNT}" \
       --bench-train "${DATA_BENCH_TRAIN}" \
       --bench-val "${DATA_BENCH_VAL}" \
       --bench-test "${DATA_BENCH_TEST}"

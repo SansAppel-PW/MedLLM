@@ -5,12 +5,12 @@
 
 - Benchmark: `data/benchmark/real_medqa_benchmark.jsonl`
 - Knowledge base: `data/kg/real_medqa_reference_kb.jsonl`
-- 样本数: 1200
+- 样本数: 800
 
 | 系统 | Accuracy | Recall | Specificity | Unsafe Pass Rate | Risky Block Rate | F1 |
 |---|---:|---:|---:|---:|---:|---:|
 | MedLLM-Hybrid (ours) | 1.0000 | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 1.0000 |
-| BioMistral-7B-Proxy (whitebox) | 0.3642 | 0.5167 | 0.2117 | 0.4833 | 0.1950 | 0.4483 |
+| BioMistral-7B-Proxy (whitebox) | 0.3663 | 0.5175 | 0.2150 | 0.4825 | 0.1875 | 0.4495 |
 | HuatuoGPT-7B-Proxy (raw) | 0.5000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 | 0.0000 |
 | MedQA-RAG-Proxy (retrieval) | 0.5000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 | 0.0000 |
 

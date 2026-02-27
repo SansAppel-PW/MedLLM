@@ -1,0 +1,156 @@
+{
+  "summary": {
+    "PASS": 21,
+    "WARN": 0,
+    "FAIL": 0
+  },
+  "results": [
+    {
+      "section": "数据源",
+      "item": "CMtMedQA 数据源",
+      "status": "PASS",
+      "evidence": "reports/real_dataset_summary.json 包含 `Suprit/CMtMedQA`",
+      "action": "保持"
+    },
+    {
+      "section": "数据源",
+      "item": "Huatuo-26M-Lite 数据源",
+      "status": "PASS",
+      "evidence": "reports/real_dataset_summary.json 包含 `FreedomIntelligence/Huatuo26M-Lite`",
+      "action": "保持"
+    },
+    {
+      "section": "数据源",
+      "item": "MedQA 数据源",
+      "status": "PASS",
+      "evidence": "benchmark 文件存在并由 MedQA 构建: `data/benchmark/real_medqa_benchmark.jsonl`",
+      "action": "如需将 MedQA 纳入 SFT，重跑 build_real_dataset.py --medqa-count"
+    },
+    {
+      "section": "数据源",
+      "item": "CM3KG 本地知识图谱目录",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/CM3KG`",
+      "action": "保持或迁移到 GPU 环境后同路径挂载"
+    },
+    {
+      "section": "知识图谱",
+      "item": "集成 CMeKG 文件",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/data/kg/cmekg_integrated.jsonl`",
+      "action": "执行 scripts/data/build_cmekg_from_cm3kg.py"
+    },
+    {
+      "section": "检测/RAG",
+      "item": "原子事实抽取",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/src/detect/atomic_fact_extractor.py`",
+      "action": "保持"
+    },
+    {
+      "section": "检测/RAG",
+      "item": "检索模块",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/src/detect/retriever.py`",
+      "action": "保持"
+    },
+    {
+      "section": "检测/RAG",
+      "item": "NLI核查",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/src/detect/nli_checker.py`",
+      "action": "保持"
+    },
+    {
+      "section": "检测/RAG",
+      "item": "运行时守卫",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/src/detect/runtime_guard.py`",
+      "action": "保持"
+    },
+    {
+      "section": "训练",
+      "item": "真实 SFT 入口",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/src/train/real_sft_train.py`",
+      "action": "保持"
+    },
+    {
+      "section": "训练",
+      "item": "真实偏好对齐入口",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/src/train/real_pref_train.py`",
+      "action": "保持"
+    },
+    {
+      "section": "训练",
+      "item": "对齐编排脚本",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/scripts/train/run_real_alignment_pipeline.sh`",
+      "action": "保持"
+    },
+    {
+      "section": "训练",
+      "item": "SFT 指标",
+      "status": "PASS",
+      "evidence": "存在 train_loss: `/Users/bibo/Desktop/MedLLM_codex/reports/training/layer_b_qwen25_7b_sft_metrics.json`",
+      "action": "指标已可用于论文"
+    },
+    {
+      "section": "训练",
+      "item": "DPO 指标",
+      "status": "PASS",
+      "evidence": "真实训练指标: `/Users/bibo/Desktop/MedLLM_codex/reports/training/dpo_metrics.json`",
+      "action": "指标已可用于论文"
+    },
+    {
+      "section": "训练",
+      "item": "SimPO 指标",
+      "status": "PASS",
+      "evidence": "真实训练指标: `/Users/bibo/Desktop/MedLLM_codex/reports/training/simpo_metrics.json`",
+      "action": "指标已可用于论文"
+    },
+    {
+      "section": "训练",
+      "item": "KTO 指标",
+      "status": "PASS",
+      "evidence": "真实训练指标: `/Users/bibo/Desktop/MedLLM_codex/reports/training/kto_metrics.json`",
+      "action": "指标已可用于论文"
+    },
+    {
+      "section": "论文产物",
+      "item": "数据报告",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/reports/real_dataset_report.md`",
+      "action": "保持"
+    },
+    {
+      "section": "论文产物",
+      "item": "清洗报告",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/reports/data_cleaning_report.md`",
+      "action": "保持"
+    },
+    {
+      "section": "论文产物",
+      "item": "综合评测",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/reports/eval_default.md`",
+      "action": "保持"
+    },
+    {
+      "section": "论文产物",
+      "item": "SOTA 对比",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/reports/sota_compare.md`",
+      "action": "保持"
+    },
+    {
+      "section": "论文产物",
+      "item": "论文草稿材料",
+      "status": "PASS",
+      "evidence": "存在: `/Users/bibo/Desktop/MedLLM_codex/reports/thesis_support/thesis_draft_material.md`",
+      "action": "保持"
+    }
+  ]
+}

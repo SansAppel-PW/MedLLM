@@ -30,6 +30,13 @@ def stable_query_hash(text: str) -> str:
 
 
 def load_knowledge_docs(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        demo_fallback = path.parent / "cmekg_demo.jsonl"
+        if demo_fallback.exists():
+            path = demo_fallback
+        else:
+            raise FileNotFoundError(f"knowledge base file not found: {path}")
+
     rows = []
     with path.open("r", encoding="utf-8") as f:
         for line in f:
@@ -158,7 +165,7 @@ def run_batch(facts_path: Path, output_path: Path, kb_path: Path, top_k: int) ->
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="KG retrieval module")
-    parser.add_argument("--kb", default="data/kg/cmekg_demo.jsonl", help="Knowledge base jsonl")
+    parser.add_argument("--kb", default="data/kg/cmekg_integrated.jsonl", help="Knowledge base jsonl")
     parser.add_argument("--query", default="", help="Single query")
     parser.add_argument("--facts", default="", help="Facts jsonl input")
     parser.add_argument("--output", default="", help="Batch output jsonl")

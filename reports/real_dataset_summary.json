@@ -5,8 +5,8 @@
       "dataset": "Suprit/CMtMedQA",
       "config": "default",
       "split": "train",
-      "num_rows_total": 68023,
-      "start_offset": 47698,
+      "num_rows_total": 8000,
+      "start_offset": 0,
       "target_count": 8000,
       "fetched_count": 8000,
       "license": "MIT"
@@ -16,8 +16,8 @@
       "dataset": "FreedomIntelligence/Huatuo26M-Lite",
       "config": "default",
       "split": "train",
-      "num_rows_total": 177703,
-      "start_offset": 4826,
+      "num_rows_total": 6000,
+      "start_offset": 0,
       "target_count": 6000,
       "fetched_count": 6000,
       "license": "Apache-2.0"
@@ -27,8 +27,8 @@
       "dataset": "FreedomIntelligence/huatuo_encyclopedia_qa",
       "config": "default",
       "split": "train",
-      "num_rows_total": 362420,
-      "start_offset": 25975,
+      "num_rows_total": 6000,
+      "start_offset": 0,
       "target_count": 6000,
       "fetched_count": 6000,
       "license": "Apache-2.0"
@@ -40,5 +40,6 @@
   "dev_count": 1997,
   "test_count": 1997,
   "benchmark_count": 3600,
-  "seed": 42
+  "seed": 42,
+  "rebuilt_from_local_artifacts": true
 }

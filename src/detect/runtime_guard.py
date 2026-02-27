@@ -102,7 +102,7 @@ def mcq_format_signal(query: str, answer: str) -> dict[str, Any]:
 def guard_answer(
     query: str,
     answer: str,
-    kg_path: str | Path = "data/kg/cmekg_demo.jsonl",
+    kg_path: str | Path = "data/kg/cmekg_integrated.jsonl",
     top_k: int = 5,
     high_threshold: float = 0.58,
     medium_threshold: float = 0.40,
@@ -203,7 +203,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Runtime hallucination guard")
     parser.add_argument("--query", default="", help="Single query")
     parser.add_argument("--answer", default="", help="Single model answer")
-    parser.add_argument("--kg", default="data/kg/cmekg_demo.jsonl", help="Knowledge base")
+    parser.add_argument("--kg", default="data/kg/cmekg_integrated.jsonl", help="Knowledge base")
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--input", default="", help="Batch input jsonl")
     parser.add_argument("--output", default="", help="Batch output jsonl")

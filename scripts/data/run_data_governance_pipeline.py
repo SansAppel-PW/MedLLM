@@ -81,6 +81,35 @@ def build_default_kg(path: Path) -> None:
     save_jsonl(path, rows)
 
 
+def ensure_reference_kg(repo_root: Path, kg_path: Path, cm3kg_dir: Path) -> None:
+    if kg_path.exists():
+        return
+
+    cm3kg_medical = cm3kg_dir / "medical.csv"
+    if cm3kg_medical.exists():
+        run_cmd(
+            [
+                sys.executable,
+                "scripts/data/build_cmekg_from_cm3kg.py",
+                "--cm3kg-dir",
+                str(cm3kg_dir.relative_to(repo_root)),
+                "--output",
+                str(kg_path.relative_to(repo_root)),
+                "--report",
+                "reports/cm3kg_kg_report.md",
+                "--summary-json",
+                "reports/cm3kg_kg_summary.json",
+                "--merge-demo",
+                "data/kg/cmekg_demo.jsonl",
+            ],
+            cwd=repo_root,
+        )
+        return
+
+    # Fallback for environments without CM3KG assets.
+    build_default_kg(kg_path)
+
+
 def split_train_dev(rows: list[dict[str, Any]], dev_ratio: float, seed: int) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     rng = random.Random(seed)
     copied = list(rows)
@@ -178,7 +207,8 @@ def write_report(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run data governance pipeline")
     parser.add_argument("--input", default="data/raw/schema_examples.json", help="Raw input file")
-    parser.add_argument("--kg", default="data/kg/cmekg_demo.jsonl", help="Reference KG file")
+    parser.add_argument("--kg", default="data/kg/cmekg_integrated.jsonl", help="Reference KG file")
+    parser.add_argument("--cm3kg-dir", default="CM3KG", help="CM3KG data directory")
     parser.add_argument("--dataset", default="med_demo", help="Dataset name tag")
     parser.add_argument("--split", default="train", help="Split tag")
     parser.add_argument("--dev-ratio", type=float, default=0.2, help="Dev set ratio")
@@ -189,7 +219,8 @@ def main() -> int:
 
     input_path = (repo_root / args.input).resolve()
     kg_path = (repo_root / args.kg).resolve()
-    build_default_kg(kg_path)
+    cm3kg_dir = (repo_root / args.cm3kg_dir).resolve()
+    ensure_reference_kg(repo_root=repo_root, kg_path=kg_path, cm3kg_dir=cm3kg_dir)
 
     normalized = repo_root / "data/raw/normalized_records.jsonl"
     pii_cleaned = repo_root / "data/raw/normalized_records_pii.jsonl"

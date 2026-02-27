@@ -40,7 +40,7 @@ OPENAI_API_KEY=your_key_here
 运行评测时开启：
 
 ```bash
-ENABLE_LLM_JUDGE=true JUDGE_MODEL=gpt-4o-mini bash scripts/eval/run_eval.sh
+ENABLE_LLM_JUDGE=true JUDGE_MODEL=gemini-2.5-flash bash scripts/eval/run_eval.sh
 ```
 
 ## 真实数据构建（论文实验）
@@ -50,6 +50,7 @@ python scripts/data/build_real_dataset.py \
   --cmt-count 8000 \
   --h26-count 6000 \
   --henc-count 6000 \
+  --medqa-count 6000 \
   --bench-train 1200 \
   --bench-val 300 \
   --bench-test 300
@@ -59,6 +60,13 @@ python scripts/data/build_real_dataset.py \
 - `data/clean/real_sft_{train,dev,test}.jsonl`
 - `data/benchmark/real_medqa_benchmark.jsonl`
 - `reports/real_dataset_report.md`
+
+构建 CM3KG 集成知识图谱（CMeKG 风格）：
+```bash
+python scripts/data/build_cmekg_from_cm3kg.py \
+  --cm3kg-dir CM3KG \
+  --output data/kg/cmekg_integrated.jsonl
+```
 
 ## 训练对齐流水线（真实数据）
 ```bash
@@ -171,9 +179,9 @@ bash scripts/eval/run_thesis_pipeline.sh
 - 默认以 `train` split 构建参考 KB，并在 `validation,test` split 上评测，避免同集构建-评测泄漏。
 - 流水线会自动生成基准构造偏差审计，检查答案格式是否与标签强耦合。
 - 可选开启 API 风险评测基线（默认关闭）：
-  `ENABLE_LLM_RISK_JUDGE=true LLM_RISK_MAX_SAMPLES=200 bash scripts/eval/run_thesis_pipeline.sh`
+  `ENABLE_LLM_RISK_JUDGE=true LLM_RISK_MODEL=gemini-2.5-flash LLM_RISK_MAX_SAMPLES=200 bash scripts/eval/run_thesis_pipeline.sh`
 - 可选开启 v2 规则检测的 LLM 回退融合（默认关闭）：
-  `ENABLE_V2_LLM_FALLBACK=true V2_LLM_MAX_CALLS=200 bash scripts/eval/run_thesis_pipeline.sh`
+  `ENABLE_V2_LLM_FALLBACK=true V2_LLM_MODEL=gemini-2.5-flash V2_LLM_MAX_CALLS=200 bash scripts/eval/run_thesis_pipeline.sh`
 
 输出：
 - `reports/detection_eval.md`

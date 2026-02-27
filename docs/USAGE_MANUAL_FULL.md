@@ -5,8 +5,8 @@
 
 ## 2. 当前项目状态（2026-02-27）
 - 迁移就绪：`reports/migration/handoff_readiness.json` -> `ready=true`
-- 严格完工：`reports/migration/gpu_completion_check.json` -> `strict_pass=false`
-- 原因：当前机器无 CUDA，真实 Qwen2.5-7B/14B 训练尚未执行，仅保留跳过证据。
+- 严格完工：以 `reports/migration/gpu_completion_check.json` 的最新值为准（GPU 实训后应为 `strict_pass=true`）。
+- 说明：若在无 CUDA 环境运行，训练阶段会降级并在审计报告中标注为非真实训练口径。
 
 这意味着：
 - 工程链路完整；

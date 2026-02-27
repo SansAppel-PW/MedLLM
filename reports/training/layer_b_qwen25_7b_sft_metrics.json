@@ -1,10 +1,13 @@
 {
-  "skipped": true,
-  "skip_reason": "Insufficient CUDA resources for 7B (need >= 18GB).",
-  "train_runtime": 0.0,
-  "train_samples_per_second": 0.0,
-  "train_steps_per_second": 0.0,
-  "train_loss": null,
-  "final_eval_loss": null,
-  "created_at_utc": "2026-02-27T15:55:47.275136+00:00"
+  "train_runtime": 281.1239,
+  "train_samples_per_second": 1.138,
+  "train_steps_per_second": 0.142,
+  "total_flos": 5011671618723840.0,
+  "train_loss": 1.8862550735473633,
+  "epoch": 0.02002002002002002,
+  "final_eval_loss": 1.7270233631134033,
+  "final_eval_runtime": 8.2081,
+  "final_eval_samples_per_second": 3.899,
+  "final_eval_steps_per_second": 3.899,
+  "final_epoch": 0.02002002002002002
 }

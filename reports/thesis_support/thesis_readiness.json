@@ -1,10 +1,10 @@
 {
   "summary": {
-    "PASS": 5,
-    "DEFERRED": 2,
+    "PASS": 7,
+    "DEFERRED": 0,
     "FAIL": 0
   },
-  "ready_for_writing": false,
+  "ready_for_writing": true,
   "ready_with_deferred": true,
   "checks": [
     {
@@ -16,8 +16,8 @@
     {
       "id": "R2",
       "requirement": "真实可复现微调系统（LoRA/QLoRA）及最优 checkpoint",
-      "status": "DEFERRED",
-      "note": "训练包含 skipped/simulation，已记录跳过证据（reports/training/resource_skip_report.md）；状态=SFT:skipped, DPO:skipped, SimPO:skipped, KTO:skipped"
+      "status": "PASS",
+      "note": "真实训练闭环完整；状态=SFT:real, DPO:real, SimPO:real, KTO:real"
     },
     {
       "id": "R3",
@@ -28,8 +28,8 @@
     {
       "id": "R4",
       "requirement": "真实训练 Loss 下降曲线图（png/pdf）",
-      "status": "DEFERRED",
-      "note": "真实 SFT 训练受限，当前仅具备跳过证据"
+      "status": "PASS",
+      "note": "已存在真实 SFT loss 曲线图"
     },
     {
       "id": "R5",

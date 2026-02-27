@@ -7,7 +7,9 @@
 | `Suprit/CMtMedQA` | 68,023 / 8,000 | 中文医疗问答训练语料 | MIT | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/cmtmedqa.jsonl` |
 | `FreedomIntelligence/Huatuo26M-Lite` | 177,703 / 6,000 | 中文医疗问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo26m_lite.jsonl` |
 | `FreedomIntelligence/huatuo_encyclopedia_qa` | 362,420 / 6,000 | 医学百科问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo_encyclopedia.jsonl` |
+| `GBaker/MedQA-USMLE-4-options-hf` (train) | train / 6,000 | 医学考试问答训练补充语料 | CC-BY-SA-4.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/medqa_usmle_train.jsonl` |
 | `GBaker/MedQA-USMLE-4-options-hf` | train/val/test | 构建真实 benchmark 与参考 KB | CC-BY-SA-4.0 | `scripts/data/build_real_dataset.py` | `data/benchmark/real_medqa_benchmark.jsonl` |
+| `CM3KG`（本地导入） | 8k+ disease / 6k+ symptom | 构建 CMeKG 风格知识图谱基础设施 | 见上游仓库说明 | `scripts/data/build_cmekg_from_cm3kg.py` | `data/kg/cmekg_integrated.jsonl` |
 
 ## 2. 项目衍生数据产物
 
@@ -18,6 +20,7 @@
 | `data/clean/real_sft_test.jsonl` | 真实 SFT 测试集 | `scripts/data/build_real_dataset.py` |
 | `data/clean/real_pref_seed_pairs.jsonl` | 真实偏好对种子数据 | `scripts/train/run_real_alignment_pipeline.sh` |
 | `data/kg/real_medqa_reference_kb.jsonl` | 基于 benchmark 正例构建的参考知识库 | `scripts/data/build_benchmark_reference_kb.py` |
+| `data/kg/cmekg_integrated.jsonl` | 由 CM3KG 构建并融合 guardrail 三元组的集成 KG | `scripts/data/build_cmekg_from_cm3kg.py` |
 | `reports/real_dataset_summary.json` | 真实数据构建统计摘要 | `scripts/data/build_real_dataset.py` |
 
 ## 3. 合规与使用规则

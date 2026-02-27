@@ -1,7 +1,10 @@
 {
-  "ready": true,
-  "missing_count": 0,
-  "missing": [],
+  "ready": false,
+  "missing_count": 2,
+  "missing": [
+    "reports/pipeline/paper_ready_status.md",
+    "reports/thesis_support/thesis_readiness.md"
+  ],
   "checks": [
     {
       "path": "day1_run.sh",
@@ -49,11 +52,11 @@
     },
     {
       "path": "reports/pipeline/paper_ready_status.md",
-      "exists": true
+      "exists": false
     },
     {
       "path": "reports/thesis_support/thesis_readiness.md",
-      "exists": true
+      "exists": false
     }
   ]
 }

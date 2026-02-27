@@ -1,0 +1,24 @@
+{
+  "medical_rows": 8808,
+  "disease_alias_entities": 2335,
+  "symptom_alias_entities": 1682,
+  "merged_demo_rows": 5,
+  "triple_count": 298498,
+  "relation_counter": {
+    "has_symptom": 54710,
+    "requires_check": 39418,
+    "comorbidity": 12011,
+    "recommended_drug": 59736,
+    "treats": 59738,
+    "diet_recommendation": 22230,
+    "diet_avoid": 22239,
+    "alias_of": 28413,
+    "contraindicated_for": 2,
+    "dosage_range_mg": 1
+  },
+  "source_counter": {
+    "CM3KG.medical": 270080,
+    "CM3KG.alias": 28413,
+    "cmekg_demo": 5
+  }
+}

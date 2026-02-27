@@ -6,8 +6,8 @@ OUTPUT_ROOT="${ROOT_DIR}/data/raw"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 FORCE=0
 
-DEFAULT_DATASETS=("medqa" "cmtmedqa")
-SELECTED_DATASETS=("medqa" "cmtmedqa")
+DEFAULT_DATASETS=("medqa" "cmtmedqa" "huatuo26m")
+SELECTED_DATASETS=("medqa" "cmtmedqa" "huatuo26m")
 
 usage() {
   cat <<'EOF'
@@ -15,7 +15,7 @@ Usage:
   scripts/data/download_datasets.sh [options]
 
 Options:
-  --dataset NAME_OR_REPO   Dataset key (medqa|cmtmedqa) or HuggingFace repo id (owner/repo).
+  --dataset NAME_OR_REPO   Dataset key (medqa|cmtmedqa|huatuo26m) or HuggingFace repo id (owner/repo).
                            Repeat the option to add multiple datasets.
   --root PATH              Output root directory. Default: data/raw
   --python BIN             Python binary. Default: python3
@@ -48,6 +48,7 @@ dataset_repo() {
   case "$1" in
     medqa) echo "fzkuji/MedQA" ;;
     cmtmedqa) echo "Suprit/CMtMedQA" ;;
+    huatuo26m) echo "FreedomIntelligence/Huatuo26M-Lite" ;;
     *) return 1 ;;
   esac
 }
@@ -56,6 +57,7 @@ dataset_config() {
   case "$1" in
     medqa) echo "med_qa_zh_source" ;;
     cmtmedqa) echo "" ;;
+    huatuo26m) echo "default" ;;
     *) return 1 ;;
   esac
 }

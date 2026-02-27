@@ -1,48 +1,48 @@
 {
-  "strict_pass": false,
+  "strict_pass": true,
   "allow_deferred": false,
   "thesis_readiness": {
     "fail": 0,
-    "deferred": 2,
+    "deferred": 0,
     "path": "reports/thesis_support/thesis_readiness.json"
   },
-  "real_sft_curve_present": false,
+  "real_sft_curve_present": true,
   "components": [
     {
       "component": "SFT",
       "metrics_path": "reports/training/layer_b_qwen25_7b_sft_metrics.json",
       "metrics_exists": true,
-      "metrics_real": false,
+      "metrics_real": true,
       "checkpoint_path": "checkpoints/layer_b/qwen25_7b_sft/final",
-      "checkpoint_exists": false,
-      "note": "metrics marked skipped/simulation"
+      "checkpoint_exists": true,
+      "note": "real metrics + checkpoint present"
     },
     {
       "component": "DPO",
       "metrics_path": "reports/training/dpo_metrics.json",
       "metrics_exists": true,
-      "metrics_real": false,
+      "metrics_real": true,
       "checkpoint_path": "checkpoints/dpo-real-baseline/final",
-      "checkpoint_exists": false,
-      "note": "metrics marked skipped/simulation"
+      "checkpoint_exists": true,
+      "note": "real metrics + checkpoint present"
     },
     {
       "component": "SimPO",
       "metrics_path": "reports/training/simpo_metrics.json",
       "metrics_exists": true,
-      "metrics_real": false,
+      "metrics_real": true,
       "checkpoint_path": "checkpoints/simpo-real-baseline/final",
-      "checkpoint_exists": false,
-      "note": "metrics marked skipped/simulation"
+      "checkpoint_exists": true,
+      "note": "real metrics + checkpoint present"
     },
     {
       "component": "KTO",
       "metrics_path": "reports/training/kto_metrics.json",
       "metrics_exists": true,
-      "metrics_real": false,
+      "metrics_real": true,
       "checkpoint_path": "checkpoints/kto-real-baseline/final",
-      "checkpoint_exists": false,
-      "note": "metrics marked skipped/simulation"
+      "checkpoint_exists": true,
+      "note": "real metrics + checkpoint present"
     }
   ]
 }

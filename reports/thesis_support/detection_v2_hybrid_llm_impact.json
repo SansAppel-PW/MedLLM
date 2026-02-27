@@ -1,7 +1,7 @@
 {
   "samples": 1200,
-  "llm_used": 80,
-  "llm_promotions": 52,
+  "llm_used": 500,
+  "llm_promotions": 309,
   "rule_only": {
     "variant": "rule_only",
     "accuracy": 0.5,
@@ -19,26 +19,26 @@
   },
   "hybrid": {
     "variant": "hybrid_with_llm",
-    "accuracy": 0.515,
-    "precision": 0.673077,
-    "recall": 0.058333,
-    "f1": 0.107362,
-    "specificity": 0.971667,
-    "fpr": 0.028333,
-    "fnr": 0.941667,
-    "tp": 35,
-    "fp": 17,
-    "tn": 583,
-    "fn": 565,
+    "accuracy": 0.6075,
+    "precision": 0.708738,
+    "recall": 0.365,
+    "f1": 0.481848,
+    "specificity": 0.85,
+    "fpr": 0.15,
+    "fnr": 0.635,
+    "tp": 219,
+    "fp": 90,
+    "tn": 510,
+    "fn": 381,
     "sample_count": 1200
   },
   "delta": {
-    "accuracy": 0.015000000000000013,
-    "precision": 0.6730769230769231,
-    "recall": 0.058333333333333334,
-    "f1": 0.10736196319018405,
-    "specificity": -0.02833333333333332,
-    "fpr": 0.028333333333333332,
-    "fnr": -0.05833333333333335
+    "accuracy": 0.10750000000000004,
+    "precision": 0.7087378640776699,
+    "recall": 0.365,
+    "f1": 0.4818481848184819,
+    "specificity": -0.15000000000000002,
+    "fpr": 0.15,
+    "fnr": -0.365
   }
 }

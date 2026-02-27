@@ -1,3 +1,3 @@
 # Training Loss Figures
 
-未发现可用训练日志（train_log.jsonl），暂无可绘制曲线。
+未安装 matplotlib，无法自动生成训练曲线图。

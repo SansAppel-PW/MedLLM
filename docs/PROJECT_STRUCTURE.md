@@ -9,7 +9,7 @@
 - `src/serve/`：服务与推理入口。
 
 ## 2. Orchestration Scripts
-- `scripts/data/`：真实数据构建、benchmark 构建、治理流水线。
+- `scripts/data/`：真实数据构建、CM3KG->CMeKG 构建、benchmark 构建、治理流水线。
 - `scripts/train/`：Layer-B 真实 SFT 与真实对齐编排。
 - `scripts/eval/`：主评测、鲁棒评测、论文资产生成。
 - `scripts/pipeline/run_paper_ready.sh`：本地一键论文流水线。

@@ -464,6 +464,7 @@ def main() -> int:
     parser.add_argument("--cmt-count", type=int, default=20000)
     parser.add_argument("--h26-count", type=int, default=15000)
     parser.add_argument("--henc-count", type=int, default=15000)
+    parser.add_argument("--medqa-count", type=int, default=6000)
     parser.add_argument("--bench-train", type=int, default=2000)
     parser.add_argument("--bench-val", type=int, default=600)
     parser.add_argument("--bench-test", type=int, default=600)
@@ -499,6 +500,15 @@ def main() -> int:
             target_count=args.henc_count,
             adapter="huatuo_enc",
             license_hint="Apache-2.0",
+        ),
+        SourceSpec(
+            name="medqa_usmle_train",
+            dataset="GBaker/MedQA-USMLE-4-options-hf",
+            config="default",
+            split="train",
+            target_count=args.medqa_count,
+            adapter="medqa",
+            license_hint="CC-BY-SA-4.0",
         ),
     ]
 

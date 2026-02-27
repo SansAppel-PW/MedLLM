@@ -1,7 +1,16 @@
 {
-  "created_at_utc": "2026-02-27T15:55:45.696845+00:00",
-  "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O",
-  "accelerator": "mps",
-  "cuda_device_count": 0,
-  "cuda_total_mem_gb": 0.0
+  "created_at_utc": "2026-02-27T20:18:21.373302+00:00",
+  "platform": "Linux-5.4.0-136-generic-x86_64-with-glibc2.35",
+  "accelerator": "cuda",
+  "cuda_device_count": 1,
+  "cuda_total_mem_gb": 31.73,
+  "cuda_devices": [
+    {
+      "index": 0,
+      "name": "Tesla V100-PCIE-32GB",
+      "mem_gb": 31.73,
+      "compute_capability": "7.0"
+    }
+  ],
+  "cuda_min_compute_capability_major": 7
 }

@@ -6,6 +6,9 @@ cd "${ROOT_DIR}"
 
 BENCHMARK="${BENCHMARK:-data/benchmark/real_medqa_benchmark.jsonl}"
 KB_OUT="${KB_OUT:-data/kg/real_medqa_reference_kb.jsonl}"
+KG_BASE="${KG_BASE:-data/kg/cmekg_integrated.jsonl}"
+CM3KG_DIR="${CM3KG_DIR:-CM3KG}"
+EXTRA_KG_MAX="${EXTRA_KG_MAX:-12000}"
 KB_SOURCE_SPLITS="${KB_SOURCE_SPLITS:-train}"
 EVAL_SPLITS="${EVAL_SPLITS:-validation,test}"
 DET_MAX="${DET_MAX:-0}"
@@ -13,16 +16,16 @@ EVAL_MAX="${EVAL_MAX:-0}"
 SOTA_MAX="${SOTA_MAX:-0}"
 LOG_EVERY="${LOG_EVERY:-300}"
 ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-false}"
-JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
+JUDGE_MODEL="${JUDGE_MODEL:-gemini-2.5-flash}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
 JUDGE_CACHE="${JUDGE_CACHE:-reports/eval/judge_cache.jsonl}"
 RUN_BALANCED_DETECTION_AUDIT="${RUN_BALANCED_DETECTION_AUDIT:-true}"
 ENABLE_LLM_RISK_JUDGE="${ENABLE_LLM_RISK_JUDGE:-false}"
-LLM_RISK_MODEL="${LLM_RISK_MODEL:-gpt-4o-mini}"
+LLM_RISK_MODEL="${LLM_RISK_MODEL:-gemini-2.5-flash}"
 LLM_RISK_MAX_SAMPLES="${LLM_RISK_MAX_SAMPLES:-200}"
 LLM_RISK_CACHE="${LLM_RISK_CACHE:-reports/eval/judge_risk_cache.jsonl}"
 ENABLE_V2_LLM_FALLBACK="${ENABLE_V2_LLM_FALLBACK:-false}"
-V2_LLM_MODEL="${V2_LLM_MODEL:-gpt-4o-mini}"
+V2_LLM_MODEL="${V2_LLM_MODEL:-gemini-2.5-flash}"
 V2_LLM_CACHE="${V2_LLM_CACHE:-reports/eval/judge_risk_cache_v2.jsonl}"
 V2_LLM_MIN_CONF="${V2_LLM_MIN_CONF:-0.70}"
 V2_LLM_MAX_CALLS="${V2_LLM_MAX_CALLS:-0}"
@@ -46,9 +49,23 @@ if [[ "${ENABLE_LLM_JUDGE}" == "true" ]]; then
   eval_cmd+=(--enable-llm-judge)
 fi
 
+python3 scripts/data/build_cmekg_from_cm3kg.py \
+  --cm3kg-dir "${CM3KG_DIR}" \
+  --output "${KG_BASE}" \
+  --report reports/cm3kg_kg_report.md \
+  --summary-json reports/cm3kg_kg_summary.json \
+  --merge-demo data/kg/cmekg_demo.jsonl
+
+python3 scripts/data/rebuild_real_dataset_summary.py \
+  --root . \
+  --out-json reports/real_dataset_summary.json \
+  --out-md reports/real_dataset_report.md
+
 python3 scripts/data/build_benchmark_reference_kb.py \
   --benchmark "${BENCHMARK}" \
   --include-splits "${KB_SOURCE_SPLITS}" \
+  --extra-kg "${KG_BASE}" \
+  --extra-kg-max "${EXTRA_KG_MAX}" \
   --output "${KB_OUT}" \
   --report reports/benchmark_reference_kb_report.md
 
