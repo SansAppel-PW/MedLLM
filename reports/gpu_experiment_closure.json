@@ -1,0 +1,63 @@
+{
+  "summary": {
+    "total": 6,
+    "pass": 3,
+    "fail": 3
+  },
+  "checks": [
+    {
+      "id": "G01",
+      "requirement": "Layer-B Qwen2.5-7B real SFT metrics",
+      "status": "FAIL",
+      "detail": "Missing Layer-B metrics or invalid train_loss.",
+      "evidence": [
+        "reports/training/layer_b_qwen25_7b_sft_metrics.json"
+      ]
+    },
+    {
+      "id": "G02",
+      "requirement": "Real DPO alignment evidence",
+      "status": "PASS",
+      "detail": "DPO metrics are real and pair_count>0.",
+      "evidence": [
+        "reports/training/dpo_real_metrics.json"
+      ]
+    },
+    {
+      "id": "G03",
+      "requirement": "Real SimPO alignment evidence",
+      "status": "PASS",
+      "detail": "SimPO metrics are real and sample_count>0.",
+      "evidence": [
+        "reports/training/simpo_metrics.json"
+      ]
+    },
+    {
+      "id": "G04",
+      "requirement": "Real KTO alignment evidence",
+      "status": "PASS",
+      "detail": "KTO metrics are real and sample_count>0.",
+      "evidence": [
+        "reports/training/kto_metrics.json"
+      ]
+    },
+    {
+      "id": "G05",
+      "requirement": "Opening alignment A10 should be PASS",
+      "status": "FAIL",
+      "detail": "A10 status=PARTIAL.",
+      "evidence": [
+        "reports/opening_alignment_audit.json"
+      ]
+    },
+    {
+      "id": "G06",
+      "requirement": "Main real result table should include Layer-B row",
+      "status": "FAIL",
+      "detail": "Layer-B row not found in main_results_real.csv.",
+      "evidence": [
+        "reports/thesis_assets/tables/main_results_real.csv"
+      ]
+    }
+  ]
+}

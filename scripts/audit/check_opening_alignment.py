@@ -162,7 +162,6 @@ def main() -> int:
     simpo = load_json(root / "reports/training/simpo_metrics.json")
     kto = load_json(root / "reports/training/kto_metrics.json")
     if dpo_ok and simpo and kto:
-        # SimPO/KTO currently proxy in this repo; keep as partial.
         sim_proxy = bool(simpo.get("simulation") is True)
         kto_proxy = bool(kto.get("simulation") is True)
         if sim_proxy or kto_proxy:

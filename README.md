@@ -5,12 +5,12 @@
 ## 项目目标
 - 基于真实数据构建训练集与评测集，减少 demo 级假数据依赖。
 - 基于白盒不确定性 + 检索核查的混合检测，实现高风险拦截。
-- 基于 SFT / DPO / SimPO 的对齐训练流程（当前仓库为轻量模拟实现），支持论文实验复现实验编排。
+- 基于 SFT / DPO / SimPO / KTO 的对齐训练流程，支持真实训练、超时回退与论文级复现实验编排。
 
 ## 学术合规说明
 - `src/train/sft_train.py`、`src/train/dpo_train.py`、`src/train/simpo_train.py`、`src/train/kto_train.py` 为代理/模拟流程。
-- `src/train/real_sft_train.py` 与 `src/train/real_dpo_train.py` 为真实训练入口（含真实 forward/backward、loss、checkpoint、日志与 manifest）。
-- 当前 `ALIGNMENT_MODE=real` 已支持真实 DPO；SimPO/KTO 仍为代理实现（会在报告中标注）。
+- `src/train/real_sft_train.py`、`src/train/real_dpo_train.py`、`src/train/real_simpo_train.py`、`src/train/real_kto_train.py` 为真实训练入口（含真实 forward/backward、loss、checkpoint、日志与 manifest）。
+- `ALIGNMENT_MODE=real` 支持真实 DPO/SimPO/KTO，并带主模型超时回退到本地 tiny 模型以保证流程闭环。
 - `reports/sota_compare.md` 为“代理复现实验”，不可表述为官方 HuatuoGPT/BioMistral 完整能力对比。
 
 ## 目录结构
@@ -84,20 +84,25 @@ make ensure-real-data
 
 ## 训练对齐流水线（真实数据）
 ```bash
-# 默认：真实 SFT + 代理 DPO/SimPO/KTO（ALIGNMENT_MODE=proxy）
-bash scripts/train/run_real_alignment_pipeline.sh
+# 论文主线推荐：真实 DPO/SimPO/KTO（Layer-B 若已单独跑完建议 SKIP_LAYER_B=1）
+ALIGNMENT_MODE=real SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
+
+# 快速对照：代理模式
+ALIGNMENT_MODE=proxy SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
 ```
 
 输出：
 - `checkpoints/layer_b/qwen25_7b_sft/`
 - `logs/layer_b/qwen25_7b_sft/train_log.jsonl`
 - `reports/training/layer_b_qwen25_7b_sft_metrics.json`
-- `reports/training/{dpo,simpo,kto}_metrics.json`
+- `reports/training/dpo_real_metrics.json`
+- `reports/training/simpo_metrics.json`
+- `reports/training/kto_metrics.json`
 - `reports/alignment_compare.md`
 
 说明：
-- `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器（当前默认）。
-- `ALIGNMENT_MODE=real`：执行真实 DPO（带回退），SimPO/KTO 暂保持代理。
+- `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器（快速流程验证）。
+- `ALIGNMENT_MODE=real`：执行真实 DPO/SimPO/KTO（均带回退路径，避免单步失败中断）。
 
 ## Layer-B 真实 SFT（论文主链起点）
 ```bash
@@ -118,6 +123,26 @@ bash scripts/train/run_layer_b_qwen_autofallback.sh
 行为：
 - 有 GPU：自动按 3 档参数尝试（2048/16 -> 1536/32 -> 1024/64）。
 - 无 GPU：写出阻塞报告 `reports/small_real/qwen_layer_b_blocker.md`，并退出 0（不阻塞其余流程）。
+
+## GPU 迁移主实验（一键）
+```bash
+# 迁移前审计：确认当前仓库只剩 GPU 主实验缺口
+make gpu-readiness
+
+# 本机预演（不执行，只打印将运行的命令）
+make gpu-mainline-dryrun
+
+# 在 GPU 环境执行主实验闭环
+make gpu-mainline
+
+# GPU 结果闭环验收
+make gpu-closure
+```
+
+对应脚本：
+- `scripts/train/run_gpu_thesis_mainline.sh`
+- `scripts/audit/check_gpu_migration_readiness.py`
+- `scripts/audit/verify_gpu_experiment_closure.py`
 
 ## Small Real 一键闭环（prepare -> train -> eval -> visualize -> run_card）
 ```bash
@@ -227,6 +252,13 @@ make task-audit
 python scripts/audit/check_opening_alignment.py
 # 或
 make opening-audit
+```
+
+## GPU 迁移就绪审计
+```bash
+python scripts/audit/check_gpu_migration_readiness.py
+# 或
+make gpu-readiness
 ```
 
 ## 回归测试

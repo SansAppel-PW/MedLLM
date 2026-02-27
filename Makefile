@@ -2,7 +2,7 @@ PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo pytho
 VENV := .venv
 PIP := $(PYTHON) -m pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment decision-log loop-once thesis-ready run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit gpu-readiness gpu-closure bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment gpu-mainline gpu-mainline-dryrun decision-log loop-once thesis-ready run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -28,6 +28,12 @@ opening-audit:
 task-audit:
 	$(PYTHON) scripts/audit/check_task_completion.py
 
+gpu-readiness:
+	$(PYTHON) scripts/audit/check_gpu_migration_readiness.py
+
+gpu-closure:
+	$(PYTHON) scripts/audit/verify_gpu_experiment_closure.py
+
 bootstrap-data:
 	$(PYTHON) scripts/data/bootstrap_minimal_assets.py
 
@@ -48,6 +54,12 @@ qwen-layer-b:
 
 real-alignment:
 	PYTHON_BIN="$(PYTHON)" ALIGNMENT_MODE=real SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
+
+gpu-mainline:
+	PYTHON_BIN="$(PYTHON)" bash scripts/train/run_gpu_thesis_mainline.sh
+
+gpu-mainline-dryrun:
+	PYTHON_BIN="$(PYTHON)" DRY_RUN=1 bash scripts/train/run_gpu_thesis_mainline.sh
 
 decision-log:
 	$(PYTHON) scripts/audit/update_decision_log.py
