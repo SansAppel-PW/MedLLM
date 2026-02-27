@@ -30,6 +30,10 @@ Optional env vars:
 - JUDGE_MODEL=<model>          default: gpt-4o-mini
 - JUDGE_MAX_SAMPLES=<int>      default: 200
 - PYTHON_BIN=<path>            default: .venv/bin/python if exists else python3
+- NUM_GPUS=<int>               default: auto-detect GPU count
+- USE_TORCHRUN=1|0            default: auto (NUM_GPUS>1 => 1)
+- BF16=true|false              default: auto by GPU architecture (V100 => false)
+- FP16=true|false              default: auto by GPU architecture (V100 => true)
 - AUTO_COMMIT_PUSH=1|0         default: 0
 - COMMIT_MSG="..."            default: milestone: gpu mainline thesis run <timestamp>
 USAGE
@@ -46,6 +50,10 @@ ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-0}"
 JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-200}"
 AUTO_COMMIT_PUSH="${AUTO_COMMIT_PUSH:-0}"
+NUM_GPUS="${NUM_GPUS:-}"
+USE_TORCHRUN="${USE_TORCHRUN:-}"
+BF16="${BF16:-}"
+FP16="${FP16:-}"
 
 TS="${TS:-$(date +%Y%m%d_%H%M%S)}"
 LOG_DIR="logs/session"
@@ -106,16 +114,57 @@ if [[ "${REQUIRE_GPU}" == "1" ]]; then
   step "GPU check"
   command -v nvidia-smi >/dev/null 2>&1 || fail "nvidia-smi not found. Use REQUIRE_GPU=0 only for debug dry runs."
   nvidia-smi
-  "${PYTHON_BIN}" - <<'PY'
+  GPU_INFO_JSON="$("${PYTHON_BIN}" - <<'PY'
+import json
 import sys
 import torch
-print("torch:", torch.__version__)
-print("cuda_available:", torch.cuda.is_available())
-if not torch.cuda.is_available():
+cuda_ok = bool(torch.cuda.is_available())
+payload = {
+    "torch": torch.__version__,
+    "cuda_available": cuda_ok,
+    "device_count": int(torch.cuda.device_count()) if cuda_ok else 0,
+    "device0": torch.cuda.get_device_name(0) if cuda_ok else None,
+    "cc_major": int(torch.cuda.get_device_capability(0)[0]) if cuda_ok else None,
+    "cc_minor": int(torch.cuda.get_device_capability(0)[1]) if cuda_ok else None,
+    "bf16_supported": bool(torch.cuda.is_bf16_supported()) if cuda_ok and hasattr(torch.cuda, "is_bf16_supported") else False,
+}
+if not cuda_ok:
     print("ERROR: CUDA is not available", file=sys.stderr)
     raise SystemExit(2)
-print("device0:", torch.cuda.get_device_name(0))
+print(json.dumps(payload, ensure_ascii=False))
 PY
+)"
+  echo "gpu_info=${GPU_INFO_JSON}"
+
+  if [[ -z "${NUM_GPUS}" ]]; then
+    NUM_GPUS="$("${PYTHON_BIN}" - <<'PY'
+import torch
+print(torch.cuda.device_count() if torch.cuda.is_available() else 1)
+PY
+)"
+  fi
+  if [[ -z "${USE_TORCHRUN}" ]]; then
+    if [[ "${NUM_GPUS}" -gt 1 ]]; then
+      USE_TORCHRUN="1"
+    else
+      USE_TORCHRUN="0"
+    fi
+  fi
+  if [[ -z "${BF16}" || -z "${FP16}" ]]; then
+    gpu_major="$("${PYTHON_BIN}" - <<'PY'
+import torch
+print(torch.cuda.get_device_capability(0)[0] if torch.cuda.is_available() else 0)
+PY
+)"
+    if [[ "${gpu_major}" -ge 8 ]]; then
+      BF16="${BF16:-true}"
+      FP16="${FP16:-false}"
+    else
+      BF16="${BF16:-false}"
+      FP16="${FP16:-true}"
+    fi
+  fi
+  echo "runtime_plan: NUM_GPUS=${NUM_GPUS} USE_TORCHRUN=${USE_TORCHRUN} BF16=${BF16} FP16=${FP16}"
 fi
 
 if [[ "${ENABLE_LLM_JUDGE}" == "1" ]]; then
@@ -139,6 +188,10 @@ if [[ "${SKIP_MAINLINE}" != "1" ]]; then
   ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE}" \
   JUDGE_MODEL="${JUDGE_MODEL}" \
   JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES}" \
+  NUM_GPUS="${NUM_GPUS:-1}" \
+  USE_TORCHRUN="${USE_TORCHRUN:-0}" \
+  BF16="${BF16:-false}" \
+  FP16="${FP16:-true}" \
   PYTHON_BIN="${PYTHON_BIN}" \
   make gpu-mainline 2>&1 | tee "${MAINLINE_LOG}"
 

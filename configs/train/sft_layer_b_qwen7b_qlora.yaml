@@ -26,9 +26,9 @@ save_steps: 100
 eval_steps: 100
 save_total_limit: 3
 
-bf16: true
-fp16: false
-device_map_auto: true
+bf16: false
+fp16: true
+device_map_auto: false
 trust_remote_code: true
 local_files_only: false
 

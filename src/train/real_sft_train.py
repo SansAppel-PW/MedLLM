@@ -86,6 +86,18 @@ def parse_target_modules(raw: str) -> list[str]:
     return out
 
 
+def cuda_bf16_supported(torch_module: Any) -> bool:
+    if not torch_module.cuda.is_available():
+        return False
+    if hasattr(torch_module.cuda, "is_bf16_supported"):
+        try:
+            return bool(torch_module.cuda.is_bf16_supported())
+        except Exception:  # noqa: BLE001
+            pass
+    major, _minor = torch_module.cuda.get_device_capability(0)
+    return int(major) >= 8
+
+
 def import_training_stack() -> dict[str, Any]:
     missing: list[str] = []
 
@@ -237,10 +249,21 @@ def main() -> int:
     TrainingArguments = stack["TrainingArguments"]
     set_seed = stack["set_seed"]
 
+    world_size = int(os.getenv("WORLD_SIZE", "1"))
+    local_rank = int(os.getenv("LOCAL_RANK", "0"))
+    distributed = world_size > 1
+
     random.seed(args.seed)
     set_seed(args.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
+        if args.bf16 and not cuda_bf16_supported(torch):
+            print("[warn] CUDA device does not support bf16 (e.g. V100), force --bf16=false --fp16=true")
+            args.bf16 = False
+            args.fp16 = True
+        if args.bf16 and args.fp16:
+            print("[warn] both bf16 and fp16 are true, force --fp16=false")
+            args.fp16 = False
     else:
         # CPU fallback: disable CUDA-only options to keep the pipeline runnable.
         if args.load_in_4bit:
@@ -255,6 +278,10 @@ def main() -> int:
         if args.fp16:
             print("[warn] CUDA not available, force --fp16=false")
             args.fp16 = False
+
+    if distributed and args.device_map_auto:
+        print("[warn] distributed mode detected, force --device-map-auto=false for DDP safety")
+        args.device_map_auto = False
 
     train_rows = load_jsonl(train_path)
     dev_rows = load_jsonl(dev_path) if dev_path.exists() else []
@@ -322,7 +349,9 @@ def main() -> int:
 
     quantization_config = None
     load_kwargs: dict[str, Any] = {"trust_remote_code": args.trust_remote_code}
-    if args.device_map_auto:
+    if args.load_in_4bit and distributed:
+        load_kwargs["device_map"] = {"": local_rank}
+    elif args.device_map_auto:
         load_kwargs["device_map"] = "auto"
 
     if args.load_in_4bit:
@@ -410,6 +439,8 @@ def main() -> int:
     ta_params = inspect.signature(TrainingArguments.__init__).parameters
     if "overwrite_output_dir" in ta_params:
         training_kwargs["overwrite_output_dir"] = False
+    if distributed and "ddp_find_unused_parameters" in ta_params:
+        training_kwargs["ddp_find_unused_parameters"] = False
     if "evaluation_strategy" in ta_params:
         training_kwargs["evaluation_strategy"] = evaluation_strategy
     elif "eval_strategy" in ta_params:
@@ -467,6 +498,11 @@ def main() -> int:
             "available": bool(torch.cuda.is_available()),
             "device_count": int(torch.cuda.device_count()) if torch.cuda.is_available() else 0,
             "device_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+            "bf16_supported": cuda_bf16_supported(torch) if torch.cuda.is_available() else False,
+        },
+        "distributed": {
+            "world_size": world_size,
+            "local_rank": local_rank,
         },
         "environment_snapshot": {
             "pip_freeze": pip_freeze_path,

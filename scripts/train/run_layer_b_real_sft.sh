@@ -6,6 +6,8 @@ cd "${ROOT_DIR}"
 
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 CONFIG="${CONFIG:-configs/train/sft_layer_b_real.yaml}"
+USE_TORCHRUN="${USE_TORCHRUN:-0}"
+NUM_GPUS="${NUM_GPUS:-1}"
 
 TRAIN_FILE="${TRAIN_FILE:-data/clean/real_sft_train.jsonl}"
 DEV_FILE="${DEV_FILE:-data/clean/real_sft_dev.jsonl}"
@@ -14,7 +16,42 @@ OUTPUT_DIR="${OUTPUT_DIR:-checkpoints/layer_b/qwen25_7b_sft}"
 LOGGING_DIR="${LOGGING_DIR:-logs/layer_b/qwen25_7b_sft}"
 METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_sft_metrics.json}"
 
-"${PYTHON_BIN}" src/train/real_sft_train.py \
+if [[ -z "${BF16:-}" || -z "${FP16:-}" ]]; then
+  if command -v nvidia-smi >/dev/null 2>&1; then
+    bf16_capable="$("${PYTHON_BIN}" - <<'PY'
+import torch
+ok = bool(torch.cuda.is_available() and getattr(torch.cuda, "is_bf16_supported", lambda: False)())
+print("1" if ok else "0")
+PY
+)"
+  else
+    bf16_capable="0"
+  fi
+  if [[ -z "${BF16:-}" ]]; then
+    if [[ "${bf16_capable}" == "1" ]]; then
+      BF16="true"
+    else
+      BF16="false"
+    fi
+  fi
+  if [[ -z "${FP16:-}" ]]; then
+    if [[ "${BF16}" == "true" ]]; then
+      FP16="false"
+    else
+      FP16="true"
+    fi
+  fi
+fi
+
+if [[ "${USE_TORCHRUN}" == "1" && "${NUM_GPUS}" -gt 1 ]]; then
+  LAUNCHER=("${PYTHON_BIN}" -m torch.distributed.run --standalone --nnodes=1 --nproc_per_node "${NUM_GPUS}")
+  echo "[layer-b-real-sft] launcher=torchrun nproc_per_node=${NUM_GPUS}"
+else
+  LAUNCHER=("${PYTHON_BIN}")
+  echo "[layer-b-real-sft] launcher=single-process"
+fi
+
+"${LAUNCHER[@]}" src/train/real_sft_train.py \
   --config "${CONFIG}" \
   --task real_sft_layer_b \
   --model-name "${MODEL_NAME}" \
@@ -43,7 +80,8 @@ METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_sft_metrics.json}
   --lora-dropout "${LORA_DROPOUT:-0.05}" \
   --lora-target-modules "${LORA_TARGETS:-q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj}" \
   --load-in-4bit "${LOAD_IN_4BIT:-true}" \
-  --bf16 "${BF16:-true}" \
-  --fp16 "${FP16:-false}"
+  --bf16 "${BF16}" \
+  --fp16 "${FP16}" \
+  --device-map-auto "${DEVICE_MAP_AUTO:-false}"
 
 echo "[layer-b-real-sft] done"

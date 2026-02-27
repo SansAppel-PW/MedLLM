@@ -6,6 +6,8 @@ cd "${ROOT_DIR}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 MODEL_NAME="${MODEL_NAME:-Qwen/Qwen2.5-7B-Instruct}"
+USE_TORCHRUN="${USE_TORCHRUN:-0}"
+NUM_GPUS="${NUM_GPUS:-1}"
 TRAIN_FILE="${TRAIN_FILE:-data/clean/real_sft_train.jsonl}"
 DEV_FILE="${DEV_FILE:-data/clean/real_sft_dev.jsonl}"
 BASE_OUTPUT="${BASE_OUTPUT:-checkpoints/layer_b/qwen25_7b_qlora}"
@@ -14,6 +16,29 @@ METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_qlora_metrics.jso
 BLOCKER_REPORT="${BLOCKER_REPORT:-reports/small_real/qwen_layer_b_blocker.md}"
 
 mkdir -p "$(dirname "${BLOCKER_REPORT}")" "${BASE_LOG}" "$(dirname "${METRICS_OUT}")"
+
+if [[ -z "${BF16:-}" || -z "${FP16:-}" ]]; then
+  bf16_capable="$("${PYTHON_BIN}" - <<'PY'
+import torch
+ok = bool(torch.cuda.is_available() and getattr(torch.cuda, "is_bf16_supported", lambda: False)())
+print("1" if ok else "0")
+PY
+)"
+  if [[ -z "${BF16:-}" ]]; then
+    if [[ "${bf16_capable}" == "1" ]]; then
+      BF16="true"
+    else
+      BF16="false"
+    fi
+  fi
+  if [[ -z "${FP16:-}" ]]; then
+    if [[ "${BF16}" == "true" ]]; then
+      FP16="false"
+    else
+      FP16="true"
+    fi
+  fi
+fi
 
 if ! command -v nvidia-smi >/dev/null 2>&1; then
   cat >"${BLOCKER_REPORT}" <<EOF
@@ -32,6 +57,10 @@ if ! command -v nvidia-smi >/dev/null 2>&1; then
 \`\`\`bash
 bash scripts/train/run_layer_b_qwen_autofallback.sh
 \`\`\`
+- V100 推荐:
+\`\`\`bash
+USE_TORCHRUN=1 NUM_GPUS=2 BF16=false FP16=true bash scripts/train/run_layer_b_qwen_autofallback.sh
+\`\`\`
 
 ## 自愈策略
 1. 首次尝试: max_length=2048, grad_acc=16
@@ -40,6 +69,22 @@ bash scripts/train/run_layer_b_qwen_autofallback.sh
 EOF
   echo "[qwen-layer-b] no-gpu blocker report written: ${BLOCKER_REPORT}"
   exit 0
+fi
+
+available_gpus="$(nvidia-smi --list-gpus | wc -l | tr -d '[:space:]')"
+if [[ "${NUM_GPUS}" -gt "${available_gpus}" ]]; then
+  echo "[qwen-layer-b] requested NUM_GPUS=${NUM_GPUS} > available=${available_gpus}, clamp to available."
+  NUM_GPUS="${available_gpus}"
+fi
+
+if [[ "${USE_TORCHRUN}" == "1" && "${NUM_GPUS}" -gt 1 ]]; then
+  LAUNCHER=("${PYTHON_BIN}" -m torch.distributed.run --standalone --nnodes=1 --nproc_per_node "${NUM_GPUS}")
+  DEVICE_MAP_AUTO="${DEVICE_MAP_AUTO:-false}"
+  echo "[qwen-layer-b] launcher=torchrun nproc_per_node=${NUM_GPUS}"
+else
+  LAUNCHER=("${PYTHON_BIN}")
+  DEVICE_MAP_AUTO="${DEVICE_MAP_AUTO:-true}"
+  echo "[qwen-layer-b] launcher=single-process"
 fi
 
 try_train() {
@@ -51,9 +96,9 @@ try_train() {
   local run_log="${log_dir}/attempt.log"
   mkdir -p "${log_dir}"
 
-  echo "[qwen-layer-b] attempt=${attempt} max_len=${max_len} grad_acc=${grad_acc}"
+  echo "[qwen-layer-b] attempt=${attempt} max_len=${max_len} grad_acc=${grad_acc} bf16=${BF16} fp16=${FP16} device_map_auto=${DEVICE_MAP_AUTO}"
   set +e
-  "${PYTHON_BIN}" src/train/real_sft_train.py \
+  "${LAUNCHER[@]}" src/train/real_sft_train.py \
     --task "layer_b_qwen7b_attempt${attempt}" \
     --config configs/train/sft_layer_b_qwen7b_qlora.yaml \
     --model-name "${MODEL_NAME}" \
@@ -79,9 +124,9 @@ try_train() {
     --eval-steps 100 \
     --save-total-limit 3 \
     --seed 42 \
-    --bf16 true \
-    --fp16 false \
-    --device-map-auto true \
+    --bf16 "${BF16}" \
+    --fp16 "${FP16}" \
+    --device-map-auto "${DEVICE_MAP_AUTO}" \
     --use-lora true \
     --lora-r 64 \
     --lora-alpha 128 \

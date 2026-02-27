@@ -23,6 +23,11 @@ python -m pip install -r requirements.txt
 make gpu-mainline
 ```
 
+V100-32GB（双卡）推荐：
+```bash
+NUM_GPUS=2 USE_TORCHRUN=1 BF16=false FP16=true make gpu-mainline
+```
+
 等价命令：
 ```bash
 PYTHON_BIN=.venv/bin/python bash scripts/train/run_gpu_thesis_mainline.sh

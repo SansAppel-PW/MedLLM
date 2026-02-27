@@ -121,6 +121,11 @@ bash scripts/train/run_layer_b_real_sft.sh
 bash scripts/train/run_layer_b_qwen_autofallback.sh
 ```
 
+V100-32GB（双卡）推荐：
+```bash
+USE_TORCHRUN=1 NUM_GPUS=2 BF16=false FP16=true bash scripts/train/run_layer_b_qwen_autofallback.sh
+```
+
 行为：
 - 有 GPU：自动按 3 档参数尝试（2048/16 -> 1536/32 -> 1024/64）。
 - 无 GPU：写出阻塞报告 `reports/small_real/qwen_layer_b_blocker.md`，并退出 0（不阻塞其余流程）。
@@ -135,6 +140,9 @@ make gpu-mainline-dryrun
 
 # 在 GPU 环境执行主实验闭环
 make gpu-mainline
+
+# V100-32GB（双卡）推荐
+NUM_GPUS=2 USE_TORCHRUN=1 BF16=false FP16=true make gpu-mainline
 
 # GPU 结果闭环验收
 make gpu-closure

@@ -32,7 +32,12 @@ run_cmd "${PYTHON_BIN}" scripts/audit/check_pipeline_interface_consistency.py
 run_cmd "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py
 run_cmd bash scripts/data/ensure_real_dataset.sh
 
-run_cmd bash scripts/train/run_layer_b_qwen_autofallback.sh
+run_cmd env \
+  USE_TORCHRUN="${USE_TORCHRUN:-0}" \
+  NUM_GPUS="${NUM_GPUS:-1}" \
+  BF16="${BF16:-}" \
+  FP16="${FP16:-}" \
+  bash scripts/train/run_layer_b_qwen_autofallback.sh
 
 run_cmd env \
   PYTHON_BIN="${PYTHON_BIN}" \
