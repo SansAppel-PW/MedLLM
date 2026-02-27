@@ -8,10 +8,11 @@
 - 基于 SFT / DPO / SimPO / KTO 的对齐训练流程，支持真实训练、超时回退与论文级复现实验编排。
 
 ## 学术合规说明
-- `src/train/sft_train.py`、`src/train/dpo_train.py`、`src/train/simpo_train.py`、`src/train/kto_train.py` 为代理/模拟流程。
-- `src/train/real_sft_train.py`、`src/train/real_dpo_train.py`、`src/train/real_simpo_train.py`、`src/train/real_kto_train.py` 为真实训练入口（含真实 forward/backward、loss、checkpoint、日志与 manifest）。
-- `ALIGNMENT_MODE=real` 支持真实 DPO/SimPO/KTO，并带主模型超时回退到本地 tiny 模型以保证流程闭环。
+- `src/train/sft_train.py`、`src/train/dpo_train.py`、`src/train/simpo_train.py`、`src/train/kto_train.py` 仅用于 Sanity/Proxy 层流程验证，不作为论文主结果证据。
+- `src/train/real_sft_train.py`、`src/train/real_dpo_train.py`、`src/train/real_simpo_train.py`、`src/train/real_kto_train.py` 为论文主线真实训练入口（含真实 forward/backward、loss、checkpoint、日志与 manifest）。
+- `ALIGNMENT_MODE=real` 执行真实 DPO/SimPO/KTO；保留主模型超时回退到本地 tiny 模型以保证流程闭环不中断。
 - `reports/sota_compare.md` 为“代理复现实验”，不可表述为官方 HuatuoGPT/BioMistral 完整能力对比。
+- 当前状态（2026-02-27）：仓库已通过 `gpu-readiness`，剩余主缺口为 GPU 环境补齐 Layer-B Qwen2.5-7B 主实验。
 
 ## 目录结构
 - `src/`: 核心代码（数据、检测、训练、服务）
@@ -87,7 +88,7 @@ make ensure-real-data
 # 论文主线推荐：真实 DPO/SimPO/KTO（Layer-B 若已单独跑完建议 SKIP_LAYER_B=1）
 ALIGNMENT_MODE=real SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
 
-# 快速对照：代理模式
+# 仅流程验证（非论文主结果）：代理模式
 ALIGNMENT_MODE=proxy SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeline.sh
 ```
 
@@ -101,7 +102,7 @@ ALIGNMENT_MODE=proxy SKIP_LAYER_B=1 bash scripts/train/run_real_alignment_pipeli
 - `reports/alignment_compare.md`
 
 说明：
-- `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器（快速流程验证）。
+- `ALIGNMENT_MODE=proxy`：DPO/SimPO/KTO 使用代理训练器，仅用于快速冒烟与联调。
 - `ALIGNMENT_MODE=real`：执行真实 DPO/SimPO/KTO（均带回退路径，避免单步失败中断）。
 
 ## Layer-B 真实 SFT（论文主链起点）

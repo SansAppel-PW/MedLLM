@@ -21,8 +21,8 @@
 ### M1 开题约束与工程现状固化
 - 目标：把开题约束转化为工程可执行条目。
 - 产物：
-  - `docs/STEP1_CORE_CONSTRAINTS.md`
-  - `docs/STEP2_PROJECT_AUDIT.md`
+  - `docs/archive/phase0/STEP1_CORE_CONSTRAINTS.md`
+  - `docs/archive/phase0/STEP2_PROJECT_AUDIT.md`
 - 验收标准：
   - 核心问题、方法、指标、baseline、风险、冲突均有引用标注。
 - 论文映射：第1章研究问题定义、第3章实验设计约束。  
