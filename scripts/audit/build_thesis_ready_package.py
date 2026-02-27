@@ -100,6 +100,25 @@ def num(v: Any) -> float | None:
     return None
 
 
+def alignment_metric_name(metrics: dict[str, Any]) -> str:
+    if isinstance(metrics.get("pref_accuracy_after"), (int, float)):
+        return "pref_accuracy_after"
+    return "aligned_score"
+
+
+def alignment_metric_value(metrics: dict[str, Any]) -> float | None:
+    key = alignment_metric_name(metrics)
+    return num(metrics.get(key))
+
+
+def alignment_sample_count(metrics: dict[str, Any]) -> int | None:
+    for key in ("pair_count", "samples"):
+        value = metrics.get(key)
+        if isinstance(value, int):
+            return value
+    return None
+
+
 def build_dual_rows(
     latest_small_real: dict[str, Any] | None,
     base_eval: dict[str, Any] | None,
@@ -202,25 +221,31 @@ def build_dual_rows(
             }
         )
 
-    def add_proxy_row(setting: str, metrics: dict[str, Any] | None, evidence: str) -> None:
+    def add_alignment_row(method: str, metrics: dict[str, Any] | None, evidence: str) -> None:
         if not metrics:
             return
-        proxy_rows.append(
-            {
-                "section": "alignment",
-                "setting": setting,
-                "method_type": "proxy",
-                "metric": "aligned_score",
-                "value": num(metrics.get("aligned_score")),
-                "sample_count": metrics.get("samples"),
-                "evidence": evidence,
-                "note": "proxy indicator, not directly comparable to real preference accuracy",
-            }
-        )
+        is_real = metrics.get("simulation") is False
+        metric_name = alignment_metric_name(metrics)
+        row = {
+            "section": "alignment",
+            "setting": f"{method} ({'real' if is_real else 'proxy'})",
+            "method_type": "real" if is_real else "proxy",
+            "metric": metric_name,
+            "value": alignment_metric_value(metrics),
+            "sample_count": alignment_sample_count(metrics),
+            "evidence": evidence,
+            "note": "real preference alignment"
+            if is_real
+            else "proxy indicator, not directly comparable to real preference accuracy",
+        }
+        if is_real:
+            real_rows.append(row)
+        else:
+            proxy_rows.append(row)
 
-    add_proxy_row("DPO (proxy)", dpo_proxy_metrics, "reports/training/dpo_metrics.json")
-    add_proxy_row("SimPO (proxy)", simpo_metrics, "reports/training/simpo_metrics.json")
-    add_proxy_row("KTO (proxy)", kto_metrics, "reports/training/kto_metrics.json")
+    add_alignment_row("DPO", dpo_proxy_metrics, "reports/training/dpo_metrics.json")
+    add_alignment_row("SimPO", simpo_metrics, "reports/training/simpo_metrics.json")
+    add_alignment_row("KTO", kto_metrics, "reports/training/kto_metrics.json")
 
     return real_rows, proxy_rows
 
@@ -404,7 +429,9 @@ def main() -> int:
         "paper_ready_notes": {
             "main_result_scope": "主结果采用 real/proxy 双层分表；small-real 仅作为工程闭环证据，不作为最终主结论。",
             "ablation_scope": "Across small_real_lora_v* runs to verify reproducibility and run stability.",
-            "alignment_scope": "real DPO 与 proxy SimPO/KTO 分口径呈现，禁止在论文中直接数值对比。",
+            "alignment_scope": (
+                "real/proxy 按 simulation 标记自动分层呈现，禁止跨口径直接比较绝对数值。"
+            ),
             "limitation": "Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment.",
             "next_action": "Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package.",
         },

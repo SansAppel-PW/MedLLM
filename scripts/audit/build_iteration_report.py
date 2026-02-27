@@ -118,6 +118,8 @@ def main() -> int:
     real_dev_count = int(real_data.get("dev_count", 0)) if real_data else 0
     real_test_count = int(real_data.get("test_count", 0)) if real_data else 0
     baseline_real_count, baseline_proxy_count = baseline_layer_counts(baseline_payload)
+    simpo_real = bool(simpo_metrics and simpo_metrics.get("simulation") is False)
+    kto_real = bool(kto_metrics and kto_metrics.get("simulation") is False)
 
     alignment_rows = []
     for method, payload in (("DPO", dpo_real), ("SimPO", simpo_metrics), ("KTO", kto_metrics)):
@@ -127,13 +129,21 @@ def main() -> int:
         alignment_rows.append({"method": method, "score": score})
     best_alignment = max(alignment_rows, key=lambda x: x["score"]) if alignment_rows else None
 
-    technical_risk = {
-        "type": "技术风险",
-        "level": "中",
-        "summary": "对齐训练已支持真实 DPO，但 SimPO/KTO 仍为代理流程。",
-        "mitigation": "保持真实 DPO 持续迭代，并在后续阶段补齐 SimPO/KTO 真实训练入口。",
-    }
-    if not dpo_real:
+    if dpo_real and simpo_real and kto_real:
+        technical_risk = {
+            "type": "技术风险",
+            "level": "低",
+            "summary": "对齐训练已覆盖真实 DPO/SimPO/KTO，闭环完整。",
+            "mitigation": "保持控制变量法迭代并扩充偏好数据规模，巩固统计显著性。",
+        }
+    elif dpo_real:
+        technical_risk = {
+            "type": "技术风险",
+            "level": "中",
+            "summary": "对齐训练已支持真实 DPO，但 SimPO/KTO 仍为代理流程。",
+            "mitigation": "保持真实 DPO 持续迭代，并在后续阶段补齐 SimPO/KTO 真实训练入口。",
+        }
+    else:
         technical_risk = {
             "type": "技术风险",
             "level": "中",

@@ -4,7 +4,7 @@
   "task": "real_dpo_alignment_fallback",
   "pair_count": 288,
   "steps": 6,
-  "train_runtime_sec": 6.2316,
+  "train_runtime_sec": 5.3234,
   "train_loss": 0.6931262214978536,
   "pref_accuracy_before": 0.25,
   "pref_accuracy_after": 0.2534722222222222,

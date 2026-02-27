@@ -1,8 +1,8 @@
 {
   "summary": {
     "total": 11,
-    "pass": 9,
-    "partial": 2,
+    "pass": 10,
+    "partial": 1,
     "fail": 0
   },
   "checks": [
@@ -69,8 +69,8 @@
     {
       "id": "A05",
       "requirement": "对齐方法覆盖（SFT + DPO/SimPO/KTO）",
-      "status": "PARTIAL",
-      "detail": "DPO为真实训练；SimPO/KTO 当前为 proxy，方法覆盖完整但真实度部分不足。",
+      "status": "PASS",
+      "detail": "DPO/SimPO/KTO 均为真实训练。",
       "evidence": [
         "reports/training/dpo_real_metrics.json",
         "reports/training/simpo_metrics.json",

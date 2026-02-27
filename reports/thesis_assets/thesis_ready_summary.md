@@ -1,6 +1,6 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-02-26T06:15:44.349118+00:00
+- Generated(UTC): 2026-02-27T14:03:18.359247+00:00
 - Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table
@@ -29,6 +29,6 @@
 ## Thesis Writing Notes
 - 主结果口径: 主结果采用 real/proxy 双层分表；small-real 仅作为工程闭环证据，不作为最终主结论。
 - 消融口径: Across small_real_lora_v* runs to verify reproducibility and run stability.
-- 对齐口径: real DPO 与 proxy SimPO/KTO 分口径呈现，禁止在论文中直接数值对比。
+- 对齐口径: real/proxy 按 simulation 标记自动分层呈现，禁止跨口径直接比较绝对数值。
 - 局限性: Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment.
 - 下一步: Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package.

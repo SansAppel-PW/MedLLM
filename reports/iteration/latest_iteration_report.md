@@ -1,10 +1,10 @@
 # Loop Iteration Report
 
-- 生成时间(UTC): 2026-02-26T06:15:44.274623+00:00
+- 生成时间(UTC): 2026-02-27T14:03:18.390425+00:00
 
 ## 关键结果摘要
-- train_loss: 10.734733581542969
-- final_eval_loss: 10.736883163452148
+- train_loss: 10.734590888023376
+- final_eval_loss: 10.736875534057617
 - exact_match: 0.0
 - rouge_l_f1: 0.0
 - char_f1: 0.0
@@ -18,17 +18,17 @@
 ## 真实对齐摘要
 - dpo_pair_count: 288
 - dpo_pref_accuracy_after: 0.2534722222222222
-- simpo_score_after: 0.816895
-- kto_score_after: 0.5875
-- best_alignment_method: SimPO
-- best_alignment_score: 0.816895
+- simpo_score_after: 0.2534722222222222
+- kto_score_after: 0.2534722222222222
+- best_alignment_method: DPO
+- best_alignment_score: 0.2534722222222222
 
 ## Baseline 分层摘要
 - baseline_real_mainline_count: 2
 - baseline_proxy_background_count: 4
 
 ## 风险评估
-- 技术风险（中）：对齐训练已支持真实 DPO，但 SimPO/KTO 仍为代理流程。 缓解：保持真实 DPO 持续迭代，并在后续阶段补齐 SimPO/KTO 真实训练入口。
+- 技术风险（低）：对齐训练已覆盖真实 DPO/SimPO/KTO，闭环完整。 缓解：保持控制变量法迭代并扩充偏好数据规模，巩固统计显著性。
 - 算力风险（高）：当前环境是否具备 CUDA 决定 Qwen7B 主实验能否执行。 缓解：使用 run_layer_b_qwen_autofallback.sh；无 GPU 输出 blocker，有 GPU 自动 OOM 回退。
 - 数据风险（低）：real_* 数据集已构建且可用于真实训练与评测。 缓解：继续提升数据规模与多源覆盖，并记录许可与偏差分析。
 - 论文逻辑风险（中）：proxy 与 real 结果混写会导致证据链不可信。 缓解：继续保持分层目录与报告口径隔离。

@@ -63,7 +63,7 @@ if [[ "${ALIGNMENT_MODE}" == "proxy" ]]; then
     --kto reports/training/kto_metrics.json \
     --output reports/alignment_compare.md
 elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
-  echo "[real] running real DPO + proxy SimPO/KTO hybrid alignment."
+  echo "[real] running real DPO + real SimPO/KTO with timeout fallback."
 
   DPO_MODEL_PRIMARY="${DPO_MODEL_PRIMARY:-Qwen/Qwen2.5-0.5B-Instruct}"
   DPO_MODEL_FALLBACK="${DPO_MODEL_FALLBACK:-${HOME}/.cache/huggingface/hub/models--sshleifer--tiny-gpt2/snapshots/5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be}"
@@ -128,16 +128,103 @@ elif [[ "${ALIGNMENT_MODE}" == "real" ]]; then
       --local-files-only true
   fi
 
-  echo "[real] SimPO/KTO remain proxy in current stage."
-  "${PYTHON_BIN}" src/train/simpo_train.py \
-    --pref-file "${PREF_FILE}" \
-    --output-dir checkpoints/simpo-real-baseline \
-    --metrics-out reports/training/simpo_metrics.json
+  run_real_pref_trainer() {
+    local name="$1"
+    local script_path="$2"
+    local task_name="$3"
+    local out_dir="$4"
+    local log_dir="$5"
+    local metrics_path="$6"
+    local timeout_sec="$7"
+    shift 7
+    local extra_args=("$@")
 
-  "${PYTHON_BIN}" src/train/kto_train.py \
-    --pref-file "${PREF_FILE}" \
-    --output-dir checkpoints/kto-real-baseline \
-    --metrics-out reports/training/kto_metrics.json
+    local primary_cmd=(
+      "${PYTHON_BIN}" "${script_path}"
+      --task "${task_name}"
+      --pref-file "${PREF_FILE}"
+      --model-name "${DPO_MODEL_PRIMARY}"
+      --output-dir "${out_dir}"
+      --logging-dir "${log_dir}"
+      --metrics-out "${metrics_path}"
+      --epochs "${DPO_EPOCHS:-2}"
+      --max-steps "${DPO_MAX_STEPS:-40}"
+      --learning-rate "${DPO_LR:-1e-5}"
+      --max-length "${DPO_MAX_LENGTH:-256}"
+      --seed "${DPO_SEED:-42}"
+      --trust-remote-code true
+      --local-files-only false
+      "${extra_args[@]}"
+    )
+
+    local timeout_prefix=()
+    if [[ "${timeout_sec}" -gt 0 ]]; then
+      if command -v gtimeout >/dev/null 2>&1; then
+        timeout_prefix=(gtimeout "${timeout_sec}")
+      elif command -v timeout >/dev/null 2>&1; then
+        timeout_prefix=(timeout "${timeout_sec}")
+      fi
+    fi
+
+    local ok=0
+    if [[ ${#timeout_prefix[@]} -gt 0 ]]; then
+      if "${timeout_prefix[@]}" "${primary_cmd[@]}"; then
+        ok=1
+      else
+        echo "[real] ${name} primary run failed or timed out (${timeout_sec}s)."
+      fi
+    else
+      if "${primary_cmd[@]}"; then
+        ok=1
+      else
+        echo "[real] ${name} primary run failed."
+      fi
+    fi
+
+    if [[ "${ok}" -ne 1 ]]; then
+      echo "[real] ${name} fallback to local tiny model."
+      HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 "${PYTHON_BIN}" "${script_path}" \
+        --task "${task_name}_fallback" \
+        --pref-file "${PREF_FILE}" \
+        --model-name "${DPO_MODEL_FALLBACK}" \
+        --output-dir "${out_dir}" \
+        --logging-dir "${log_dir}" \
+        --metrics-out "${metrics_path}" \
+        --epochs "${DPO_EPOCHS:-2}" \
+        --max-steps "${DPO_MAX_STEPS:-40}" \
+        --learning-rate "${DPO_LR:-1e-5}" \
+        --max-length "${DPO_MAX_LENGTH:-256}" \
+        --seed "${DPO_SEED:-42}" \
+        --trust-remote-code false \
+        --local-files-only true \
+        "${extra_args[@]}"
+    fi
+  }
+
+  SIMPO_PRIMARY_TIMEOUT="${SIMPO_PRIMARY_TIMEOUT:-240}"
+  KTO_PRIMARY_TIMEOUT="${KTO_PRIMARY_TIMEOUT:-240}"
+
+  run_real_pref_trainer \
+    "SimPO" \
+    "src/train/real_simpo_train.py" \
+    "real_simpo_alignment" \
+    "checkpoints/simpo-real-baseline" \
+    "logs/simpo-real-baseline" \
+    "reports/training/simpo_metrics.json" \
+    "${SIMPO_PRIMARY_TIMEOUT}" \
+    --beta "${SIMPO_BETA:-1.0}" \
+    --gamma "${SIMPO_GAMMA:-0.03}"
+
+  run_real_pref_trainer \
+    "KTO" \
+    "src/train/real_kto_train.py" \
+    "real_kto_alignment" \
+    "checkpoints/kto-real-baseline" \
+    "logs/kto-real-baseline" \
+    "reports/training/kto_metrics.json" \
+    "${KTO_PRIMARY_TIMEOUT}" \
+    --loss-aversion "${KTO_LOSS_AVERSION:-1.5}" \
+    --tau "${KTO_TAU:-1.0}"
 
   "${PYTHON_BIN}" src/train/compare_alignment.py \
     --dpo reports/training/dpo_real_metrics.json \
