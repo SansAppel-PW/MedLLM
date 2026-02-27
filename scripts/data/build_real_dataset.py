@@ -486,6 +486,9 @@ def main() -> int:
     parser.add_argument("--bench-val", type=int, default=600)
     parser.add_argument("--bench-test", type=int, default=600)
     parser.add_argument("--request-interval", type=float, default=0.25)
+    parser.add_argument("--benchmark-out", default="data/benchmark/real_medqa_benchmark.jsonl")
+    parser.add_argument("--summary-out", default="reports/real_dataset_summary.json")
+    parser.add_argument("--report-out", default="reports/real_dataset_report.md")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[2]
@@ -548,7 +551,7 @@ def main() -> int:
         val_n=args.bench_val,
         test_n=args.bench_test,
     )
-    write_jsonl(root / "data/benchmark/real_medqa_benchmark.jsonl", benchmark)
+    write_jsonl(root / args.benchmark_out, benchmark)
 
     summary = {
         "sources": source_summaries,
@@ -561,11 +564,11 @@ def main() -> int:
         "seed": args.seed,
     }
 
-    summary_path = root / "reports/real_dataset_summary.json"
+    summary_path = root / args.summary_out
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    save_markdown_report(root / "reports/real_dataset_report.md", summary)
+    save_markdown_report(root / args.report_out, summary)
     print("[done] real dataset package built")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0

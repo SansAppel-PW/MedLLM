@@ -109,10 +109,22 @@ def main() -> int:
 
     # A03: Real dataset evidence.
     real_summary = load_json(root / "reports/real_dataset_summary.json")
-    if real_summary and int(real_summary.get("train_count", 0)) > 0:
+    train_n = 0
+    dev_n = 0
+    test_n = 0
+    if real_summary:
+        train_n = int(real_summary.get("train_count", 0))
+        dev_n = int(real_summary.get("dev_count", 0))
+        test_n = int(real_summary.get("test_count", 0))
+        if train_n <= 0 and isinstance(real_summary.get("final_sft"), dict):
+            final_sft = real_summary["final_sft"]
+            train_n = int(final_sft.get("train_count", 0))
+            dev_n = int(final_sft.get("dev_count", 0))
+            test_n = int(final_sft.get("test_count", 0))
+    if real_summary and train_n > 0:
         detail = (
             f"real数据可用 train/dev/test="
-            f"{real_summary.get('train_count')}/{real_summary.get('dev_count')}/{real_summary.get('test_count')}。"
+            f"{train_n}/{dev_n}/{test_n}。"
         )
         status = PASS
     else:

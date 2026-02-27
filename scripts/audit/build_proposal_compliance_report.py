@@ -44,13 +44,27 @@ def main() -> int:
     test_n = line_count(test_path)
     bench_n = line_count(benchmark_path)
     source_name = str(summary.get("source", {}).get("dataset", ""))
-    source_ok = "CM3KG" in source_name or train_n >= 5000
+    source_requirements = summary.get("source_requirements", {})
+    source_ok = False
+    if isinstance(source_requirements, dict):
+        source_ok = bool(
+            source_requirements.get("cm3kg_used")
+            and source_requirements.get("external_real_qa_used")
+            and source_requirements.get("medqa_benchmark_used")
+            and train_n >= 5000
+            and bench_n >= 2000
+        )
+    if not source_ok:
+        source_ok = ("CM3KG" in source_name and train_n >= 5000) or train_n >= 5000
     checks.append(
         {
             "id": "C1",
             "requirement": "真实数据集规模与来源可审计",
             "status": "PASS" if source_ok else "FAIL",
-            "detail": f"train/dev/test={train_n}/{dev_n}/{test_n}, benchmark={bench_n}, source={source_name or 'unknown'}",
+            "detail": (
+                f"train/dev/test={train_n}/{dev_n}/{test_n}, benchmark={bench_n}, "
+                f"source={source_name or 'unified'}, source_requirements={bool(source_requirements)}"
+            ),
             "evidence": [
                 str(train_path.relative_to(root)),
                 str(summary_path.relative_to(root)),

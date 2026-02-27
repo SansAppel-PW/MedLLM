@@ -40,7 +40,7 @@
       "id": "A03",
       "requirement": "真实数据构建与版本化可追溯",
       "status": "PASS",
-      "detail": "real数据可用 train/dev/test=288/36/36。",
+      "detail": "real数据可用 train/dev/test=70054/8755/8755。",
       "evidence": [
         "reports/real_dataset_summary.json",
         "reports/real_dataset_report.md"
@@ -140,8 +140,8 @@
     {
       "id": "A10",
       "requirement": "完整规模实验可行性与阻塞可审计",
-      "status": "PARTIAL",
-      "detail": "当前环境无GPU，已输出 blocker，流程可继续但主实验结果待算力补齐。",
+      "status": "PASS",
+      "detail": "Layer-B 主实验已有真实训练指标。",
       "evidence": [
         "reports/small_real/qwen_layer_b_blocker.md",
         "reports/training/layer_b_qwen25_7b_sft_metrics.json"
@@ -154,8 +154,8 @@
     {
       "id": "A11",
       "requirement": "任务清单与交付物一致性",
-      "status": "PASS",
-      "detail": "任务审计显示 DONE 项交付物完整。",
+      "status": "PARTIAL",
+      "detail": "任务审计存在 DONE 缺失项: 3。",
       "evidence": [
         "reports/task_audit.json",
         "reports/task_audit.md"

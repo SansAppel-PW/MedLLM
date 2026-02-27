@@ -1,44 +1,48 @@
 {
-  "sources": [
-    {
-      "name": "cmtmedqa",
-      "dataset": "Suprit/CMtMedQA",
-      "config": "default",
-      "split": "train",
-      "num_rows_total": 68023,
-      "start_offset": 54836,
-      "target_count": 120,
-      "fetched_count": 120,
-      "license": "MIT"
-    },
-    {
-      "name": "huatuo26m_lite",
-      "dataset": "FreedomIntelligence/Huatuo26M-Lite",
-      "config": "default",
-      "split": "train",
-      "num_rows_total": 177703,
-      "start_offset": 4826,
-      "target_count": 120,
-      "fetched_count": 120,
-      "license": "Apache-2.0"
-    },
-    {
-      "name": "huatuo_encyclopedia",
-      "dataset": "FreedomIntelligence/huatuo_encyclopedia_qa",
-      "config": "default",
-      "split": "train",
-      "num_rows_total": 362420,
-      "start_offset": 25975,
-      "target_count": 120,
-      "fetched_count": 120,
-      "license": "Apache-2.0"
+  "source_requirements": {
+    "proposal_required_sources": [
+      "CMeKG/CM3KG",
+      "Huatuo-26M",
+      "MedQA",
+      "CMtMedQA"
+    ],
+    "cm3kg_used": true,
+    "external_real_qa_used": true,
+    "medqa_benchmark_used": true
+  },
+  "cm3kg_component": {
+    "train_count": 41305,
+    "dev_count": 5162,
+    "test_count": 5162,
+    "benchmark_count": 7998
+  },
+  "external_real_qa_component": {
+    "raw_merged_count": 35935,
+    "train_count": 28749,
+    "dev_count": 3593,
+    "test_count": 3593,
+    "source_file_counts": {
+      "cmtmedqa_count": 12000,
+      "huatuo26m_lite_count": 12000,
+      "huatuo_encyclopedia_count": 12000,
+      "merged_real_qa_count": 35935
     }
-  ],
-  "merged_before_dedup": 360,
-  "merged_after_dedup": 360,
-  "train_count": 288,
-  "dev_count": 36,
-  "test_count": 36,
-  "benchmark_count": 200,
-  "seed": 42
+  },
+  "final_sft": {
+    "train_count": 70054,
+    "dev_count": 8755,
+    "test_count": 8755
+  },
+  "final_benchmark": {
+    "count": 12998,
+    "medqa_component_count": 5000,
+    "cm3kg_component_count": 7998
+  },
+  "seed": 42,
+  "artifacts": {
+    "train_file": "data/clean/real_sft_train.jsonl",
+    "dev_file": "data/clean/real_sft_dev.jsonl",
+    "test_file": "data/clean/real_sft_test.jsonl",
+    "benchmark_file": "data/benchmark/real_medqa_benchmark.jsonl"
+  }
 }

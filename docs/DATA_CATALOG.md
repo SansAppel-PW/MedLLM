@@ -4,10 +4,10 @@
 
 | 数据集 | 规模（官方/采样） | 用途 | 许可 | 接入方式 | 本地产物 |
 |---|---:|---|---|---|---|
-| `Suprit/CMtMedQA` | 68,023 / 8,000 | 中文医疗问答训练语料 | MIT | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/cmtmedqa.jsonl` |
-| `FreedomIntelligence/Huatuo26M-Lite` | 177,703 / 6,000 | 中文医疗问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo26m_lite.jsonl` |
-| `FreedomIntelligence/huatuo_encyclopedia_qa` | 362,420 / 6,000 | 医学百科问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo_encyclopedia.jsonl` |
-| `GBaker/MedQA-USMLE-4-options-hf` | train/val/test | 构建真实 benchmark 与参考 KB | CC-BY-SA-4.0 | `scripts/data/build_real_dataset.py` | `data/benchmark/real_medqa_benchmark.jsonl` |
+| `Suprit/CMtMedQA` | 68,023 / 按参数采样 | 中文医疗问答训练语料 | MIT | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/cmtmedqa.jsonl` |
+| `FreedomIntelligence/Huatuo26M-Lite` | 177,703 / 按参数采样 | 中文医疗问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo26m_lite.jsonl` |
+| `FreedomIntelligence/huatuo_encyclopedia_qa` | 362,420 / 按参数采样 | 医学百科问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo_encyclopedia.jsonl` |
+| `GBaker/MedQA-USMLE-4-options-hf` | train/val/test | 构建真实 benchmark 与参考 KB | CC-BY-SA-4.0 | `scripts/data/build_real_dataset.py` | `data/benchmark/real_medqa_benchmark_from_hf.jsonl` |
 
 ## 1.1 本地真实知识图谱数据源（CM3KG）
 
@@ -20,14 +20,17 @@
 
 | 数据产物 | 说明 | 生成脚本 |
 |---|---|---|
-| `data/clean/real_sft_train.jsonl` | 真实 SFT 训练集（优先由 CM3KG 构建） | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
-| `data/clean/real_sft_dev.jsonl` | 真实 SFT 验证集 | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
-| `data/clean/real_sft_test.jsonl` | 真实 SFT 测试集 | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
+| `data/clean/real_sft_train.jsonl` | 统一真实 SFT 训练集（CM3KG + 外部问答） | `scripts/data/build_unified_real_assets.py` |
+| `data/clean/real_sft_dev.jsonl` | 统一真实 SFT 验证集 | `scripts/data/build_unified_real_assets.py` |
+| `data/clean/real_sft_test.jsonl` | 统一真实 SFT 测试集 | `scripts/data/build_unified_real_assets.py` |
 | `data/clean/real_pref_seed_pairs.jsonl` | 真实偏好对种子数据 | `scripts/train/run_real_alignment_pipeline.sh` |
 | `data/kg/real_medqa_reference_kb.jsonl` | 基于 benchmark 正例构建的参考知识库 | `scripts/data/build_benchmark_reference_kb.py` |
 | `data/kg/cm3kg_core_kb.jsonl` | 基于 CM3KG 构建的核心检索 KG | `scripts/data/build_cm3kg_real_assets.py` |
 | `data/kg/real_medqa_reference_kb_merged.jsonl` | benchmark KB + CM3KG KB 合并知识库 | `scripts/eval/run_thesis_pipeline.sh` |
 | `reports/real_dataset_summary.json` | 真实数据构建统计摘要 | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
+| `reports/hf_real_dataset_summary.json` | 外部问答数据构建摘要（Huatuo/CMt/MedQA） | `scripts/data/build_real_dataset.py` |
+| `reports/cm3kg_dataset_summary.json` | CM3KG 构建摘要 | `scripts/data/build_cm3kg_real_assets.py` |
+| `data/benchmark/real_medqa_benchmark.jsonl` | 统一 benchmark（MedQA + CM3KG） | `scripts/data/build_unified_real_assets.py` |
 
 ## 3. 合规与使用规则
 - 仅在遵循各数据集 License 前提下用于研究与论文实验。

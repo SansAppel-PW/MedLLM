@@ -374,6 +374,13 @@ def main() -> int:
     parser.add_argument("--max-sft-rows", type=int, default=60000)
     parser.add_argument("--max-benchmark-pairs", type=int, default=4000)
     parser.add_argument("--max-kb-rows", type=int, default=180000)
+    parser.add_argument("--train-out", default="data/clean/real_sft_train.jsonl")
+    parser.add_argument("--dev-out", default="data/clean/real_sft_dev.jsonl")
+    parser.add_argument("--test-out", default="data/clean/real_sft_test.jsonl")
+    parser.add_argument("--benchmark-out", default="data/benchmark/real_medqa_benchmark.jsonl")
+    parser.add_argument("--kb-out", default="data/kg/cm3kg_core_kb.jsonl")
+    parser.add_argument("--summary-out", default="reports/real_dataset_summary.json")
+    parser.add_argument("--report-out", default="reports/real_dataset_report.md")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[2]
@@ -397,11 +404,11 @@ def main() -> int:
     benchmark_rows = build_benchmark(med_df, max_pairs=args.max_benchmark_pairs, seed=args.seed)
     kb_rows = build_core_kb(med_df, disease_df, max_rows=args.max_kb_rows, seed=args.seed)
 
-    train_path = root / "data/clean/real_sft_train.jsonl"
-    dev_path = root / "data/clean/real_sft_dev.jsonl"
-    test_path = root / "data/clean/real_sft_test.jsonl"
-    benchmark_path = root / "data/benchmark/real_medqa_benchmark.jsonl"
-    kb_path = root / "data/kg/cm3kg_core_kb.jsonl"
+    train_path = root / args.train_out
+    dev_path = root / args.dev_out
+    test_path = root / args.test_out
+    benchmark_path = root / args.benchmark_out
+    kb_path = root / args.kb_out
 
     write_jsonl(train_path, train)
     write_jsonl(dev_path, dev)
@@ -439,7 +446,7 @@ def main() -> int:
         },
     }
 
-    summary_path = root / "reports/real_dataset_summary.json"
+    summary_path = root / args.summary_out
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -467,7 +474,9 @@ def main() -> int:
         "## 合规说明",
         "- CM3KG 来自公开仓库下载；发布论文前需再次核验上游许可条款与再分发限制。",
     ]
-    (root / "reports/real_dataset_report.md").write_text("\n".join(report_lines) + "\n", encoding="utf-8")
+    report_path = root / args.report_out
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text("\n".join(report_lines) + "\n", encoding="utf-8")
 
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0

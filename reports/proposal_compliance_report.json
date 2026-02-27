@@ -10,7 +10,7 @@
       "id": "C1",
       "requirement": "真实数据集规模与来源可审计",
       "status": "PASS",
-      "detail": "train/dev/test=41305/5162/5162, benchmark=7998, source=CM3KG (from CMKG project)",
+      "detail": "train/dev/test=70054/8755/8755, benchmark=12998, source=unified, source_requirements=True",
       "evidence": [
         "data/clean/real_sft_train.jsonl",
         "reports/real_dataset_summary.json",

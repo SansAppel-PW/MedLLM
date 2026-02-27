@@ -1,0 +1,29 @@
+{
+  "source": {
+    "dataset": "CM3KG (from CMKG project)",
+    "cm3kg_dir": "/Users/bibo/Desktop/MedLLM_codex_worktree-gpt-prompt/CM3KG",
+    "medical_csv_rows": 8808,
+    "disease_csv_rows": 483272,
+    "license_notice": "Please verify CMKG upstream license terms before publication/distribution."
+  },
+  "train_count": 41305,
+  "dev_count": 5162,
+  "test_count": 5162,
+  "benchmark_count": 7998,
+  "kb_count": 180000,
+  "seed": 42,
+  "artifacts": {
+    "train_file": "data/clean/cm3kg_sft_train.jsonl",
+    "dev_file": "data/clean/cm3kg_sft_dev.jsonl",
+    "test_file": "data/clean/cm3kg_sft_test.jsonl",
+    "benchmark_file": "data/benchmark/cm3kg_benchmark.jsonl",
+    "kb_file": "data/kg/cm3kg_core_kb.jsonl"
+  },
+  "sha256": {
+    "train": "e9cf88e914854c494dcd4f296f3207a2aee825b4eb85ef61c3c7e17f62cb1866",
+    "dev": "948238d1efe3f79c61424f201ce9c2c7f2631de1fbe23a031b2f7ccb7d5b3daf",
+    "test": "fcf223bda503f556daee9991e6e232cc0f2366f2c906b31c78298eb46ee83ea1",
+    "benchmark": "e917a65d6ac7f19afad7f5a40af17956cc48d47b40d9a7130d1d68bf848dae7d",
+    "kb": "507cab2e0de385680581d39a6425e31e6d6014db9ed8d41c6a1fc28e1e985563"
+  }
+}
