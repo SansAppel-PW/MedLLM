@@ -1,5 +1,5 @@
 {
-  "git_commit": "ba4a5725733f9e28af1377262f159aceae713d6b",
+  "git_commit": "c3562e3d27218b469b0f8b79781b1224ccfe47d2",
   "dataset": {
     "sources": [
       {
@@ -51,7 +51,7 @@
     "kto": "skipped (Insufficient CUDA resources for 7B (need >= 18GB).)"
   },
   "resource": {
-    "created_at_utc": "2026-02-27T15:05:30.325786+00:00",
+    "created_at_utc": "2026-02-27T15:55:45.696845+00:00",
     "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O",
     "accelerator": "mps",
     "cuda_device_count": 0,
