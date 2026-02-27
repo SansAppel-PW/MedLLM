@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-02-27T14:38:48.161026+00:00",
+  "generated_at_utc": "2026-02-27T14:42:56.253116+00:00",
   "repo_root": "/Users/bibo/Desktop/MedLLM_codex",
   "git": {
     "branch": "codex/worktree",
-    "commit": "fc190bda1d12c69eee5fc517c2d420fcb4c67de8",
-    "worktree_clean": false
+    "commit": "fd365af0c1332c0e76e3109e68019571791a886a",
+    "worktree_clean": true
   },
   "target": {
     "model_name": "Qwen/Qwen2.5-7B-Instruct",
@@ -97,8 +97,8 @@
     {
       "path": "scripts/eval/analyze_llm_fallback_impact.py",
       "exists": true,
-      "size_bytes": 8501,
-      "sha256": "18059866357f8f254d0d2cbcc2a872a9d5908ee9a4a86ae6f4e477d268fa7a25"
+      "size_bytes": 8874,
+      "sha256": "ad3bfe647b687873ce891f507561bb38db382bf4afc36cdb45c8bbe6431351f9"
     },
     {
       "path": "scripts/pipeline/run_paper_ready.sh",

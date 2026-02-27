@@ -1,9 +1,9 @@
 # GPU Migration Handoff Manifest
 
-- Generated at (UTC): 2026-02-27T14:38:48.161026+00:00
+- Generated at (UTC): 2026-02-27T14:42:56.253116+00:00
 - Branch: `codex/worktree`
-- Commit: `fc190bda1d12c69eee5fc517c2d420fcb4c67de8`
-- Worktree clean: `False`
+- Commit: `fd365af0c1332c0e76e3109e68019571791a886a`
+- Worktree clean: `True`
 
 ## Target Run
 - Model: `Qwen/Qwen2.5-7B-Instruct`
@@ -35,7 +35,7 @@
 | scripts/train/run_real_alignment_pipeline.sh | True | 12932 | e9c846d45efae5a4df9799085017357d079310e816bc8822709fd8f04eecb951 |
 | scripts/train/run_layer_b_real_sft.sh | True | 3300 | a8d7c1704cbcd81575e3fbf32af023eda50182fa0ff5bdd2d2ee22a297577390 |
 | scripts/eval/run_thesis_pipeline.sh | True | 5610 | e82114769021db15a05def4c8d45cd1923409cf5eaa2cf0a29f7c9a7b7e91b68 |
-| scripts/eval/analyze_llm_fallback_impact.py | True | 8501 | 18059866357f8f254d0d2cbcc2a872a9d5908ee9a4a86ae6f4e477d268fa7a25 |
+| scripts/eval/analyze_llm_fallback_impact.py | True | 8874 | ad3bfe647b687873ce891f507561bb38db382bf4afc36cdb45c8bbe6431351f9 |
 | scripts/pipeline/run_paper_ready.sh | True | 6337 | 8ade5bb39482c94e38eea63e5ef131920eb6a0fc94ffec0b506dc04ca9905d16 |
 | configs/train/sft_layer_b_real.yaml | True | 997 | b9c8bcf277e83754bd8a71d3c005708de609d5a744d61477cb7690ff2a05d076 |
 | configs/train/dpo_real.yaml | True | 381 | 06fde6f94dc6cea4b0cce0c2a875194859a94f1a1217502db3846735424aad1c |
