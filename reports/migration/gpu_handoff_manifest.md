@@ -1,8 +1,8 @@
 # GPU Migration Handoff Manifest
 
-- Generated at (UTC): 2026-02-27T15:24:47.970693+00:00
+- Generated at (UTC): 2026-02-27T16:24:48.054096+00:00
 - Branch: `codex/worktree`
-- Commit: `b3e76e176c1dcb2470afdddd5145d5fc59b995a5`
+- Commit: `c3562e3d27218b469b0f8b79781b1224ccfe47d2`
 - Worktree clean: `False`
 
 ## Target Run
@@ -25,7 +25,7 @@
 |---|---|---:|---|
 | requirements.txt | True | 395 | c56bcc108b770dd0bd38cdc595d189d71130dc905d1ca1e05d304ffe5eafa2cd |
 | Makefile | True | 1069 | a4d6bb6f9f8d55d510e19964732200cd2896c12d48f3566c004415f9e1067a6f |
-| README.md | True | 6675 | 28592d7c481a2b41d1892eb9c5c5b21f39bdb68c5a69bc73735f67ed873965cb |
+| README.md | True | 6710 | e9aba6ee71ad496e668e0de6f8320cd2556d7406e67ea123fe1cd3eb4ebebd56 |
 | day1_run.sh | True | 5888 | dd46ee498c6ab770fbbeed868bde00e4c9d3b00258efa42ca7bd89ef7986007e |
 | docs/GPU_MIGRATION_RUNBOOK.md | True | 2393 | c7b38e6e10e78a798a7ef50cbc62f490747ece3d33e2c14f51290e49e98c7590 |
 | docs/USAGE_MANUAL_FULL.md | True | 5129 | 52ad9306fec3f9f734f59e9101ba5f1ff4765a3ead34d81e36c04b5f3c6ea019 |
