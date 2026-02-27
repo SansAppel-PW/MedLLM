@@ -69,6 +69,16 @@ def parse_target_modules(raw: str) -> list[str]:
     return out
 
 
+def cuda_supports_bf16(torch_mod: Any) -> bool:
+    if not torch_mod.cuda.is_available():
+        return False
+    for i in range(torch_mod.cuda.device_count()):
+        major, _minor = torch_mod.cuda.get_device_capability(i)
+        if int(major) < 8:
+            return False
+    return True
+
+
 def import_training_stack() -> dict[str, Any]:
     missing: list[str] = []
 
@@ -213,6 +223,20 @@ def main() -> int:
     TrainerCallback = stack["TrainerCallback"]
     TrainingArguments = stack["TrainingArguments"]
     set_seed = stack["set_seed"]
+
+    if not torch.cuda.is_available():
+        if args.load_in_4bit:
+            print("[warn] CUDA not available, disable 4-bit loading automatically.")
+            args.load_in_4bit = False
+        if args.bf16 or args.fp16:
+            print("[warn] CUDA not available, disable mixed precision flags.")
+            args.bf16 = False
+            args.fp16 = False
+    elif args.bf16 and not cuda_supports_bf16(torch):
+        print("[warn] bf16 is not supported on current CUDA devices; fallback to fp16.")
+        args.bf16 = False
+        if not args.fp16:
+            args.fp16 = True
 
     random.seed(args.seed)
     set_seed(args.seed)

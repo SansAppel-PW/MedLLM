@@ -80,6 +80,7 @@ bash scripts/train/run_real_alignment_pipeline.sh
   - `ALLOW_SKIP_TRAINING=true`：训练失败或资源不足时自动跳过训练并继续流程（默认）。
   - `FORCE_SKIP_TRAINING=true`：强制跳过训练，仅推进其余模块。
   - 资源报告输出：`reports/training/resource_preflight.json`。
+  - 对 pre-Ampere GPU（如 V100）自动关闭 bf16、启用 fp16，避免精度配置不兼容。
 
 ## Layer-B 真实 SFT（论文主链起点）
 ```bash

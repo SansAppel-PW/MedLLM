@@ -87,6 +87,7 @@ make gpu-run
 - 运行真实 SFT + 真实偏好对齐；
 - 运行 thesis 评测与资产构建；
 - 执行严格完工校验。
+- 对 pre-Ampere GPU（如 V100）自动降级精度为 fp16（禁用 bf16）。
 
 ### 6.4 GPU 后完工确认
 ```bash

@@ -63,6 +63,16 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def cuda_supports_bf16(torch_mod: Any) -> bool:
+    if not torch_mod.cuda.is_available():
+        return False
+    for i in range(torch_mod.cuda.device_count()):
+        major, _minor = torch_mod.cuda.get_device_capability(i)
+        if int(major) < 8:
+            return False
+    return True
+
+
 def import_training_stack() -> dict[str, Any]:
     missing: list[str] = []
 
@@ -340,6 +350,11 @@ def main() -> int:
         if args.bf16 or args.fp16:
             args.bf16 = False
             args.fp16 = False
+    elif args.bf16 and not cuda_supports_bf16(torch):
+        print("[warn] bf16 is not supported on current CUDA devices; fallback to fp16.")
+        args.bf16 = False
+        if not args.fp16:
+            args.fp16 = True
 
     quantization_config = None
     load_kwargs: dict[str, Any] = {"trust_remote_code": args.trust_remote_code}

@@ -39,6 +39,37 @@ LOAD_IN_4BIT="${LOAD_IN_4BIT:-true}"
 BF16="${BF16:-true}"
 FP16="${FP16:-false}"
 
+autoadapt_precision_for_cuda_arch() {
+  local min_major
+  min_major="$(python3 - <<'PY'
+try:
+    import torch  # type: ignore
+except Exception:
+    print("")
+    raise SystemExit(0)
+if not torch.cuda.is_available():
+    print("")
+    raise SystemExit(0)
+majors = []
+for i in range(torch.cuda.device_count()):
+    major, _minor = torch.cuda.get_device_capability(i)
+    majors.append(int(major))
+print(min(majors) if majors else "")
+PY
+)"
+
+  if [[ "${min_major}" =~ ^[0-9]+$ ]] && (( min_major < 8 )); then
+    if [[ "${BF16}" == "true" ]]; then
+      echo "[layer-b-real-sft] pre-Ampere CUDA detected (min_cc_major=${min_major}), disable bf16."
+      BF16=false
+    fi
+    if [[ "${FP16}" != "true" ]]; then
+      echo "[layer-b-real-sft] pre-Ampere CUDA detected (min_cc_major=${min_major}), enable fp16."
+      FP16=true
+    fi
+  fi
+}
+
 run_once() {
   python3 src/train/real_sft_train.py \
     --config "${CONFIG}" \
@@ -75,6 +106,8 @@ run_once() {
     --bf16 "${BF16}" \
     --fp16 "${FP16}"
 }
+
+autoadapt_precision_for_cuda_arch
 
 attempt=1
 while (( attempt <= 3 )); do

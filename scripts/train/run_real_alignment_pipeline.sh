@@ -79,6 +79,8 @@ payload = {
     "accelerator": "cpu",
     "cuda_device_count": 0,
     "cuda_total_mem_gb": 0.0,
+    "cuda_devices": [],
+    "cuda_min_compute_capability_major": None,
 }
 try:
     import torch  # type: ignore
@@ -87,9 +89,25 @@ try:
         payload["accelerator"] = "cuda"
         payload["cuda_device_count"] = int(torch.cuda.device_count())
         total = 0.0
+        min_major = None
         for i in range(torch.cuda.device_count()):
-            total += float(torch.cuda.get_device_properties(i).total_memory) / (1024**3)
+            props = torch.cuda.get_device_properties(i)
+            mem = float(props.total_memory) / (1024**3)
+            total += mem
+            major = int(props.major)
+            minor = int(props.minor)
+            if min_major is None or major < min_major:
+                min_major = major
+            payload["cuda_devices"].append(
+                {
+                    "index": i,
+                    "name": props.name,
+                    "mem_gb": round(mem, 2),
+                    "compute_capability": f"{major}.{minor}",
+                }
+            )
         payload["cuda_total_mem_gb"] = round(total, 2)
+        payload["cuda_min_compute_capability_major"] = min_major
     elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
         payload["accelerator"] = "mps"
 except Exception as exc:  # noqa: BLE001
@@ -100,6 +118,40 @@ with open(report_path, "w", encoding="utf-8") as f:
 
 print(payload["accelerator"], payload["cuda_total_mem_gb"], payload["cuda_device_count"])
 PY
+}
+
+adapt_precision_for_cuda_arch() {
+  if [[ "${ACCELERATOR}" != "cuda" ]]; then
+    return 0
+  fi
+
+  local min_major
+  min_major="$(python3 - "${RESOURCE_REPORT}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+p = Path(sys.argv[1])
+if not p.exists():
+    print("")
+    raise SystemExit(0)
+payload = json.loads(p.read_text(encoding="utf-8"))
+v = payload.get("cuda_min_compute_capability_major")
+if isinstance(v, int):
+    print(v)
+PY
+)"
+
+  if [[ "${min_major}" =~ ^[0-9]+$ ]] && (( min_major < 8 )); then
+    if [[ "${ALIGN_BF16}" == "true" ]]; then
+      echo "[resource] pre-Ampere CUDA detected (min_cc_major=${min_major}), disable bf16."
+      ALIGN_BF16=false
+    fi
+    if [[ "${ALIGN_FP16}" != "true" ]]; then
+      echo "[resource] pre-Ampere CUDA detected (min_cc_major=${min_major}), enable fp16."
+      ALIGN_FP16=true
+    fi
+  fi
 }
 
 write_skipped_metric() {
@@ -248,7 +300,9 @@ run_real_pref_with_retry() {
 
 MODEL_TIER_DERIVED="$(derive_model_tier)"
 read -r ACCELERATOR TOTAL_MEM_GB CUDA_COUNT < <(probe_resources)
+adapt_precision_for_cuda_arch
 echo "[resource] accelerator=${ACCELERATOR} cuda_mem_gb=${TOTAL_MEM_GB} cuda_count=${CUDA_COUNT} model_tier=${MODEL_TIER_DERIVED}"
+echo "[resource] precision bf16=${ALIGN_BF16} fp16=${ALIGN_FP16}"
 
 if [[ "${FORCE_SKIP_TRAINING}" == "true" ]]; then
   TRAINING_SKIPPED=true
