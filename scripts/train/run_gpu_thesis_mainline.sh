@@ -28,12 +28,14 @@ if [[ "${REQUIRE_GPU}" == "1" && "${DRY_RUN}" != "1" ]]; then
 fi
 
 run_cmd "${PYTHON_BIN}" scripts/repo_guard.py --mode preadd --max-size-mb 10
+run_cmd "${PYTHON_BIN}" scripts/audit/check_pipeline_interface_consistency.py
 run_cmd "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py
 run_cmd bash scripts/data/ensure_real_dataset.sh
 
 run_cmd bash scripts/train/run_layer_b_qwen_autofallback.sh
 
 run_cmd env \
+  PYTHON_BIN="${PYTHON_BIN}" \
   ALIGNMENT_MODE=real \
   SKIP_LAYER_B=1 \
   DPO_EPOCHS="${DPO_EPOCHS:-1}" \
@@ -44,6 +46,7 @@ run_cmd env \
   bash scripts/train/run_real_alignment_pipeline.sh
 
 run_cmd env \
+  PYTHON_BIN="${PYTHON_BIN}" \
   ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE}" \
   JUDGE_MODEL="${JUDGE_MODEL}" \
   JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES}" \
@@ -63,4 +66,3 @@ run_cmd "${PYTHON_BIN}" scripts/audit/check_task_completion.py
 run_cmd "${PYTHON_BIN}" scripts/audit/verify_gpu_experiment_closure.py --strict
 
 echo "[gpu-mainline] done"
-

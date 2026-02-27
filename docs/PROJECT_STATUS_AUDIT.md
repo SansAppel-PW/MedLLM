@@ -6,6 +6,7 @@
   - `python scripts/audit/check_gpu_migration_readiness.py` 返回 `READY_FOR_GPU_MAINLINE`。
   - `python scripts/audit/verify_gpu_experiment_closure.py` 返回 `pass=3, fail=3`，失败项集中在 Layer-B Qwen2.5-7B 主实验缺口。
   - `python scripts/audit/check_opening_alignment.py` 返回 `pass=10, partial=1, fail=0`，唯一 `PARTIAL` 为 A10（完整规模实验受 GPU 资源限制）。
+  - `python scripts/audit/check_pipeline_interface_consistency.py` 返回 `pass=6, fail=0`，一键主链接口调用一致。
 
 ## 2. 与开题要求的一致性
 - 三层闭环（数据治理-检测-对齐）已具备可执行入口，满足主线框架要求【PDF | 页码p10 | 段落#1】。

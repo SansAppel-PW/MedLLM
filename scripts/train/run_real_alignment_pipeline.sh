@@ -18,6 +18,7 @@ if command -v nvidia-smi >/dev/null 2>&1 && [[ "${SKIP_LAYER_B:-0}" != "1" ]]; t
   OUTPUT_DIR="${OUTPUT_DIR:-checkpoints/layer_b/qwen25_7b_sft}" \
   LOGGING_DIR="${LOGGING_DIR:-logs/layer_b/qwen25_7b_sft}" \
   METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_sft_metrics.json}" \
+  PYTHON_BIN="${PYTHON_BIN}" \
   bash scripts/train/run_layer_b_real_sft.sh
 else
   echo "[warn] skip Layer-B SFT (no GPU or SKIP_LAYER_B=1), continue alignment stage."

@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
+PYTHON_BIN="${PYTHON_BIN:-python3}"
 CONFIG="${CONFIG:-configs/train/sft_layer_b_real.yaml}"
 
 TRAIN_FILE="${TRAIN_FILE:-data/clean/real_sft_train.jsonl}"
@@ -13,7 +14,7 @@ OUTPUT_DIR="${OUTPUT_DIR:-checkpoints/layer_b/qwen25_7b_sft}"
 LOGGING_DIR="${LOGGING_DIR:-logs/layer_b/qwen25_7b_sft}"
 METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_sft_metrics.json}"
 
-python3 src/train/real_sft_train.py \
+"${PYTHON_BIN}" src/train/real_sft_train.py \
   --config "${CONFIG}" \
   --task real_sft_layer_b \
   --model-name "${MODEL_NAME}" \

@@ -2,6 +2,8 @@
 
 ## 当前有效主线文档
 - `PROJECT_STATUS_AUDIT.md`：当前项目状态、GPU 迁移结论与剩余缺口。
+- `USER_MANUAL_COMPLETE.md`：完整使用说明（本地预演 + GPU 一键主实验 + 验收）。
+- `THESIS_WRITING_MATERIALS.md`：论文写作材料包（章节映射、图表清单、模板段落）。
 - `GPU_MIGRATION_RUNBOOK.md`：GPU 环境一键执行与验收流程。
 - `OPENING_PROPOSAL_EVIDENCE.md`：开题材料结构化证据与引用锚点。
 - `ACADEMIC_INTEGRITY.md`：学术合规、真实/代理口径边界。

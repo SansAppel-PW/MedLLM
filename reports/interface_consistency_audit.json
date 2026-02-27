@@ -1,0 +1,73 @@
+{
+  "summary": {
+    "total": 6,
+    "pass": 6,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "id": "C01",
+      "requirement": "GPU 主链关键脚本存在",
+      "status": "PASS",
+      "detail": "关键脚本齐全。",
+      "evidence": [
+        "scripts/train/run_gpu_thesis_mainline.sh",
+        "scripts/train/run_real_alignment_pipeline.sh",
+        "scripts/train/run_layer_b_real_sft.sh",
+        "scripts/eval/run_thesis_pipeline.sh",
+        "scripts/eval/run_eval.sh",
+        "scripts/data/ensure_real_dataset.sh"
+      ]
+    },
+    {
+      "id": "C02",
+      "requirement": "Makefile 引用的脚本路径有效",
+      "status": "PASS",
+      "detail": "Makefile 脚本引用路径均存在。",
+      "evidence": [
+        "Makefile"
+      ]
+    },
+    {
+      "id": "C03",
+      "requirement": "关键流水线脚本不得硬编码 python3",
+      "status": "PASS",
+      "detail": "关键流水线脚本均通过 PYTHON_BIN 调用 Python。",
+      "evidence": [
+        "scripts/train/run_gpu_thesis_mainline.sh",
+        "scripts/train/run_real_alignment_pipeline.sh",
+        "scripts/train/run_layer_b_real_sft.sh",
+        "scripts/eval/run_thesis_pipeline.sh",
+        "scripts/eval/run_eval.sh"
+      ]
+    },
+    {
+      "id": "C04",
+      "requirement": "gpu-mainline 向子流水线透传 PYTHON_BIN",
+      "status": "PASS",
+      "detail": "已向 alignment 与 thesis eval 子流水线透传 PYTHON_BIN。",
+      "evidence": [
+        "scripts/train/run_gpu_thesis_mainline.sh"
+      ]
+    },
+    {
+      "id": "C05",
+      "requirement": "real-alignment 调用 Layer-B SFT 时透传 PYTHON_BIN",
+      "status": "PASS",
+      "detail": "Layer-B SFT 子脚本透传 PYTHON_BIN 已配置。",
+      "evidence": [
+        "scripts/train/run_real_alignment_pipeline.sh",
+        "scripts/train/run_layer_b_real_sft.sh"
+      ]
+    },
+    {
+      "id": "C06",
+      "requirement": "Makefile 提供 GPU 一键主链入口与验收入口",
+      "status": "PASS",
+      "detail": "GPU 一键执行与验收目标齐全。",
+      "evidence": [
+        "Makefile"
+      ]
+    }
+  ]
+}

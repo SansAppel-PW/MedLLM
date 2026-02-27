@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
+PYTHON_BIN="${PYTHON_BIN:-python3}"
 BENCHMARK="${BENCHMARK:-data/benchmark/real_medqa_benchmark.jsonl}"
 KB_OUT="${KB_OUT:-data/kg/real_medqa_reference_kb.jsonl}"
 KB_SOURCE_SPLITS="${KB_SOURCE_SPLITS:-train}"
@@ -29,13 +30,13 @@ if [[ "${ENABLE_LLM_JUDGE}" == "1" ]]; then
   )
 fi
 
-python3 scripts/data/build_benchmark_reference_kb.py \
+"${PYTHON_BIN}" scripts/data/build_benchmark_reference_kb.py \
   --benchmark "${BENCHMARK}" \
   --include-splits "${KB_SOURCE_SPLITS}" \
   --output "${KB_OUT}" \
   --report reports/benchmark_reference_kb_report.md
 
-python3 -m src.detect.evaluate_detection \
+"${PYTHON_BIN}" -m src.detect.evaluate_detection \
   --benchmark "${BENCHMARK}" \
   --kg "${KB_OUT}" \
   --pred-output reports/detection_predictions.jsonl \
@@ -43,7 +44,7 @@ python3 -m src.detect.evaluate_detection \
   --include-splits "${EVAL_SPLITS}" \
   --max-samples "${DET_MAX}"
 
-python3 eval/run_eval.py \
+"${PYTHON_BIN}" eval/run_eval.py \
   --benchmark "${BENCHMARK}" \
   --kg "${KB_OUT}" \
   --default-report reports/eval_default.md \
@@ -55,7 +56,7 @@ python3 eval/run_eval.py \
   --log-every "${LOG_EVERY}" \
   "${EVAL_JUDGE_ARGS[@]}"
 
-python3 scripts/eval/run_sota_compare.py \
+"${PYTHON_BIN}" scripts/eval/run_sota_compare.py \
   --benchmark "${BENCHMARK}" \
   --kg "${KB_OUT}" \
   --report reports/sota_compare.md \
@@ -64,13 +65,13 @@ python3 scripts/eval/run_sota_compare.py \
   --max-samples "${SOTA_MAX}" \
   --log-every "${LOG_EVERY}"
 
-python3 scripts/eval/generate_error_analysis.py \
+"${PYTHON_BIN}" scripts/eval/generate_error_analysis.py \
   --predictions reports/detection_predictions.jsonl \
   --output reports/error_analysis.md \
   --cases-out reports/thesis_assets/cases/error_cases_top30.jsonl \
   --top-n 30
 
-python3 scripts/eval/build_thesis_assets.py \
+"${PYTHON_BIN}" scripts/eval/build_thesis_assets.py \
   --out-dir reports/thesis_assets \
   --dataset-summary reports/real_dataset_summary.json \
   --predictions reports/detection_predictions.jsonl \

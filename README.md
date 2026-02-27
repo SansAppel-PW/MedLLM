@@ -262,6 +262,13 @@ python scripts/audit/check_gpu_migration_readiness.py
 make gpu-readiness
 ```
 
+## 流水线接口一致性审计（防接口漂移）
+```bash
+python scripts/audit/check_pipeline_interface_consistency.py
+# 或
+make interface-audit
+```
+
 ## 回归测试
 ```bash
 pytest -q tests
@@ -277,3 +284,6 @@ scripts/deploy/run_demo.sh --web
 
 ## 当前执行清单
 - `docs/EXECUTION_TASKS.md`
+- `docs/PROJECT_STATUS_AUDIT.md`
+- `docs/USER_MANUAL_COMPLETE.md`
+- `docs/THESIS_WRITING_MATERIALS.md`

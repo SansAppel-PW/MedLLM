@@ -15,6 +15,7 @@ make gpu-mainline-dryrun
 
 验收：
 - `reports/gpu_migration_readiness.md` 状态应为 `READY_FOR_GPU_MAINLINE`。
+- `reports/interface_consistency_audit.md` 应为 `FAIL=0`（由主线脚本自动执行）。
 
 ## 3. GPU 环境执行
 ```bash
@@ -49,4 +50,3 @@ make thesis-ready
 - `reports/gpu_experiment_closure.md` 中全部 `PASS`。
 - `reports/opening_alignment_audit.md` 中 `A10=PASS`，整体 `FAIL=0`。
 - 主结果表包含 Layer-B 行：`reports/thesis_assets/tables/main_results_real.csv`。
-
