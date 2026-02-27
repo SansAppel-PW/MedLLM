@@ -97,6 +97,21 @@ make gpu-complete-check
 - `reports/migration/gpu_completion_check.json` 中 `strict_pass=true`
 - `reports/thesis_support/thesis_readiness.json` 中 `ready_for_writing=true`
 
+### 6.5 Day1 单文件脚本（零思考执行）
+```bash
+bash day1_run.sh
+# 或
+make day1-run
+```
+
+脚本会顺序执行：
+1. 同步分支并拉取最新代码
+2. GPU/环境检查与 `make gpu-bootstrap`
+3. `make gpu-check` 与 GPU-run dry-run
+4. 真实 `make gpu-run`（可由 `DAY1_DRY_RUN=true` 跳过）
+5. `make gpu-complete-check` 严格完工校验
+6. 生成 `reports/migration/day1_run_summary.md`
+
 ## 7. 主要命令清单
 
 ### 数据

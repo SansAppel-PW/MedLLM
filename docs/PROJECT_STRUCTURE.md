@@ -33,3 +33,4 @@
 ## 6. High-Level Guides
 - `docs/USAGE_MANUAL_FULL.md`：完整使用说明（含 GPU 一键执行路径）。
 - `reports/thesis_support/thesis_writing_material_full.md`：论文写作材料（章节、结果、模板）。
+- `day1_run.sh`：GPU 首次上线“零思考”单文件执行脚本。

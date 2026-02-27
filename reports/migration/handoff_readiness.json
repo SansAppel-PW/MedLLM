@@ -4,6 +4,10 @@
   "missing": [],
   "checks": [
     {
+      "path": "day1_run.sh",
+      "exists": true
+    },
+    {
       "path": "scripts/migration/bootstrap_gpu_env.sh",
       "exists": true
     },
@@ -21,6 +25,10 @@
     },
     {
       "path": "docs/GPU_MIGRATION_RUNBOOK.md",
+      "exists": true
+    },
+    {
+      "path": "docs/USAGE_MANUAL_FULL.md",
       "exists": true
     },
     {

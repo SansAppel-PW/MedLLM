@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-02-27T15:13:26.048407+00:00",
+  "generated_at_utc": "2026-02-27T15:24:47.970693+00:00",
   "repo_root": "/Users/bibo/Desktop/MedLLM_codex",
   "git": {
     "branch": "codex/worktree",
-    "commit": "ba4a5725733f9e28af1377262f159aceae713d6b",
+    "commit": "b3e76e176c1dcb2470afdddd5145d5fc59b995a5",
     "worktree_clean": false
   },
   "target": {
@@ -31,20 +31,32 @@
     {
       "path": "Makefile",
       "exists": true,
-      "size_bytes": 1031,
-      "sha256": "de1cc685f57ee8a3f417aac4c22ab48a5f695ee14eda1a9cc8b30681012002fb"
+      "size_bytes": 1069,
+      "sha256": "a4d6bb6f9f8d55d510e19964732200cd2896c12d48f3566c004415f9e1067a6f"
     },
     {
       "path": "README.md",
       "exists": true,
-      "size_bytes": 6574,
-      "sha256": "441e582f54def9814679a36ae3d6c3e919af8a222cacbf753a5d9a525c47cadb"
+      "size_bytes": 6675,
+      "sha256": "28592d7c481a2b41d1892eb9c5c5b21f39bdb68c5a69bc73735f67ed873965cb"
+    },
+    {
+      "path": "day1_run.sh",
+      "exists": true,
+      "size_bytes": 5888,
+      "sha256": "dd46ee498c6ab770fbbeed868bde00e4c9d3b00258efa42ca7bd89ef7986007e"
     },
     {
       "path": "docs/GPU_MIGRATION_RUNBOOK.md",
       "exists": true,
       "size_bytes": 2393,
       "sha256": "c7b38e6e10e78a798a7ef50cbc62f490747ece3d33e2c14f51290e49e98c7590"
+    },
+    {
+      "path": "docs/USAGE_MANUAL_FULL.md",
+      "exists": true,
+      "size_bytes": 5129,
+      "sha256": "52ad9306fec3f9f734f59e9101ba5f1ff4765a3ead34d81e36c04b5f3c6ea019"
     },
     {
       "path": "docs/RESOURCE_AWARE_EXECUTION.md",
@@ -67,8 +79,8 @@
     {
       "path": "scripts/migration/check_handoff_readiness.py",
       "exists": true,
-      "size_bytes": 2245,
-      "sha256": "1b57b0e5c5b1eb40258fe02df42ec0fdabd6fed13fab82ba9be51182b98514c6"
+      "size_bytes": 2297,
+      "sha256": "e0db4b5efcfa98dc2afc0eed04408fba609809bd9aad26bacc5b263821a612dc"
     },
     {
       "path": "scripts/migration/check_gpu_completion.py",

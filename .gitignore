@@ -69,3 +69,5 @@ data/**/*.parquet
 # Eval cache
 reports/eval/judge_cache*.jsonl
 reports/eval/judge_risk_cache*.jsonl
+reports/migration/day1_gpu_run.log
+reports/migration/day1_run_summary.md

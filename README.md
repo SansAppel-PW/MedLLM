@@ -136,6 +136,13 @@ GPU 运行后严格完成性校验：
 make gpu-complete-check
 ```
 
+Day1 一键执行脚本（推荐上线当天）：
+```bash
+bash day1_run.sh
+# 或
+make day1-run
+```
+
 详见：`docs/GPU_MIGRATION_RUNBOOK.md`。
 
 说明：

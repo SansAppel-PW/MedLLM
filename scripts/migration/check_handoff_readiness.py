@@ -9,11 +9,13 @@ from pathlib import Path
 
 
 REQUIRED_PATHS = [
+    "day1_run.sh",
     "scripts/migration/bootstrap_gpu_env.sh",
     "scripts/migration/run_gpu_thesis_experiment.sh",
     "scripts/migration/build_gpu_handoff_manifest.py",
     "scripts/migration/check_gpu_completion.py",
     "docs/GPU_MIGRATION_RUNBOOK.md",
+    "docs/USAGE_MANUAL_FULL.md",
     "scripts/train/run_real_alignment_pipeline.sh",
     "scripts/eval/run_thesis_pipeline.sh",
     "scripts/eval/analyze_llm_fallback_impact.py",
