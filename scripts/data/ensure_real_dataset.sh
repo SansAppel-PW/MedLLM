@@ -54,6 +54,7 @@ if (( need_build == 0 )); then
 fi
 
 echo "[ensure-real-dataset] rebuild required: train=${train_count} dev=${dev_count} test=${test_count}"
+set +e
 "${PYTHON_BIN}" scripts/data/build_real_dataset.py \
   --seed 42 \
   --cmt-count "${CMT_COUNT}" \
@@ -63,8 +64,79 @@ echo "[ensure-real-dataset] rebuild required: train=${train_count} dev=${dev_cou
   --bench-val "${BENCH_VAL}" \
   --bench-test "${BENCH_TEST}" \
   --request-interval "${REQUEST_INTERVAL}"
+build_rc=$?
+set -e
+
+if [[ "${build_rc}" -ne 0 ]]; then
+  echo "[ensure-real-dataset] warn: real dataset build failed (rc=${build_rc}), fallback to local governance pipeline."
+  "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py
+  "${PYTHON_BIN}" scripts/data/run_data_governance_pipeline.py --seed 42
+
+  if [[ -f "data/clean/sft_train.jsonl" ]]; then
+    cp "data/clean/sft_train.jsonl" "${TRAIN_FILE}"
+  fi
+  if [[ -f "data/clean/sft_dev.jsonl" ]]; then
+    cp "data/clean/sft_dev.jsonl" "${DEV_FILE}"
+    cp "data/clean/sft_dev.jsonl" "${TEST_FILE}"
+  fi
+
+  if [[ ! -f "data/benchmark/real_medqa_benchmark.jsonl" ]]; then
+    "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py --force
+  fi
+
+  "${PYTHON_BIN}" - <<'PY'
+import json
+from pathlib import Path
+
+root = Path(".").resolve()
+train = root / "data/clean/real_sft_train.jsonl"
+dev = root / "data/clean/real_sft_dev.jsonl"
+test = root / "data/clean/real_sft_test.jsonl"
+bench = root / "data/benchmark/real_medqa_benchmark.jsonl"
+
+def count(path: Path) -> int:
+    if not path.exists():
+        return 0
+    with path.open("r", encoding="utf-8") as f:
+        return sum(1 for line in f if line.strip())
+
+payload = {
+    "sources": [
+        {
+            "name": "fallback_local_governance_pipeline",
+            "dataset": "local_bootstrap_minimal_assets",
+            "config": "default",
+            "split": "train/dev/test",
+            "num_rows_total": count(train) + count(dev) + count(test),
+            "start_offset": 0,
+            "target_count": count(train) + count(dev) + count(test),
+            "fetched_count": count(train) + count(dev) + count(test),
+            "license": "synthetic-demo",
+            "fallback": True,
+        }
+    ],
+    "merged_before_dedup": count(train) + count(dev) + count(test),
+    "merged_after_dedup": count(train) + count(dev) + count(test),
+    "train_count": count(train),
+    "dev_count": count(dev),
+    "test_count": count(test),
+    "benchmark_count": count(bench),
+    "seed": 42,
+    "fallback_mode": True,
+}
+out = root / "reports/real_dataset_summary.json"
+out.parent.mkdir(parents=True, exist_ok=True)
+out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+PY
+fi
 
 train_count="$(line_count "${TRAIN_FILE}")"
 dev_count="$(line_count "${DEV_FILE}")"
 test_count="$(line_count "${TEST_FILE}")"
+
+if (( train_count == 0 || dev_count == 0 || test_count == 0 )); then
+  echo "[ensure-real-dataset] error: dataset fallback still invalid train=${train_count} dev=${dev_count} test=${test_count}" >&2
+  exit 2
+fi
+
 echo "[ensure-real-dataset] ready: train=${train_count} dev=${dev_count} test=${test_count}"

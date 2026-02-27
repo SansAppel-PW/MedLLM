@@ -13,9 +13,11 @@ DEV_FILE="${DEV_FILE:-data/clean/real_sft_dev.jsonl}"
 BASE_OUTPUT="${BASE_OUTPUT:-checkpoints/layer_b/qwen25_7b_qlora}"
 BASE_LOG="${BASE_LOG:-logs/layer_b/qwen25_7b_qlora}"
 METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_qlora_metrics.json}"
+METRICS_OUT_SFT_ALIAS="${METRICS_OUT_SFT_ALIAS:-reports/training/layer_b_qwen25_7b_sft_metrics.json}"
 BLOCKER_REPORT="${BLOCKER_REPORT:-reports/small_real/qwen_layer_b_blocker.md}"
 
 mkdir -p "$(dirname "${BLOCKER_REPORT}")" "${BASE_LOG}" "$(dirname "${METRICS_OUT}")"
+mkdir -p "$(dirname "${METRICS_OUT_SFT_ALIAS}")"
 
 if [[ -z "${BF16:-}" || -z "${FP16:-}" ]]; then
   bf16_capable="$("${PYTHON_BIN}" - <<'PY'
@@ -87,6 +89,14 @@ else
   echo "[qwen-layer-b] launcher=single-process"
 fi
 
+sync_layer_b_metrics() {
+  if [[ -f "${METRICS_OUT}" && "${METRICS_OUT}" != "${METRICS_OUT_SFT_ALIAS}" ]]; then
+    cp "${METRICS_OUT}" "${METRICS_OUT_SFT_ALIAS}"
+  elif [[ -f "${METRICS_OUT_SFT_ALIAS}" && "${METRICS_OUT}" != "${METRICS_OUT_SFT_ALIAS}" ]]; then
+    cp "${METRICS_OUT_SFT_ALIAS}" "${METRICS_OUT}"
+  fi
+}
+
 try_train() {
   local attempt="$1"
   local max_len="$2"
@@ -141,6 +151,7 @@ try_train() {
   set -e
 
   if [[ ${rc} -eq 0 ]]; then
+    sync_layer_b_metrics
     echo "[qwen-layer-b] success attempt=${attempt}"
     return 0
   fi
