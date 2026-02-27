@@ -161,6 +161,11 @@ try_train() {
     return 2
   fi
 
+  if grep -Eqi "TCPStore|socket\\.cpp|client socket has timed out|Name or service not known|c10d|torch\\.distributed\\.elastic\\.multiprocessing\\.errors\\.ChildFailedError" "${run_log}"; then
+    echo "[qwen-layer-b] distributed bootstrap failure on attempt=${attempt}, trying single-process fallback..."
+    return 3
+  fi
+
   echo "[qwen-layer-b] non-OOM failure on attempt=${attempt}, see ${run_log}"
   return 1
 }
@@ -169,6 +174,31 @@ if try_train 1 2048 16; then
   exit 0
 fi
 rc=$?
+
+if [[ ${rc} -eq 3 ]]; then
+  echo "[qwen-layer-b] auto-downgrade to single-process because distributed bootstrap failed."
+  USE_TORCHRUN=0
+  NUM_GPUS=1
+  LAUNCHER=("${PYTHON_BIN}")
+  DEVICE_MAP_AUTO=true
+  if try_train 11 1536 32; then
+    exit 0
+  fi
+  rc=$?
+  if [[ ${rc} -eq 2 ]]; then
+    if try_train 12 1024 64; then
+      exit 0
+    fi
+    rc=$?
+  fi
+  if [[ ${rc} -eq 2 ]]; then
+    if try_train 13 768 96; then
+      exit 0
+    fi
+    rc=$?
+  fi
+fi
+
 if [[ ${rc} -eq 2 ]]; then
   if try_train 2 1536 32; then
     exit 0
