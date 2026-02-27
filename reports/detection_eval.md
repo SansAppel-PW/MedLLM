@@ -9,6 +9,9 @@
 - FPR: 0.0000
 - FNR: 0.0000
 - 样本数: 1200
+- LLM 回退开关: False
+- LLM 回退调用次数: 0
+- LLM 回退提升次数: 0
 
 ## 样例明细（前10条）
 | id | expected | predicted | score |

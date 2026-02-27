@@ -10,6 +10,8 @@
 - `cases/error_cases_top30.jsonl`: 错误案例样本（由 `generate_error_analysis.py` 生成）
 - `figures/pipeline_mermaid.md`: 流程图源码
 - `figures/result_figure_notes.md`: 图表建议
+- `../detection_eval_v2_hybrid_llm.md`: v2 规则+LLM回退融合评测（可选）
+- `../detection_eval_llm_judge.md`: API 风险评测基线（可选）
 
 ## 论文初稿材料
 - `../thesis_support/thesis_draft_material.md`: 论文正文支撑草稿

@@ -118,10 +118,13 @@ bash scripts/eval/run_thesis_pipeline.sh
 - 流水线会自动生成基准构造偏差审计，检查答案格式是否与标签强耦合。
 - 可选开启 API 风险评测基线（默认关闭）：
   `ENABLE_LLM_RISK_JUDGE=true LLM_RISK_MAX_SAMPLES=200 bash scripts/eval/run_thesis_pipeline.sh`
+- 可选开启 v2 规则检测的 LLM 回退融合（默认关闭）：
+  `ENABLE_V2_LLM_FALLBACK=true V2_LLM_MAX_CALLS=200 bash scripts/eval/run_thesis_pipeline.sh`
 
 输出：
 - `reports/detection_eval.md`
 - `reports/detection_eval_v2_balanced.md`
+- `reports/detection_eval_v2_hybrid_llm.md`（可选）
 - `reports/detection_eval_llm_judge.md`（可选）
 - `reports/eval_default.md`
 - `reports/ablation_*.md`

@@ -206,6 +206,7 @@ cat > "${STATUS_REPORT}" <<EOF
 - \`reports/sota_compare.md\`
 - \`reports/error_analysis.md\`
 - \`reports/detection_eval_v2_balanced.md\`
+- \`reports/detection_eval_v2_hybrid_llm.md\` (optional)
 - \`reports/detection_eval_llm_judge.md\` (optional)
 - \`reports/thesis_assets/\`
 - \`reports/e2e_acceptance.md\`

@@ -1,7 +1,7 @@
 # 论文初稿支撑材料（自动生成）
 
 - 生成时间（UTC）: N/A
-- 代码版本: `6c10af70161de466cbec6615a6762d238251213d`
+- 代码版本: `1d301e6c05ecc4bdd58cdef55889bbbf87f6260a`
 
 ## 1. 研究目标与创新点映射
 - 目标一：以 KG 数据治理降低训练数据事实噪声。
@@ -55,6 +55,7 @@
 - v2 option-letter gap(low vs high): 0.0
 - v2 检测 Accuracy/Recall/F1: 0.5000/0.0000/0.0000
 - LLM Judge 检测 Accuracy/Recall/F1: 0.7250/0.8750/0.7609
+- v2 Hybrid(规则+LLM回退) Accuracy/Recall/F1: 0.7250/0.8750/0.7609
 
 ## 8. 论文撰写建议（可直接展开为章节）
 1. 数据治理章节：阐述 CMeKG 校验与冲突样本处理流程。

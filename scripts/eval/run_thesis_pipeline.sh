@@ -21,6 +21,11 @@ ENABLE_LLM_RISK_JUDGE="${ENABLE_LLM_RISK_JUDGE:-false}"
 LLM_RISK_MODEL="${LLM_RISK_MODEL:-gpt-4o-mini}"
 LLM_RISK_MAX_SAMPLES="${LLM_RISK_MAX_SAMPLES:-200}"
 LLM_RISK_CACHE="${LLM_RISK_CACHE:-reports/eval/judge_risk_cache.jsonl}"
+ENABLE_V2_LLM_FALLBACK="${ENABLE_V2_LLM_FALLBACK:-false}"
+V2_LLM_MODEL="${V2_LLM_MODEL:-gpt-4o-mini}"
+V2_LLM_CACHE="${V2_LLM_CACHE:-reports/eval/judge_risk_cache_v2.jsonl}"
+V2_LLM_MIN_CONF="${V2_LLM_MIN_CONF:-0.70}"
+V2_LLM_MAX_CALLS="${V2_LLM_MAX_CALLS:-0}"
 
 eval_cmd=(
   python3 eval/run_eval.py
@@ -66,6 +71,11 @@ if [[ "${RUN_BALANCED_DETECTION_AUDIT}" == "true" ]]; then
   KB_SOURCE_SPLITS="${KB_SOURCE_SPLITS}" \
   EVAL_SPLITS="${EVAL_SPLITS}" \
   DET_MAX="${DET_MAX}" \
+  ENABLE_V2_LLM_FALLBACK="${ENABLE_V2_LLM_FALLBACK}" \
+  V2_LLM_MODEL="${V2_LLM_MODEL}" \
+  V2_LLM_CACHE="${V2_LLM_CACHE}" \
+  V2_LLM_MIN_CONF="${V2_LLM_MIN_CONF}" \
+  V2_LLM_MAX_CALLS="${V2_LLM_MAX_CALLS}" \
   bash scripts/eval/run_detection_robustness.sh
 fi
 
@@ -120,6 +130,10 @@ python3 scripts/eval/generate_thesis_draft_material.py \
   --resource reports/training/resource_preflight.json \
   --skip-report reports/training/resource_skip_report.md \
   --artifact-report reports/thesis_support/benchmark_artifact_report.json \
+  --artifact-report-v2 reports/thesis_support/benchmark_artifact_report_v2_balanced.json \
+  --detection-eval-v2 reports/detection_eval_v2_balanced.md \
+  --detection-eval-llm-judge reports/detection_eval_llm_judge.md \
+  --detection-eval-v2-hybrid-llm reports/detection_eval_v2_hybrid_llm.md \
   --output-md reports/thesis_support/thesis_draft_material.md \
   --output-json reports/thesis_support/experiment_record.json
 

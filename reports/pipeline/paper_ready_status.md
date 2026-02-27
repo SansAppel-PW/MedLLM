@@ -1,6 +1,6 @@
 # Paper-Ready Pipeline Status
 
-- Generated at (UTC): 2026-02-26T03:52:25Z
+- Generated at (UTC): 2026-02-27T13:59:23Z
 - Model target: `Qwen/Qwen2.5-7B-Instruct`
 - Alignment mode: `real`
 
@@ -19,6 +19,8 @@
 - `reports/sota_compare.md`
 - `reports/error_analysis.md`
 - `reports/detection_eval_v2_balanced.md`
+- `reports/detection_eval_v2_hybrid_llm.md` (optional)
+- `reports/detection_eval_llm_judge.md` (optional)
 - `reports/thesis_assets/`
 - `reports/e2e_acceptance.md`
 - `reports/thesis_support/thesis_draft_material.md`

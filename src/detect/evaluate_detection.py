@@ -15,6 +15,7 @@ except ImportError:  # pragma: no cover
 
 
 POSITIVE_LEVELS = {"high", "medium"}
+RISK_ORDER = {"low": 0, "medium": 1, "high": 2}
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -69,8 +70,14 @@ def metrics(samples: list[dict[str, Any]]) -> dict[str, float]:
     }
 
 
-def write_report(path: Path, details: list[dict[str, Any]], m: dict[str, float]) -> None:
+def write_report(
+    path: Path,
+    details: list[dict[str, Any]],
+    m: dict[str, float],
+    meta: dict[str, Any] | None = None,
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    meta = meta or {}
     lines = [
         "# 幻觉检测离线评测报告",
         "",
@@ -83,11 +90,25 @@ def write_report(path: Path, details: list[dict[str, Any]], m: dict[str, float])
         f"- FPR: {m['fp'] / max(m['fp'] + m['tn'], 1):.4f}",
         f"- FNR: {m['fn'] / max(m['fn'] + m['tp'], 1):.4f}",
         f"- 样本数: {len(details)}",
+    ]
+
+    if meta:
+        lines.extend(
+            [
+                f"- LLM 回退开关: {meta.get('llm_fallback_enabled', False)}",
+                f"- LLM 回退调用次数: {meta.get('llm_fallback_calls', 0)}",
+                f"- LLM 回退提升次数: {meta.get('llm_fallback_promotions', 0)}",
+            ]
+        )
+
+    lines.extend(
+        [
         "",
         "## 样例明细（前10条）",
         "| id | expected | predicted | score |",
         "|---|---|---|---|",
-    ]
+        ]
+    )
 
     for row in details[:10]:
         lines.append(
@@ -116,6 +137,18 @@ def main() -> int:
     parser.add_argument("--pred-output", default="reports/detection_predictions.jsonl")
     parser.add_argument("--report", default="reports/detection_eval.md")
     parser.add_argument("--max-samples", type=int, default=0, help="Evaluate first N samples if > 0")
+    parser.add_argument("--enable-llm-fallback", action="store_true", help="Use LLM judge fallback to promote risky cases")
+    parser.add_argument("--llm-model", default="gpt-4o-mini")
+    parser.add_argument("--llm-cache", default="reports/eval/judge_risk_cache.jsonl")
+    parser.add_argument("--llm-min-confidence", type=float, default=0.70)
+    parser.add_argument("--llm-max-calls", type=int, default=0, help="Limit fallback calls; 0 means unlimited")
+    parser.add_argument(
+        "--llm-trigger",
+        default="pred_low",
+        choices=["pred_low", "pred_low_or_medium"],
+        help="When to invoke LLM fallback",
+    )
+    parser.add_argument("--llm-log-every", type=int, default=100, help="Progress interval for LLM fallback")
     parser.add_argument(
         "--include-splits",
         default="",
@@ -131,6 +164,19 @@ def main() -> int:
     if args.max_samples > 0 and len(benchmark) > args.max_samples:
         benchmark = benchmark[: args.max_samples]
         print(f"[detection-eval] truncated benchmark to {len(benchmark)} samples")
+
+    llm_judge = None
+    if args.enable_llm_fallback:
+        try:
+            from eval.llm_risk_judge import judge_risk as llm_judge  # type: ignore
+        except ModuleNotFoundError:
+            try:
+                from llm_risk_judge import judge_risk as llm_judge  # type: ignore
+            except ModuleNotFoundError as exc:
+                raise RuntimeError("LLM fallback enabled but eval.llm_risk_judge is not available") from exc
+
+    llm_calls = 0
+    llm_promotions = 0
     preds = []
     total = len(benchmark)
     for idx, row in enumerate(benchmark, start=1):
@@ -139,19 +185,54 @@ def main() -> int:
             answer=str(row.get("answer", "")),
             kg_path=args.kg,
         )
+        predicted_risk = str(out.get("risk_level", "low"))
+        llm_risk = ""
+        llm_conf = 0.0
+        llm_reason = ""
+        llm_used = False
+        llm_promoted = False
+
+        should_trigger = predicted_risk == "low" or (
+            args.llm_trigger == "pred_low_or_medium" and predicted_risk in {"low", "medium"}
+        )
+        allowed_by_budget = args.llm_max_calls <= 0 or llm_calls < args.llm_max_calls
+        if llm_judge and should_trigger and allowed_by_budget:
+            llm_calls += 1
+            llm_used = True
+            decision = llm_judge(
+                query=str(row.get("query", "")),
+                answer=str(row.get("answer", "")),
+                model=args.llm_model,
+                cache_path=args.llm_cache,
+            )
+            llm_risk = decision.risk
+            llm_conf = float(decision.confidence)
+            llm_reason = decision.reason
+            if llm_conf >= args.llm_min_confidence and RISK_ORDER.get(llm_risk, 0) > RISK_ORDER.get(predicted_risk, 0):
+                predicted_risk = llm_risk
+                llm_promotions += 1
+                llm_promoted = True
+
         preds.append(
             {
                 "id": row.get("id"),
                 "query": row.get("query", ""),
                 "answer": row.get("answer", ""),
                 "expected_risk": row.get("expected_risk", "low"),
-                "predicted_risk": out.get("risk_level", "low"),
+                "predicted_risk": predicted_risk,
                 "risk_score": float(out.get("risk_score", 0.0)),
-                "blocked": bool(out.get("blocked", False)),
+                "blocked": predicted_risk == "high",
+                "llm_used": llm_used,
+                "llm_risk": llm_risk,
+                "llm_confidence": llm_conf,
+                "llm_reason": llm_reason,
+                "llm_promoted": llm_promoted,
             }
         )
         if idx % 200 == 0:
             print(f"[detection-eval] progress={idx}/{total}")
+        if args.enable_llm_fallback and args.llm_log_every > 0 and llm_calls > 0 and llm_calls % args.llm_log_every == 0:
+            print(f"[detection-eval:llm-fallback] calls={llm_calls} promotions={llm_promotions}")
 
     m = metrics(preds)
 
@@ -161,7 +242,16 @@ def main() -> int:
         for row in preds:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
-    write_report(Path(args.report), preds, m)
+    write_report(
+        Path(args.report),
+        preds,
+        m,
+        meta={
+            "llm_fallback_enabled": bool(args.enable_llm_fallback),
+            "llm_fallback_calls": llm_calls,
+            "llm_fallback_promotions": llm_promotions,
+        },
+    )
     print(f"[detection-eval] samples={len(preds)} report={args.report}")
     return 0
 
