@@ -7,6 +7,7 @@ cd "${ROOT_DIR}"
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 DRY_RUN="${DRY_RUN:-0}"
 REQUIRE_GPU="${REQUIRE_GPU:-1}"
+export HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"
 
 ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-0}"
 JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
@@ -31,6 +32,7 @@ run_cmd "${PYTHON_BIN}" scripts/repo_guard.py --mode preadd --max-size-mb 10
 run_cmd "${PYTHON_BIN}" scripts/audit/check_pipeline_interface_consistency.py
 run_cmd "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py
 run_cmd bash scripts/data/ensure_real_dataset.sh
+echo "[gpu-mainline] HF_ENDPOINT=${HF_ENDPOINT}"
 
 run_cmd env \
   USE_TORCHRUN="${USE_TORCHRUN:-0}" \

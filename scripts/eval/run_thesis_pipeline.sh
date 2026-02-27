@@ -7,6 +7,8 @@ cd "${ROOT_DIR}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 BENCHMARK="${BENCHMARK:-data/benchmark/real_medqa_benchmark.jsonl}"
 KB_OUT="${KB_OUT:-data/kg/real_medqa_reference_kb.jsonl}"
+KB_BASE="${KB_BASE:-data/kg/cm3kg_core_kb.jsonl}"
+KB_RUNTIME="${KB_RUNTIME:-data/kg/real_medqa_reference_kb_merged.jsonl}"
 KB_SOURCE_SPLITS="${KB_SOURCE_SPLITS:-train}"
 EVAL_SPLITS="${EVAL_SPLITS:-validation,test}"
 DET_MAX="${DET_MAX:-0}"
@@ -36,29 +38,70 @@ fi
   --output "${KB_OUT}" \
   --report reports/benchmark_reference_kb_report.md
 
+if [[ -f "${KB_BASE}" ]]; then
+  "${PYTHON_BIN}" - <<PY
+import json
+from pathlib import Path
+
+base = Path("${KB_BASE}")
+ref = Path("${KB_OUT}")
+merged = Path("${KB_RUNTIME}")
+merged.parent.mkdir(parents=True, exist_ok=True)
+
+rows = []
+seen = set()
+for path in [ref, base]:
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            item = json.loads(line)
+            key = (str(item.get("head","")), str(item.get("relation","")), str(item.get("tail","")))
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append(item)
+
+with merged.open("w", encoding="utf-8") as f:
+    for row in rows:
+        f.write(json.dumps(row, ensure_ascii=False) + "\\n")
+
+print(f"[thesis-pipeline] merged-kb rows={len(rows)} output={merged}")
+PY
+  KB_EFFECTIVE="${KB_RUNTIME}"
+else
+  KB_EFFECTIVE="${KB_OUT}"
+fi
+
 "${PYTHON_BIN}" -m src.detect.evaluate_detection \
   --benchmark "${BENCHMARK}" \
-  --kg "${KB_OUT}" \
+  --kg "${KB_EFFECTIVE}" \
   --pred-output reports/detection_predictions.jsonl \
   --report reports/detection_eval.md \
   --include-splits "${EVAL_SPLITS}" \
   --max-samples "${DET_MAX}"
 
-"${PYTHON_BIN}" eval/run_eval.py \
-  --benchmark "${BENCHMARK}" \
-  --kg "${KB_OUT}" \
-  --default-report reports/eval_default.md \
-  --ablation-kg reports/ablation_kg.md \
-  --ablation-detection reports/ablation_detection.md \
-  --ablation-alignment reports/ablation_alignment.md \
-  --include-splits "${EVAL_SPLITS}" \
-  --max-samples "${EVAL_MAX}" \
-  --log-every "${LOG_EVERY}" \
-  "${EVAL_JUDGE_ARGS[@]}"
+eval_cmd=(
+  "${PYTHON_BIN}" eval/run_eval.py
+  --benchmark "${BENCHMARK}"
+  --kg "${KB_EFFECTIVE}"
+  --default-report reports/eval_default.md
+  --ablation-kg reports/ablation_kg.md
+  --ablation-detection reports/ablation_detection.md
+  --ablation-alignment reports/ablation_alignment.md
+  --include-splits "${EVAL_SPLITS}"
+  --max-samples "${EVAL_MAX}"
+  --log-every "${LOG_EVERY}"
+)
+if [[ "${ENABLE_LLM_JUDGE}" == "1" ]]; then
+  eval_cmd+=("${EVAL_JUDGE_ARGS[@]}")
+fi
+"${eval_cmd[@]}"
 
 "${PYTHON_BIN}" scripts/eval/run_sota_compare.py \
   --benchmark "${BENCHMARK}" \
-  --kg "${KB_OUT}" \
+  --kg "${KB_EFFECTIVE}" \
   --report reports/sota_compare.md \
   --csv reports/thesis_assets/tables/sota_compare_metrics.csv \
   --include-splits "${EVAL_SPLITS}" \

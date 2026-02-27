@@ -26,6 +26,7 @@ venv/
 
 # Mandatory large-asset exclusions
 /data/
+/CM3KG/
 /datasets/
 /raw/
 /processed/

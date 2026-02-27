@@ -54,6 +54,8 @@ NUM_GPUS="${NUM_GPUS:-}"
 USE_TORCHRUN="${USE_TORCHRUN:-}"
 BF16="${BF16:-}"
 FP16="${FP16:-}"
+HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"
+export HF_ENDPOINT
 
 TS="${TS:-$(date +%Y%m%d_%H%M%S)}"
 LOG_DIR="logs/session"
@@ -185,6 +187,7 @@ PYTHON_BIN="${PYTHON_BIN}" make gpu-mainline-dryrun
 
 if [[ "${SKIP_MAINLINE}" != "1" ]]; then
   step "Run GPU mainline (this can take long)"
+  echo "runtime_hf_endpoint: ${HF_ENDPOINT}"
   ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE}" \
   JUDGE_MODEL="${JUDGE_MODEL}" \
   JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES}" \

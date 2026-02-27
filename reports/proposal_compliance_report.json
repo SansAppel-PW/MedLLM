@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "total": 3,
+    "pass": 3,
+    "partial": 0,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "真实数据集规模与来源可审计",
+      "status": "PASS",
+      "detail": "train/dev/test=41305/5162/5162, benchmark=7998, source=CM3KG (from CMKG project)",
+      "evidence": [
+        "data/clean/real_sft_train.jsonl",
+        "reports/real_dataset_summary.json",
+        "【DOCX | 三、课题技术路线及研究方案 | 段落#T03R01C01】"
+      ]
+    },
+    {
+      "id": "C2",
+      "requirement": "RAG流程与知识图谱构建对齐开题描述",
+      "status": "PASS",
+      "detail": "cm3kg_core_kb=180000, merged_kb=180800, pipeline_merge_support=True",
+      "evidence": [
+        "data/kg/cm3kg_core_kb.jsonl",
+        "data/kg/real_medqa_reference_kb_merged.jsonl",
+        "scripts/eval/run_thesis_pipeline.sh",
+        "【DOCX | 三、课题技术路线及研究方案 | 段落#T03R01C01】"
+      ]
+    },
+    {
+      "id": "C3",
+      "requirement": "从数据到结论端到端流程可复现并与课题一致",
+      "status": "PASS",
+      "detail": "missing_scripts=0, closure_fail=0, A10=PASS",
+      "evidence": [
+        "scripts/data/ensure_real_dataset.sh",
+        "scripts/train/run_gpu_thesis_mainline.sh",
+        "scripts/eval/run_thesis_pipeline.sh",
+        "scripts/audit/build_thesis_ready_package.py",
+        "reports/gpu_experiment_closure.json"
+      ]
+    }
+  ]
+}

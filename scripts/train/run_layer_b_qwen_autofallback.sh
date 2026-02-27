@@ -118,8 +118,8 @@ try_train() {
     --logging-dir "${log_dir}" \
     --metrics-out "${METRICS_OUT}" \
     --max-length "${max_len}" \
-    --num-train-epochs 1 \
-    --max-steps -1 \
+    --num-train-epochs "${NUM_EPOCHS:-1}" \
+    --max-steps "${MAX_STEPS:--1}" \
     --learning-rate 2e-5 \
     --weight-decay 0.01 \
     --warmup-ratio 0.03 \

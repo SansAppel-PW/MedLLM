@@ -9,6 +9,11 @@ TRAIN_FILE="${TRAIN_FILE:-data/clean/real_sft_train.jsonl}"
 DEV_FILE="${DEV_FILE:-data/clean/real_sft_dev.jsonl}"
 TEST_FILE="${TEST_FILE:-data/clean/real_sft_test.jsonl}"
 SUMMARY_FILE="${SUMMARY_FILE:-reports/real_dataset_summary.json}"
+CM3KG_DIR="${CM3KG_DIR:-CM3KG}"
+PREFER_CM3KG="${PREFER_CM3KG:-1}"
+CM3KG_MAX_SFT_ROWS="${CM3KG_MAX_SFT_ROWS:-60000}"
+CM3KG_MAX_BENCHMARK_PAIRS="${CM3KG_MAX_BENCHMARK_PAIRS:-4000}"
+CM3KG_MAX_KB_ROWS="${CM3KG_MAX_KB_ROWS:-180000}"
 
 MIN_REAL_TRAIN="${MIN_REAL_TRAIN:-200}"
 MIN_REAL_DEV="${MIN_REAL_DEV:-20}"
@@ -37,6 +42,15 @@ train_count="$(line_count "${TRAIN_FILE}")"
 dev_count="$(line_count "${DEV_FILE}")"
 test_count="$(line_count "${TEST_FILE}")"
 
+if [[ "${PREFER_CM3KG}" == "1" && -d "${CM3KG_DIR}" ]]; then
+  # If CM3KG is present, raise bar to enforce real-scale datasets by default.
+  if [[ -z "${MIN_REAL_TRAIN_OVERRIDE:-}" ]]; then
+    MIN_REAL_TRAIN=5000
+    MIN_REAL_DEV=500
+    MIN_REAL_TEST=500
+  fi
+fi
+
 need_build=0
 if [[ "${FORCE_REBUILD_REAL_DATASET}" == "1" ]]; then
   need_build=1
@@ -51,6 +65,32 @@ fi
 if (( need_build == 0 )); then
   echo "[ensure-real-dataset] reuse existing real dataset: train=${train_count} dev=${dev_count} test=${test_count}"
   exit 0
+fi
+
+if [[ "${PREFER_CM3KG}" == "1" && -d "${CM3KG_DIR}" ]]; then
+  echo "[ensure-real-dataset] CM3KG detected, build real assets from local CM3KG."
+  set +e
+  "${PYTHON_BIN}" scripts/data/build_cm3kg_real_assets.py \
+    --cm3kg-dir "${CM3KG_DIR}" \
+    --seed 42 \
+    --max-sft-rows "${CM3KG_MAX_SFT_ROWS}" \
+    --max-benchmark-pairs "${CM3KG_MAX_BENCHMARK_PAIRS}" \
+    --max-kb-rows "${CM3KG_MAX_KB_ROWS}"
+  cm3kg_rc=$?
+  set -e
+
+  if [[ "${cm3kg_rc}" -eq 0 ]]; then
+    train_count="$(line_count "${TRAIN_FILE}")"
+    dev_count="$(line_count "${DEV_FILE}")"
+    test_count="$(line_count "${TEST_FILE}")"
+    if (( train_count >= MIN_REAL_TRAIN && dev_count >= MIN_REAL_DEV && test_count >= MIN_REAL_TEST )); then
+      echo "[ensure-real-dataset] CM3KG build ready: train=${train_count} dev=${dev_count} test=${test_count}"
+      exit 0
+    fi
+    echo "[ensure-real-dataset] warn: CM3KG build size below threshold, fallback to alternate builder."
+  else
+    echo "[ensure-real-dataset] warn: CM3KG build failed (rc=${cm3kg_rc}), fallback to alternate builder."
+  fi
 fi
 
 echo "[ensure-real-dataset] rebuild required: train=${train_count} dev=${dev_count} test=${test_count}"

@@ -9,16 +9,25 @@
 | `FreedomIntelligence/huatuo_encyclopedia_qa` | 362,420 / 6,000 | 医学百科问答训练语料 | Apache-2.0 | `scripts/data/build_real_dataset.py` | `data/raw/real_sources/huatuo_encyclopedia.jsonl` |
 | `GBaker/MedQA-USMLE-4-options-hf` | train/val/test | 构建真实 benchmark 与参考 KB | CC-BY-SA-4.0 | `scripts/data/build_real_dataset.py` | `data/benchmark/real_medqa_benchmark.jsonl` |
 
+## 1.1 本地真实知识图谱数据源（CM3KG）
+
+| 数据源 | 规模 | 用途 | 许可 | 接入方式 | 本地产物 |
+|---|---:|---|---|---|---|
+| `CM3KG/medical.csv` | 8,808 疾病条目 | 构建真实 SFT 训练语料与 benchmark 正负样本 | 需核验上游条款 | `scripts/data/build_cm3kg_real_assets.py` | `data/clean/real_sft_*.jsonl`, `data/benchmark/real_medqa_benchmark.jsonl` |
+| `CM3KG/Disease.csv` | 483,272 三元组 | 构建检索知识库与 KG 一致性校验基础 | 需核验上游条款 | `scripts/data/build_cm3kg_real_assets.py` | `data/kg/cm3kg_core_kb.jsonl` |
+
 ## 2. 项目衍生数据产物
 
 | 数据产物 | 说明 | 生成脚本 |
 |---|---|---|
-| `data/clean/real_sft_train.jsonl` | 真实 SFT 训练集（去重后切分） | `scripts/data/build_real_dataset.py` |
-| `data/clean/real_sft_dev.jsonl` | 真实 SFT 验证集 | `scripts/data/build_real_dataset.py` |
-| `data/clean/real_sft_test.jsonl` | 真实 SFT 测试集 | `scripts/data/build_real_dataset.py` |
+| `data/clean/real_sft_train.jsonl` | 真实 SFT 训练集（优先由 CM3KG 构建） | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
+| `data/clean/real_sft_dev.jsonl` | 真实 SFT 验证集 | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
+| `data/clean/real_sft_test.jsonl` | 真实 SFT 测试集 | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
 | `data/clean/real_pref_seed_pairs.jsonl` | 真实偏好对种子数据 | `scripts/train/run_real_alignment_pipeline.sh` |
 | `data/kg/real_medqa_reference_kb.jsonl` | 基于 benchmark 正例构建的参考知识库 | `scripts/data/build_benchmark_reference_kb.py` |
-| `reports/real_dataset_summary.json` | 真实数据构建统计摘要 | `scripts/data/build_real_dataset.py` |
+| `data/kg/cm3kg_core_kb.jsonl` | 基于 CM3KG 构建的核心检索 KG | `scripts/data/build_cm3kg_real_assets.py` |
+| `data/kg/real_medqa_reference_kb_merged.jsonl` | benchmark KB + CM3KG KB 合并知识库 | `scripts/eval/run_thesis_pipeline.sh` |
+| `reports/real_dataset_summary.json` | 真实数据构建统计摘要 | `scripts/data/build_cm3kg_real_assets.py` / `scripts/data/build_real_dataset.py` |
 
 ## 3. 合规与使用规则
 - 仅在遵循各数据集 License 前提下用于研究与论文实验。
