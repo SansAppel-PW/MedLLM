@@ -33,5 +33,6 @@
 ## 6. High-Level Guides
 - `docs/USAGE_MANUAL_FULL.md`：完整使用说明（含 GPU 一键执行路径）。
 - `docs/PROJECT_MASTER_DOSSIER.md`：项目总档案（项目详情+使用说明+产出说明+论文章节草稿）。
+- `docs/AUTODL_DEPLOYMENT_GUIDE.md`：AutoDL 部署方案与保姆级操作指南。
 - `reports/thesis_support/thesis_writing_material_full.md`：论文写作材料（章节、结果、模板）。
 - `day1_run.sh`：GPU 首次上线“零思考”单文件执行脚本。

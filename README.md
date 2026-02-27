@@ -208,4 +208,5 @@ scripts/deploy/run_demo.sh --web
 - `docs/USAGE_MANUAL_FULL.md`
 - `docs/PROJECT_STRUCTURE.md`
 - `docs/PROJECT_MASTER_DOSSIER.md`
+- `docs/AUTODL_DEPLOYMENT_GUIDE.md`
 - `reports/thesis_support/thesis_writing_material_full.md`
