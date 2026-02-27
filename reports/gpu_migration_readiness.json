@@ -1,12 +1,12 @@
 {
-  "status": "READY_FOR_GPU_MAINLINE",
-  "ready_for_gpu_run": true,
+  "status": "NOT_READY",
+  "ready_for_gpu_run": false,
   "opening_audit_partial_ids": [
-    "A10"
+    "A11"
   ],
   "opening_audit_fail_ids": [],
-  "remaining_primary_gap": "A10",
-  "remaining_primary_gap_detail": "当前环境无GPU，已输出 blocker，流程可继续但主实验结果待算力补齐。",
+  "remaining_primary_gap": null,
+  "remaining_primary_gap_detail": "Layer-B 主实验已有真实训练指标。",
   "alignment_real_ready": true,
   "missing_required_paths": [],
   "gpu_execution_commands": [

@@ -9,11 +9,11 @@
 
 | 系统 | Accuracy | Recall | Specificity | Unsafe Pass Rate | Risky Block Rate | F1 |
 |---|---:|---:|---:|---:|---:|---:|
-| MedQA-RAG-Proxy (retrieval) | 0.5000 | 0.9983 | 0.0017 | 0.0017 | 0.9967 | 0.6663 |
-| MedLLM-Hybrid (ours) | 0.5000 | 0.9967 | 0.0033 | 0.0033 | 0.9917 | 0.6659 |
-| BioMistral-7B-Proxy (whitebox) | 0.3642 | 0.5167 | 0.2117 | 0.4833 | 0.1950 | 0.4483 |
+| MedQA-RAG-Proxy (retrieval) | 0.5025 | 1.0000 | 0.0050 | 0.0000 | 1.0000 | 0.6678 |
+| MedLLM-Hybrid (ours) | 0.5025 | 1.0000 | 0.0050 | 0.0000 | 1.0000 | 0.6678 |
+| BioMistral-7B-Proxy (whitebox) | 0.3650 | 0.5467 | 0.1833 | 0.4533 | 0.1617 | 0.4626 |
 | HuatuoGPT-7B-Proxy (raw) | 0.5000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 | 0.0000 |
 
 ## 结论
-- 在当前代理评测中，`MedQA-RAG-Proxy (retrieval)` 的高风险放行率最低（Unsafe Pass Rate = 0.0017）。
+- 在当前代理评测中，`MedQA-RAG-Proxy (retrieval)` 的高风险放行率最低（Unsafe Pass Rate = 0.0000）。
 - 可作为论文中“系统级安全策略对比”的可复现实验。

@@ -21,7 +21,7 @@
       "id": "C2",
       "requirement": "RAG流程与知识图谱构建对齐开题描述",
       "status": "PASS",
-      "detail": "cm3kg_core_kb=180000, merged_kb=180800, pipeline_merge_support=True",
+      "detail": "cm3kg_core_kb=180000, merged_kb=182300, pipeline_merge_support=True",
       "evidence": [
         "data/kg/cm3kg_core_kb.jsonl",
         "data/kg/real_medqa_reference_kb_merged.jsonl",

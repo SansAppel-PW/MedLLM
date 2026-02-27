@@ -77,6 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--weight-decay", type=float, default=0.0)
     p.add_argument("--loss-aversion", type=float, default=1.5)
     p.add_argument("--tau", type=float, default=1.0)
+    p.add_argument("--eval-sample-size", type=int, default=512)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--trust-remote-code", type=str2bool, default=True)
     p.add_argument("--local-files-only", type=str2bool, default=False)
@@ -207,6 +208,10 @@ def main() -> int:
     ]
     if not pairs:
         raise ValueError("No valid preference pairs.")
+    eval_pairs = pairs
+    if args.eval_sample_size > 0 and len(pairs) > args.eval_sample_size:
+        rng = random.Random(args.seed + 23)
+        eval_pairs = rng.sample(pairs, args.eval_sample_size)
 
     device = pick_device()
     tokenizer = AutoTokenizer.from_pretrained(
@@ -226,7 +231,7 @@ def main() -> int:
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
 
-    before_acc = pair_accuracy(model, tokenizer, pairs, max_length=args.max_length, device=device)
+    before_acc = pair_accuracy(model, tokenizer, eval_pairs, max_length=args.max_length, device=device)
 
     started = time.time()
     global_step = 0
@@ -273,7 +278,7 @@ def main() -> int:
                 break
 
     model.eval()
-    after_acc = pair_accuracy(model, tokenizer, pairs, max_length=args.max_length, device=device)
+    after_acc = pair_accuracy(model, tokenizer, eval_pairs, max_length=args.max_length, device=device)
     elapsed = time.time() - started
 
     model.save_pretrained(final_dir)
@@ -284,6 +289,7 @@ def main() -> int:
         "simulation": False,
         "task": args.task,
         "pair_count": len(pairs),
+        "eval_pair_count": len(eval_pairs),
         "samples": len(pairs),
         "steps": global_step,
         "train_runtime_sec": round(elapsed, 4),
@@ -323,6 +329,7 @@ def main() -> int:
             "pref_file": str(pref_path),
             "pref_file_sha256": sha256_of_file(pref_path),
             "pair_count": len(pairs),
+            "eval_pair_count": len(eval_pairs),
         },
         "model": {
             "base_model": args.model_name,
@@ -350,4 +357,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

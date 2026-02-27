@@ -1,14 +1,14 @@
 # GPU Migration Readiness
 
-- Status: READY_FOR_GPU_MAINLINE
-- Ready for GPU mainline run: True
-- Opening audit partial IDs: A10
+- Status: NOT_READY
+- Ready for GPU mainline run: False
+- Opening audit partial IDs: A11
 - Opening audit fail IDs: None
 - Alignment real-ready (DPO/SimPO/KTO): True
 - Missing required paths: None
 
 ## Remaining Primary Gap
-- A10: 当前环境无GPU，已输出 blocker，流程可继续但主实验结果待算力补齐。
+- None: Layer-B 主实验已有真实训练指标。
 
 ## GPU Execution Commands
 - `python -m pip install -r requirements.txt`

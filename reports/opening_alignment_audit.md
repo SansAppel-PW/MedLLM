@@ -1,7 +1,7 @@
 # 开题一致性审计报告
 
-- PASS: 10
-- PARTIAL: 1
+- PASS: 11
+- PARTIAL: 0
 - FAIL: 0
 
 | ID | 要求 | 状态 | 结论 | 关键证据 | 开题引用 |
@@ -16,4 +16,4 @@
 | A08 | WinRate 与开题 GPT-4 Judge 口径一致性 | PASS | 存在可追溯 LLM-as-a-Judge 实现（含 .env 注入与落盘记录入口）。 | eval/judge.py<br>eval/run_eval.py<br>.env.example<br>reports/eval_default.md | 【PDF | 页码p13 | 段落#1】 |
 | A09 | real/proxy 结果分层展示与口径隔离 | PASS | 双层表已形成。 | reports/thesis_assets/tables/main_results_dual_view.md<br>reports/thesis_assets/tables/baseline_audit_dual_view.md | 【PPT | 页码15 | 要点#7】 |
 | A10 | 完整规模实验可行性与阻塞可审计 | PASS | Layer-B 主实验已有真实训练指标。 | reports/small_real/qwen_layer_b_blocker.md<br>reports/training/layer_b_qwen25_7b_sft_metrics.json | 【PDF | 页码p13 | 段落#1】<br>【DOCX | 方法与实验设计 | 段落#1】 |
-| A11 | 任务清单与交付物一致性 | PARTIAL | 任务审计存在 DONE 缺失项: 3。 | reports/task_audit.json<br>reports/task_audit.md | 【DOCX | 题目与任务定义 | 段落#1】 |
+| A11 | 任务清单与交付物一致性 | PASS | 任务审计显示 DONE 项交付物完整。 | reports/task_audit.json<br>reports/task_audit.md | 【DOCX | 题目与任务定义 | 段落#1】 |

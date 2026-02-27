@@ -49,6 +49,7 @@ MIN_MERGED_COUNT="${MIN_MERGED_COUNT:-15000}"
 MIN_MEDQA_BENCH_COUNT="${MIN_MEDQA_BENCH_COUNT:-2000}"
 
 FORCE_REBUILD_REAL_DATASET="${FORCE_REBUILD_REAL_DATASET:-0}"
+FORCE_REDOWNLOAD_EXTERNAL_REAL="${FORCE_REDOWNLOAD_EXTERNAL_REAL:-0}"
 
 line_count() {
   local path="$1"
@@ -123,19 +124,23 @@ if (( need_build == 0 )); then
   exit 0
 fi
 
-echo "[ensure-real-dataset] step1: ensure external real QA sources (CMtMedQA/Huatuo/MedQA benchmark)."
-"${PYTHON_BIN}" scripts/data/build_real_dataset.py \
-  --seed 42 \
-  --cmt-count "${RAW_CMT_TARGET}" \
-  --h26-count "${RAW_H26_TARGET}" \
-  --henc-count "${RAW_HENC_TARGET}" \
-  --bench-train "${RAW_BENCH_TRAIN}" \
-  --bench-val "${RAW_BENCH_VAL}" \
-  --bench-test "${RAW_BENCH_TEST}" \
-  --request-interval "${RAW_REQUEST_INTERVAL}" \
-  --benchmark-out "${HF_BENCHMARK_FILE}" \
-  --summary-out "${HF_SUMMARY_FILE}" \
-  --report-out "${HF_REPORT_FILE}"
+if (( raw_ready == 1 )) && [[ "${FORCE_REDOWNLOAD_EXTERNAL_REAL}" != "1" ]]; then
+  echo "[ensure-real-dataset] step1: external real QA sources already ready, skip refetch."
+else
+  echo "[ensure-real-dataset] step1: ensure external real QA sources (CMtMedQA/Huatuo/MedQA benchmark)."
+  "${PYTHON_BIN}" scripts/data/build_real_dataset.py \
+    --seed 42 \
+    --cmt-count "${RAW_CMT_TARGET}" \
+    --h26-count "${RAW_H26_TARGET}" \
+    --henc-count "${RAW_HENC_TARGET}" \
+    --bench-train "${RAW_BENCH_TRAIN}" \
+    --bench-val "${RAW_BENCH_VAL}" \
+    --bench-test "${RAW_BENCH_TEST}" \
+    --request-interval "${RAW_REQUEST_INTERVAL}" \
+    --benchmark-out "${HF_BENCHMARK_FILE}" \
+    --summary-out "${HF_SUMMARY_FILE}" \
+    --report-out "${HF_REPORT_FILE}"
+fi
 
 echo "[ensure-real-dataset] step2: ensure CM3KG assets (when available)."
 if [[ "${PREFER_CM3KG}" == "1" && -d "${CM3KG_DIR}" ]]; then

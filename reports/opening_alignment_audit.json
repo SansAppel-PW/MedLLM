@@ -1,8 +1,8 @@
 {
   "summary": {
     "total": 11,
-    "pass": 10,
-    "partial": 1,
+    "pass": 11,
+    "partial": 0,
     "fail": 0
   },
   "checks": [
@@ -154,8 +154,8 @@
     {
       "id": "A11",
       "requirement": "任务清单与交付物一致性",
-      "status": "PARTIAL",
-      "detail": "任务审计存在 DONE 缺失项: 3。",
+      "status": "PASS",
+      "detail": "任务审计显示 DONE 项交付物完整。",
       "evidence": [
         "reports/task_audit.json",
         "reports/task_audit.md"

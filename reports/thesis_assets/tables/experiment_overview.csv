@@ -1,9 +1,9 @@
 section,metric,value
-real_dataset,merged_after_dedup,19978
-real_dataset,train_count,15984
-real_dataset,dev_count,1997
-real_dataset,test_count,1997
-real_dataset,benchmark_count,3600
+real_dataset,merged_after_dedup,0
+real_dataset,train_count,0
+real_dataset,dev_count,0
+real_dataset,test_count,0
+real_dataset,benchmark_count,0
 alignment,dpo_aligned_score,0.787646
-alignment,simpo_aligned_score,0.816465
-alignment,kto_aligned_score,0.586959
+alignment,simpo_aligned_score,0.640625
+alignment,kto_aligned_score,0.689453125

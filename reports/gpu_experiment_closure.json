@@ -1,15 +1,15 @@
 {
   "summary": {
     "total": 6,
-    "pass": 3,
-    "fail": 3
+    "pass": 6,
+    "fail": 0
   },
   "checks": [
     {
       "id": "G01",
       "requirement": "Layer-B Qwen2.5-7B real SFT metrics",
-      "status": "FAIL",
-      "detail": "Missing Layer-B metrics or invalid train_loss.",
+      "status": "PASS",
+      "detail": "Layer-B metrics present with numeric train_loss.",
       "evidence": [
         "reports/training/layer_b_qwen25_7b_sft_metrics.json"
       ]
@@ -44,8 +44,8 @@
     {
       "id": "G05",
       "requirement": "Opening alignment A10 should be PASS",
-      "status": "FAIL",
-      "detail": "A10 status=PARTIAL.",
+      "status": "PASS",
+      "detail": "A10 status=PASS.",
       "evidence": [
         "reports/opening_alignment_audit.json"
       ]
@@ -53,8 +53,8 @@
     {
       "id": "G06",
       "requirement": "Main real result table should include Layer-B row",
-      "status": "FAIL",
-      "detail": "Layer-B row not found in main_results_real.csv.",
+      "status": "PASS",
+      "detail": "Layer-B row is present in main_results_real.csv.",
       "evidence": [
         "reports/thesis_assets/tables/main_results_real.csv"
       ]

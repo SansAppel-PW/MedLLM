@@ -1,29 +1,29 @@
 {
-  "generated_at_utc": "2026-02-26T06:10:14.623898+00:00",
+  "generated_at_utc": "2026-02-27T22:22:28.469607+00:00",
   "policy": "bootstrap minimal synthetic non-sensitive assets only when missing",
   "files": {
     "schema_examples": {
       "path": "data/raw/schema_examples.json",
-      "bytes": 747,
-      "sha256": "9d47c720a6f011cbcbfc372011ccee2c4b0d86abef539c576ffa5f6633d428f6",
+      "bytes": 688,
+      "sha256": "130e6487250ffc552c67e713c5d0d84d87f8ae170082e10e214e1844a417a343",
       "created_this_run": false
     },
     "demo_kg": {
       "path": "data/kg/cmekg_demo.jsonl",
-      "bytes": 549,
-      "sha256": "5c43dee30795b0036b4fc93ba34b90e86a615c3cb5d22cb000c158b12c61669e",
+      "bytes": 594,
+      "sha256": "5d8e98ca2a853787ceb4c7887713e0abfdacb2c0516f4cd2dd77aeba6f708100",
       "created_this_run": false
     },
     "demo_benchmark": {
       "path": "data/benchmark/med_hallu_benchmark.jsonl",
-      "bytes": 1212,
-      "sha256": "599c724e65080e3302121e4ed1e68fee2f1f25bd1791d3f854cde6aa23704344",
+      "bytes": 1112,
+      "sha256": "826030a541d6c1202822b56f11febe723a2ccccffdbfef1ccb2cbbc015e1a846",
       "created_this_run": false
     },
     "real_benchmark": {
       "path": "data/benchmark/real_medqa_benchmark.jsonl",
-      "bytes": 210115,
-      "sha256": "7d643c157e0ae303168b2a9732d7a0c86ecadb29c0cb53f3efa5a0323da95bde",
+      "bytes": 7601379,
+      "sha256": "35f7f19c74eaf02f991f13d33cd5a3303a82a441cbbc59e814b72c3cd215cdd7",
       "created_this_run": false
     }
   }

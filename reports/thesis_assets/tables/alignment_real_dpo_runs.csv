@@ -5,4 +5,4 @@ small_real_dpo_v10,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/sma
 small_real_dpo_v11,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v11_metrics.json
 small_real_dpo_v12,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v12_metrics.json
 small_real_dpo_v13,False,2,4,0.6932482272386551,0.0,0.0,0.0,reports/training/small_real_dpo_v13_metrics.json
-dpo_real,False,288,6,0.6931262214978536,0.25,0.2534722222222222,0.00347222222222221,reports/training/dpo_real_metrics.json
+dpo_real,False,70054,30,0.6922715346018473,0.0078125,0.662109375,0.654296875,reports/training/dpo_real_metrics.json

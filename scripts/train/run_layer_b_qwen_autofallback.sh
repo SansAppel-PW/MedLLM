@@ -15,6 +15,8 @@ BASE_LOG="${BASE_LOG:-logs/layer_b/qwen25_7b_qlora}"
 METRICS_OUT="${METRICS_OUT:-reports/training/layer_b_qwen25_7b_qlora_metrics.json}"
 METRICS_OUT_SFT_ALIAS="${METRICS_OUT_SFT_ALIAS:-reports/training/layer_b_qwen25_7b_sft_metrics.json}"
 BLOCKER_REPORT="${BLOCKER_REPORT:-reports/small_real/qwen_layer_b_blocker.md}"
+ATTEMPT_TIMEOUT_SEC="${ATTEMPT_TIMEOUT_SEC:-900}"
+DEFAULT_MAX_STEPS="${DEFAULT_MAX_STEPS:-400}"
 
 mkdir -p "$(dirname "${BLOCKER_REPORT}")" "${BASE_LOG}" "$(dirname "${METRICS_OUT}")"
 mkdir -p "$(dirname "${METRICS_OUT_SFT_ALIAS}")"
@@ -107,53 +109,70 @@ try_train() {
   mkdir -p "${log_dir}"
 
   echo "[qwen-layer-b] attempt=${attempt} max_len=${max_len} grad_acc=${grad_acc} bf16=${BF16} fp16=${FP16} device_map_auto=${DEVICE_MAP_AUTO}"
-  set +e
-  "${LAUNCHER[@]}" src/train/real_sft_train.py \
-    --task "layer_b_qwen7b_attempt${attempt}" \
-    --config configs/train/sft_layer_b_qwen7b_qlora.yaml \
-    --model-name "${MODEL_NAME}" \
-    --train-file "${TRAIN_FILE}" \
-    --dev-file "${DEV_FILE}" \
-    --output-dir "${out_dir}" \
-    --logging-dir "${log_dir}" \
-    --metrics-out "${METRICS_OUT}" \
-    --max-length "${max_len}" \
-    --num-train-epochs "${NUM_EPOCHS:-1}" \
-    --max-steps "${MAX_STEPS:--1}" \
-    --learning-rate 2e-5 \
-    --weight-decay 0.01 \
-    --warmup-ratio 0.03 \
-    --optim paged_adamw_8bit \
-    --per-device-train-batch-size 1 \
-    --per-device-eval-batch-size 1 \
-    --gradient-accumulation-steps "${grad_acc}" \
-    --gradient-checkpointing true \
-    --num-workers 2 \
-    --logging-steps 10 \
-    --save-steps 100 \
-    --eval-steps 100 \
-    --save-total-limit 3 \
-    --seed 42 \
-    --bf16 "${BF16}" \
-    --fp16 "${FP16}" \
-    --device-map-auto "${DEVICE_MAP_AUTO}" \
-    --use-lora true \
-    --lora-r 64 \
-    --lora-alpha 128 \
-    --lora-dropout 0.05 \
-    --lora-target-modules q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj \
-    --load-in-4bit true \
-    --bnb-4bit-quant-type nf4 \
-    --bnb-4bit-use-double-quant true \
-    --trust-remote-code true \
-    >"${run_log}" 2>&1
-  local rc=$?
-  set -e
+  local cmd=(
+    "${LAUNCHER[@]}" src/train/real_sft_train.py
+    --task "layer_b_qwen7b_attempt${attempt}"
+    --config configs/train/sft_layer_b_qwen7b_qlora.yaml
+    --model-name "${MODEL_NAME}"
+    --train-file "${TRAIN_FILE}"
+    --dev-file "${DEV_FILE}"
+    --output-dir "${out_dir}"
+    --logging-dir "${log_dir}"
+    --metrics-out "${METRICS_OUT}"
+    --max-length "${max_len}"
+    --num-train-epochs "${NUM_EPOCHS:-1}"
+    --max-steps "${MAX_STEPS:-${DEFAULT_MAX_STEPS}}"
+    --learning-rate 2e-5
+    --weight-decay 0.01
+    --warmup-ratio 0.03
+    --optim paged_adamw_8bit
+    --per-device-train-batch-size 1
+    --per-device-eval-batch-size 1
+    --gradient-accumulation-steps "${grad_acc}"
+    --gradient-checkpointing true
+    --num-workers 2
+    --logging-steps 10
+    --save-steps 100
+    --eval-steps 100
+    --save-total-limit 3
+    --seed 42
+    --bf16 "${BF16}"
+    --fp16 "${FP16}"
+    --device-map-auto "${DEVICE_MAP_AUTO}"
+    --use-lora true
+    --lora-r 64
+    --lora-alpha 128
+    --lora-dropout 0.05
+    --lora-target-modules q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+    --load-in-4bit true
+    --bnb-4bit-quant-type nf4
+    --bnb-4bit-use-double-quant true
+    --trust-remote-code true
+  )
+  local rc=0
+  if [[ "${ATTEMPT_TIMEOUT_SEC}" -gt 0 ]] && command -v timeout >/dev/null 2>&1; then
+    if timeout "${ATTEMPT_TIMEOUT_SEC}" "${cmd[@]}" >"${run_log}" 2>&1; then
+      rc=0
+    else
+      rc=$?
+    fi
+  else
+    if "${cmd[@]}" >"${run_log}" 2>&1; then
+      rc=0
+    else
+      rc=$?
+    fi
+  fi
 
   if [[ ${rc} -eq 0 ]]; then
     sync_layer_b_metrics
     echo "[qwen-layer-b] success attempt=${attempt}"
     return 0
+  fi
+
+  if [[ ${rc} -eq 124 ]]; then
+    echo "[qwen-layer-b] attempt=${attempt} timed out (${ATTEMPT_TIMEOUT_SEC}s), trying fallback..."
+    return 3
   fi
 
   if grep -Eqi "out of memory|cuda out of memory|cublas|resource exhausted" "${run_log}"; then
@@ -170,10 +189,13 @@ try_train() {
   return 1
 }
 
-if try_train 1 2048 16; then
+set +e
+try_train 1 2048 16
+rc=$?
+set -e
+if [[ ${rc} -eq 0 ]]; then
   exit 0
 fi
-rc=$?
 
 if [[ ${rc} -eq 3 ]]; then
   echo "[qwen-layer-b] auto-downgrade to single-process because distributed bootstrap failed."
@@ -181,32 +203,48 @@ if [[ ${rc} -eq 3 ]]; then
   NUM_GPUS=1
   LAUNCHER=("${PYTHON_BIN}")
   DEVICE_MAP_AUTO=true
-  if try_train 11 1536 32; then
+  set +e
+  try_train 11 1536 32
+  rc=$?
+  set -e
+  if [[ ${rc} -eq 0 ]]; then
     exit 0
   fi
-  rc=$?
   if [[ ${rc} -eq 2 ]]; then
-    if try_train 12 1024 64; then
+    set +e
+    try_train 12 1024 64
+    rc=$?
+    set -e
+    if [[ ${rc} -eq 0 ]]; then
       exit 0
     fi
-    rc=$?
   fi
   if [[ ${rc} -eq 2 ]]; then
-    if try_train 13 768 96; then
+    set +e
+    try_train 13 768 96
+    rc=$?
+    set -e
+    if [[ ${rc} -eq 0 ]]; then
       exit 0
     fi
-    rc=$?
   fi
 fi
 
 if [[ ${rc} -eq 2 ]]; then
-  if try_train 2 1536 32; then
+  set +e
+  try_train 2 1536 32
+  rc=$?
+  set -e
+  if [[ ${rc} -eq 0 ]]; then
     exit 0
   fi
-  rc=$?
 fi
 if [[ ${rc} -eq 2 ]]; then
-  if try_train 3 1024 64; then
+  set +e
+  try_train 3 1024 64
+  rc=$?
+  set -e
+  if [[ ${rc} -eq 0 ]]; then
     exit 0
   fi
 fi
