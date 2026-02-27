@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env run-config paper-ready gpu-manifest gpu-check gpu-bootstrap gpu-run clean
+.PHONY: setup install check-env run-config paper-ready gpu-manifest gpu-check gpu-bootstrap gpu-run gpu-complete-check clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -34,6 +34,9 @@ gpu-bootstrap:
 
 gpu-run:
 	bash scripts/migration/run_gpu_thesis_experiment.sh
+
+gpu-complete-check:
+	$(PYTHON) scripts/migration/check_gpu_completion.py
 
 clean:
 	rm -rf __pycache__ .pytest_cache .mypy_cache

@@ -42,17 +42,21 @@ bash scripts/migration/run_gpu_thesis_experiment.sh
 - 要求检测到 CUDA（未检测到会直接退出，防止伪“真实训练”）
 - `ALIGNMENT_MODE=real`
 - 启用 v2 偏差审计
+- 默认执行严格完成性校验（`scripts/migration/check_gpu_completion.py`，要求真实训练非 skipped）
 - 可选启用：
   - `ENABLE_LLM_RISK_JUDGE=true`
   - `ENABLE_V2_LLM_FALLBACK=true`
+  - `ALLOW_DEFERRED_READINESS=true`（仅在需要临时放宽门槛时）
 
 ## 4. 关键验收文件
 - 训练：`reports/training/*.json`
 - 检测：`reports/detection_eval*.md`
+- 融合回退归因：`reports/detection_eval_v2_hybrid_llm_impact.md`（启用 LLM 回退时）
 - 对比：`reports/sota_compare.md`
 - 论文材料：`reports/thesis_support/thesis_draft_material.md`
 - 完备度：`reports/thesis_support/thesis_readiness.md`
 - GPU 运行状态：`reports/migration/gpu_run_status.md`
+- 严格完成性：`reports/migration/gpu_completion_check.md`
 
 ## 5. 常见问题
 1. CUDA 可见但训练仍被跳过：

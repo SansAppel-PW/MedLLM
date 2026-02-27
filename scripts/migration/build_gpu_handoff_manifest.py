@@ -24,9 +24,11 @@ CRITICAL_FILES = [
     "scripts/migration/bootstrap_gpu_env.sh",
     "scripts/migration/run_gpu_thesis_experiment.sh",
     "scripts/migration/check_handoff_readiness.py",
+    "scripts/migration/check_gpu_completion.py",
     "scripts/train/run_real_alignment_pipeline.sh",
     "scripts/train/run_layer_b_real_sft.sh",
     "scripts/eval/run_thesis_pipeline.sh",
+    "scripts/eval/analyze_llm_fallback_impact.py",
     "scripts/pipeline/run_paper_ready.sh",
     "configs/train/sft_layer_b_real.yaml",
     "configs/train/dpo_real.yaml",
@@ -71,6 +73,7 @@ def build_manifest(model_name: str, model_tier: str) -> dict[str, Any]:
             f"MODEL_NAME='{model_name}' MODEL_TIER='{model_tier}' "
             "bash scripts/migration/run_gpu_thesis_experiment.sh"
         ),
+        "strict_completion_check": "python3 scripts/migration/check_gpu_completion.py",
     }
 
     return {
@@ -117,6 +120,7 @@ def write_markdown(path: Path, manifest: dict[str, Any]) -> None:
         "## Commands",
         f"1. `{manifest['commands']['bootstrap']}`",
         f"2. `{manifest['commands']['run_experiment']}`",
+        f"3. `{manifest['commands']['strict_completion_check']}`",
         "",
         "## Critical Files",
         "| path | exists | size_bytes | sha256 |",

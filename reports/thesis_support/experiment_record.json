@@ -1,5 +1,5 @@
 {
-  "git_commit": "1d301e6c05ecc4bdd58cdef55889bbbf87f6260a",
+  "git_commit": "fc190bda1d12c69eee5fc517c2d420fcb4c67de8",
   "dataset": {
     "sources": [
       {
@@ -124,10 +124,54 @@
     "f1": 0.7609
   },
   "detection_v2_hybrid_llm": {
-    "accuracy": 0.725,
+    "accuracy": 0.515,
     "precision": 0.6731,
-    "recall": 0.875,
-    "f1": 0.7609
+    "recall": 0.0583,
+    "f1": 0.1074
+  },
+  "detection_v2_hybrid_impact": {
+    "samples": 1200,
+    "llm_used": 80,
+    "llm_promotions": 52,
+    "rule_only": {
+      "variant": "rule_only",
+      "accuracy": 0.5,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "specificity": 1.0,
+      "fpr": 0.0,
+      "fnr": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 600,
+      "fn": 600,
+      "sample_count": 1200
+    },
+    "hybrid": {
+      "variant": "hybrid_with_llm",
+      "accuracy": 0.515,
+      "precision": 0.673077,
+      "recall": 0.058333,
+      "f1": 0.107362,
+      "specificity": 0.971667,
+      "fpr": 0.028333,
+      "fnr": 0.941667,
+      "tp": 35,
+      "fp": 17,
+      "tn": 583,
+      "fn": 565,
+      "sample_count": 1200
+    },
+    "delta": {
+      "accuracy": 0.015000000000000013,
+      "precision": 0.6730769230769231,
+      "recall": 0.058333333333333334,
+      "f1": 0.10736196319018405,
+      "specificity": -0.02833333333333332,
+      "fpr": 0.028333333333333332,
+      "fnr": -0.05833333333333335
+    }
   },
   "eval_rows": [
     {

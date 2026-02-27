@@ -173,6 +173,7 @@ def main() -> int:
         "- `tables/experiment_overview.csv`: 数据规模与训练结果总览",
         "- `tables/detection_confusion.csv`: 检测混淆矩阵",
         "- `tables/sota_compare_metrics.csv`: 对标实验指标（由 `run_sota_compare.py` 生成）",
+        "- `tables/detection_v2_hybrid_llm_impact.csv`: v2 融合回退增益对比（可选）",
         "- `tables/training_loss_summary.csv`: 训练曲线统计摘要（由 `build_training_figures.py` 生成）",
         "- `cases/error_cases_top30.jsonl`: 错误案例样本（由 `generate_error_analysis.py` 生成）",
         "- `figures/pipeline_mermaid.md`: 流程图源码",

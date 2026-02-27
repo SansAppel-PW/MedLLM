@@ -55,6 +55,14 @@ if [[ "${ENABLE_V2_LLM_FALLBACK}" == "true" ]]; then
     --llm-cache "${V2_LLM_CACHE}" \
     --llm-min-confidence "${V2_LLM_MIN_CONF}" \
     --llm-max-calls "${V2_LLM_MAX_CALLS}"
+
+  python3 scripts/eval/analyze_llm_fallback_impact.py \
+    --predictions reports/detection_predictions_v2_hybrid_llm.jsonl \
+    --report reports/detection_eval_v2_hybrid_llm_impact.md \
+    --csv reports/thesis_assets/tables/detection_v2_hybrid_llm_impact.csv \
+    --json reports/thesis_support/detection_v2_hybrid_llm_impact.json \
+    --include-splits "${EVAL_SPLITS}" \
+    --max-samples "${DET_MAX}"
 fi
 
 echo "[detection-robustness] done"

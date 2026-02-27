@@ -12,6 +12,7 @@ FORCE_SKIP_TRAINING="${FORCE_SKIP_TRAINING:-false}"
 
 BUILD_REAL_DATA="${BUILD_REAL_DATA:-false}"
 RUN_E2E="${RUN_E2E:-true}"
+ALLOW_DEFERRED_READINESS="${ALLOW_DEFERRED_READINESS:-false}"
 ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-false}"
 JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
 JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
@@ -45,6 +46,7 @@ if [[ "${DRY_RUN}" == "true" ]]; then
   echo "  2) bash scripts/eval/run_thesis_pipeline.sh"
   echo "  3) python3 scripts/deploy/run_e2e_acceptance.py (optional)"
   echo "  4) python3 scripts/audit/check_thesis_readiness.py"
+  echo "  5) python3 scripts/migration/check_gpu_completion.py"
   exit 0
 fi
 
@@ -101,6 +103,17 @@ python3 scripts/audit/check_thesis_readiness.py \
   --report reports/thesis_support/thesis_readiness.md \
   --json reports/thesis_support/thesis_readiness.json
 
+completion_cmd=(
+  python3 scripts/migration/check_gpu_completion.py
+  --thesis-readiness-json reports/thesis_support/thesis_readiness.json
+  --report reports/migration/gpu_completion_check.md
+  --json reports/migration/gpu_completion_check.json
+)
+if [[ "${ALLOW_DEFERRED_READINESS}" == "true" ]]; then
+  completion_cmd+=(--allow-deferred)
+fi
+"${completion_cmd[@]}"
+
 mkdir -p "$(dirname "${MIGRATION_STATUS}")"
 cat > "${MIGRATION_STATUS}" <<EOF
 # GPU Experiment Run Status
@@ -123,6 +136,7 @@ cat > "${MIGRATION_STATUS}" <<EOF
 - \`reports/detection_eval_llm_judge.md\` (if enabled)
 - \`reports/sota_compare.md\`
 - \`reports/thesis_support/thesis_readiness.md\`
+- \`reports/migration/gpu_completion_check.md\`
 EOF
 
 echo "[gpu-run] done status=${MIGRATION_STATUS}"

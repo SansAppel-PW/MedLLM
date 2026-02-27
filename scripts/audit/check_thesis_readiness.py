@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 from pathlib import Path
 from typing import Any
@@ -21,17 +22,91 @@ def load_json(path: str) -> dict[str, Any]:
         return json.load(f)
 
 
-def status_for_training(metrics_path: str, skip_path: str) -> tuple[str, str]:
-    metrics = load_json(metrics_path)
-    if metrics:
-        if bool(metrics.get("skipped", False)):
-            if exists(skip_path):
-                return "DEFERRED", f"训练受限，已生成跳过证据（{skip_path}）"
-            return "DEFERRED", "训练受限，缺少标准跳过报告"
-        return "PASS", f"发现训练指标文件：{metrics_path}"
-    if exists(skip_path):
-        return "DEFERRED", f"无训练指标，但存在跳过证据：{skip_path}"
-    return "FAIL", "缺失训练指标与跳过证据"
+def load_csv_rows(path: str) -> list[dict[str, str]]:
+    p = Path(path)
+    if not p.exists():
+        return []
+    with p.open("r", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def _training_mode(metrics: dict[str, Any]) -> str:
+    if not metrics:
+        return "missing"
+    if bool(metrics.get("skipped", False)):
+        return "skipped"
+    if bool(metrics.get("simulation", False)):
+        return "simulation"
+    return "real"
+
+
+def status_for_training_bundle(skip_path: str) -> tuple[str, str]:
+    specs = [
+        (
+            "SFT",
+            "reports/training/layer_b_qwen25_7b_sft_metrics.json",
+            "checkpoints/layer_b/qwen25_7b_sft/final",
+        ),
+        ("DPO", "reports/training/dpo_metrics.json", "checkpoints/dpo-real-baseline/final"),
+        ("SimPO", "reports/training/simpo_metrics.json", "checkpoints/simpo-real-baseline/final"),
+        ("KTO", "reports/training/kto_metrics.json", "checkpoints/kto-real-baseline/final"),
+    ]
+
+    mode_by_name: list[tuple[str, str]] = []
+    missing_metrics: list[str] = []
+    missing_ckpt: list[str] = []
+
+    for name, metrics_path, ckpt_path in specs:
+        metrics = load_json(metrics_path)
+        mode = _training_mode(metrics)
+        mode_by_name.append((name, mode))
+        if mode == "missing":
+            missing_metrics.append(metrics_path)
+        if mode == "real" and not exists(ckpt_path):
+            missing_ckpt.append(ckpt_path)
+
+    status_pairs = ", ".join(f"{name}:{mode}" for name, mode in mode_by_name)
+    skip_evidence = exists(skip_path)
+
+    if missing_metrics:
+        if skip_evidence:
+            return "DEFERRED", f"训练未完整产出，已记录跳过证据（{skip_path}）；状态={status_pairs}"
+        return "FAIL", f"缺失训练指标：{'; '.join(missing_metrics)}；状态={status_pairs}"
+
+    if any(mode in {"skipped", "simulation"} for _, mode in mode_by_name):
+        if skip_evidence:
+            return "DEFERRED", f"训练包含 skipped/simulation，已记录跳过证据（{skip_path}）；状态={status_pairs}"
+        return "FAIL", f"训练非真实闭环且无跳过证据；状态={status_pairs}"
+
+    if missing_ckpt:
+        return "FAIL", f"训练指标为 real，但缺失 checkpoint：{'; '.join(missing_ckpt)}"
+
+    return "PASS", f"真实训练闭环完整；状态={status_pairs}"
+
+
+def has_real_sft_loss_curve() -> bool:
+    # Direct figure paths (naming differs across historical script versions)
+    direct_candidates = [
+        "reports/thesis_assets/figures/training_loss_qwen25_7b_sft.png",
+        "reports/thesis_assets/figures/training_loss_layer_b_qwen25_7b_sft.png",
+    ]
+    if any(exists(p) for p in direct_candidates):
+        return True
+
+    # Fallback: validate from summary CSV when figure name differs.
+    rows = load_csv_rows("reports/thesis_assets/tables/training_loss_summary.csv")
+    for row in rows:
+        source_log = str(row.get("source_log", ""))
+        if source_log != "logs/layer_b/qwen25_7b_sft/train_log.jsonl":
+            continue
+        try:
+            points = int(float(str(row.get("points", "0"))))
+        except ValueError:
+            points = 0
+        figure_path = str(row.get("figure", "")).strip()
+        if points > 0 and figure_path and exists(figure_path):
+            return True
+    return False
 
 
 def main() -> int:
@@ -60,8 +135,7 @@ def main() -> int:
     )
 
     # 2) 可复现微调系统与最佳 checkpoint
-    c2_status, c2_note = status_for_training(
-        "reports/training/layer_b_qwen25_7b_sft_metrics.json",
+    c2_status, c2_note = status_for_training_bundle(
         "reports/training/resource_skip_report.md",
     )
     checks.append(
@@ -91,18 +165,18 @@ def main() -> int:
     )
 
     # 4) 真实训练 loss 曲线
-    curve_exists = exists("reports/thesis_assets/figures/training_loss_layer_b_qwen25_7b_sft.png") or exists(
-        "reports/training/tiny_sft_loss_curve.png"
-    )
-    if curve_exists:
+    sft_metrics = load_json("reports/training/layer_b_qwen25_7b_sft_metrics.json")
+    sft_mode = _training_mode(sft_metrics)
+    curve_exists = has_real_sft_loss_curve()
+    if sft_mode == "real" and curve_exists:
         c4_status = "PASS"
-        c4_note = "已存在 loss 曲线图"
-    elif exists("reports/training/resource_skip_report.md"):
+        c4_note = "已存在真实 SFT loss 曲线图"
+    elif sft_mode in {"skipped", "simulation", "missing"} and exists("reports/training/resource_skip_report.md"):
         c4_status = "DEFERRED"
-        c4_note = "真实训练受限，当前仅具备跳过证据"
+        c4_note = "真实 SFT 训练受限，当前仅具备跳过证据"
     else:
         c4_status = "FAIL"
-        c4_note = "缺失 loss 曲线与跳过证据"
+        c4_note = f"缺失真实 SFT loss 曲线（sft_mode={sft_mode}）"
     checks.append(
         {
             "id": "R4",

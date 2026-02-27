@@ -1,0 +1,48 @@
+{
+  "strict_pass": false,
+  "allow_deferred": false,
+  "thesis_readiness": {
+    "fail": 0,
+    "deferred": 2,
+    "path": "reports/thesis_support/thesis_readiness.json"
+  },
+  "real_sft_curve_present": false,
+  "components": [
+    {
+      "component": "SFT",
+      "metrics_path": "reports/training/layer_b_qwen25_7b_sft_metrics.json",
+      "metrics_exists": true,
+      "metrics_real": false,
+      "checkpoint_path": "checkpoints/layer_b/qwen25_7b_sft/final",
+      "checkpoint_exists": false,
+      "note": "metrics marked skipped/simulation"
+    },
+    {
+      "component": "DPO",
+      "metrics_path": "reports/training/dpo_metrics.json",
+      "metrics_exists": true,
+      "metrics_real": false,
+      "checkpoint_path": "checkpoints/dpo-real-baseline/final",
+      "checkpoint_exists": false,
+      "note": "metrics marked skipped/simulation"
+    },
+    {
+      "component": "SimPO",
+      "metrics_path": "reports/training/simpo_metrics.json",
+      "metrics_exists": true,
+      "metrics_real": false,
+      "checkpoint_path": "checkpoints/simpo-real-baseline/final",
+      "checkpoint_exists": false,
+      "note": "metrics marked skipped/simulation"
+    },
+    {
+      "component": "KTO",
+      "metrics_path": "reports/training/kto_metrics.json",
+      "metrics_exists": true,
+      "metrics_real": false,
+      "checkpoint_path": "checkpoints/kto-real-baseline/final",
+      "checkpoint_exists": false,
+      "note": "metrics marked skipped/simulation"
+    }
+  ]
+}

@@ -16,6 +16,10 @@
       "exists": true
     },
     {
+      "path": "scripts/migration/check_gpu_completion.py",
+      "exists": true
+    },
+    {
       "path": "docs/GPU_MIGRATION_RUNBOOK.md",
       "exists": true
     },
@@ -25,6 +29,10 @@
     },
     {
       "path": "scripts/eval/run_thesis_pipeline.sh",
+      "exists": true
+    },
+    {
+      "path": "scripts/eval/analyze_llm_fallback_impact.py",
       "exists": true
     },
     {

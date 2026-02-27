@@ -130,6 +130,11 @@ FORCE_SKIP_TRAINING=false \
 make gpu-run
 ```
 
+GPU 运行后严格完成性校验：
+```bash
+make gpu-complete-check
+```
+
 详见：`docs/GPU_MIGRATION_RUNBOOK.md`。
 
 ## 评测与论文资产流水线
@@ -152,6 +157,7 @@ bash scripts/eval/run_thesis_pipeline.sh
 - `reports/detection_eval.md`
 - `reports/detection_eval_v2_balanced.md`
 - `reports/detection_eval_v2_hybrid_llm.md`（可选）
+- `reports/detection_eval_v2_hybrid_llm_impact.md`（可选）
 - `reports/detection_eval_llm_judge.md`（可选）
 - `reports/eval_default.md`
 - `reports/ablation_*.md`
@@ -162,6 +168,7 @@ bash scripts/eval/run_thesis_pipeline.sh
 - `reports/thesis_support/benchmark_artifact_report.md`
 - `reports/thesis_support/benchmark_artifact_report_v2_balanced.md`
 - `reports/thesis_support/thesis_readiness.md`
+- `reports/migration/gpu_completion_check.md`（GPU 真实闭环后）
 
 ## 任务审计（开题任务对齐）
 ```bash

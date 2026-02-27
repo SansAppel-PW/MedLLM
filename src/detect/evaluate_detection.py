@@ -186,6 +186,7 @@ def main() -> int:
             kg_path=args.kg,
         )
         predicted_risk = str(out.get("risk_level", "low"))
+        base_predicted_risk = predicted_risk
         llm_risk = ""
         llm_conf = 0.0
         llm_reason = ""
@@ -216,11 +217,14 @@ def main() -> int:
         preds.append(
             {
                 "id": row.get("id"),
+                "split": split_of(row),
                 "query": row.get("query", ""),
                 "answer": row.get("answer", ""),
                 "expected_risk": row.get("expected_risk", "low"),
+                "base_predicted_risk": base_predicted_risk,
                 "predicted_risk": predicted_risk,
                 "risk_score": float(out.get("risk_score", 0.0)),
+                "base_blocked": base_predicted_risk == "high",
                 "blocked": predicted_risk == "high",
                 "llm_used": llm_used,
                 "llm_risk": llm_risk,
