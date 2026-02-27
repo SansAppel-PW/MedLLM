@@ -38,6 +38,14 @@ FORCE_SKIP_TRAINING=false \
 bash scripts/migration/run_gpu_thesis_experiment.sh
 ```
 
+若使用 `V100-32GB x2`，推荐直接使用模板入口：
+
+```bash
+bash scripts/migration/run_day1_v100_dual.sh
+```
+
+该脚本会加载 `configs/runtime/v100_dual_32g.env`（fp16/4bit/梯度累积等参数），然后执行 `day1_run.sh`。
+
 默认行为：
 - 要求检测到 CUDA（未检测到会直接退出，防止伪“真实训练”）
 - 若启用 API 评测（LLM Judge / 风险判别 / LLM 回退），会检查 `.env` 或 `OPENAI_API_KEY` 是否存在

@@ -15,6 +15,7 @@
 若你已经租了 `V100-32GB * 2`：
 - 先跑 `Qwen2.5-7B` 完全可行（建议优先完成这一轮论文主链）。
 - 当前项目已内置“预 Ampere 自动精度降级”：检测到 V100 会自动 `bf16=false`、`fp16=true`，无需你手动改参数。
+- 可直接使用双卡模板：`configs/runtime/v100_dual_32g.env` + `bash scripts/migration/run_day1_v100_dual.sh`。
 
 ## 2. 选型依据
 
@@ -77,6 +78,17 @@ ENABLE_LLM_RISK_JUDGE=true \
 ENABLE_V2_LLM_FALLBACK=true \
 bash day1_run.sh
 ```
+
+## 4.3 V100 双卡模板启动（推荐）
+
+```bash
+bash scripts/migration/run_day1_v100_dual.sh
+# 或
+make day1-v100-dual
+```
+
+该入口会自动加载 `configs/runtime/v100_dual_32g.env`，并沿用 `day1_run.sh` 全流程。
+参数细节见：`docs/V100_DUAL_CARD_TEMPLATE.md`。
 
 只做流程探测不真正跑训练：
 

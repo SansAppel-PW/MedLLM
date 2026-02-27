@@ -2,7 +2,7 @@ PYTHON := python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 
-.PHONY: setup install check-env run-config paper-ready gpu-manifest gpu-check gpu-bootstrap gpu-run gpu-complete-check day1-run clean
+.PHONY: setup install check-env run-config paper-ready gpu-manifest gpu-check gpu-bootstrap gpu-run gpu-complete-check day1-run day1-v100-dual clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -40,6 +40,9 @@ gpu-complete-check:
 
 day1-run:
 	bash day1_run.sh
+
+day1-v100-dual:
+	bash scripts/migration/run_day1_v100_dual.sh
 
 clean:
 	rm -rf __pycache__ .pytest_cache .mypy_cache

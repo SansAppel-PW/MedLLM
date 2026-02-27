@@ -144,6 +144,14 @@ bash day1_run.sh
 make day1-run
 ```
 
+V100 双卡专用模板（2xV100-32GB）：
+```bash
+bash scripts/migration/run_day1_v100_dual.sh
+# 或
+make day1-v100-dual
+```
+模板文件：`configs/runtime/v100_dual_32g.env`，详细说明见 `docs/V100_DUAL_CARD_TEMPLATE.md`。
+
 详见：`docs/GPU_MIGRATION_RUNBOOK.md`。
 
 说明：
