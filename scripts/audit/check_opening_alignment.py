@@ -234,18 +234,29 @@ def main() -> int:
     )
 
     # A08: WinRate judge consistency (proposal mentions GPT-4 judge).
+    env_example = (root / ".env.example").read_text(encoding="utf-8") if (root / ".env.example").exists() else ""
     code_text = "\n".join(
         [
             (root / "scripts/eval/run_sota_compare.py").read_text(encoding="utf-8")
             if (root / "scripts/eval/run_sota_compare.py").exists()
             else "",
             (root / "eval/metrics.py").read_text(encoding="utf-8") if (root / "eval/metrics.py").exists() else "",
+            (root / "eval/judge.py").read_text(encoding="utf-8") if (root / "eval/judge.py").exists() else "",
+            (root / "eval/run_eval.py").read_text(encoding="utf-8") if (root / "eval/run_eval.py").exists() else "",
         ]
     )
-    has_judge_runtime = "THIRD_PARTY_API_KEY" in code_text or "OpenAI(" in code_text or "LLM-as-a-Judge" in code_text
+    has_judge_runtime = all(
+        [
+            "THIRD_PARTY_API_KEY" in code_text,
+            "THIRD_PARTY_BASE_URL" in code_text,
+            "OpenAI(" in code_text,
+            "LLM-as-a-Judge" in code_text or "enable-llm-judge" in code_text,
+            "THIRD_PARTY_API_KEY" in env_example,
+        ]
+    )
     if has_judge_runtime:
         status = PASS
-        detail = "存在可追溯 LLM-as-a-Judge 实现。"
+        detail = "存在可追溯 LLM-as-a-Judge 实现（含 .env 注入与落盘记录入口）。"
     else:
         status = PARTIAL
         detail = "当前 WinRate 为离线规则口径，尚未落地 GPT-4 Judge 版本。"
@@ -255,7 +266,12 @@ def main() -> int:
             requirement="WinRate 与开题 GPT-4 Judge 口径一致性",
             status=status,
             detail=detail,
-            evidence=["eval/metrics.py", "scripts/eval/run_sota_compare.py", "reports/eval_default.md"],
+            evidence=[
+                "eval/judge.py",
+                "eval/run_eval.py",
+                ".env.example",
+                "reports/eval_default.md",
+            ],
             source_refs=["【PDF | 页码p13 | 段落#1】"],
         )
     )

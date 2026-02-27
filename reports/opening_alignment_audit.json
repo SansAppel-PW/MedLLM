@@ -1,8 +1,8 @@
 {
   "summary": {
     "total": 11,
-    "pass": 8,
-    "partial": 3,
+    "pass": 9,
+    "partial": 2,
     "fail": 0
   },
   "checks": [
@@ -112,11 +112,12 @@
     {
       "id": "A08",
       "requirement": "WinRate 与开题 GPT-4 Judge 口径一致性",
-      "status": "PARTIAL",
-      "detail": "当前 WinRate 为离线规则口径，尚未落地 GPT-4 Judge 版本。",
+      "status": "PASS",
+      "detail": "存在可追溯 LLM-as-a-Judge 实现（含 .env 注入与落盘记录入口）。",
       "evidence": [
-        "eval/metrics.py",
-        "scripts/eval/run_sota_compare.py",
+        "eval/judge.py",
+        "eval/run_eval.py",
+        ".env.example",
         "reports/eval_default.md"
       ],
       "source_refs": [

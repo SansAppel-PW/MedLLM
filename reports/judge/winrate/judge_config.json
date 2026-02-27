@@ -1,0 +1,8 @@
+{
+  "enable_llm_judge": true,
+  "model": "gpt-4o-mini",
+  "max_samples": 60,
+  "criteria_version": "med_winrate_v1",
+  "api_key_env": "THIRD_PARTY_API_KEY",
+  "base_url_env": "THIRD_PARTY_BASE_URL"
+}

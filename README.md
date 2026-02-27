@@ -200,6 +200,21 @@ bash scripts/eval/run_thesis_pipeline.sh
 - `reports/error_analysis.md`
 - `reports/thesis_assets/`
 
+可选：启用 LLM-as-a-Judge（需要 `.env` 中有效 `THIRD_PARTY_API_KEY`）：
+```bash
+ENABLE_LLM_JUDGE=1 \
+JUDGE_MODEL=gpt-4o-mini \
+JUDGE_MAX_SAMPLES=120 \
+bash scripts/eval/run_thesis_pipeline.sh
+```
+
+Judge 产物：
+- `reports/judge/winrate/judge_config.json`
+- `reports/judge/winrate/dpo_vs_sft_records.jsonl`
+- `reports/judge/winrate/dpo_vs_sft_summary.json`
+- `reports/judge/winrate/simpo_vs_sft_records.jsonl`
+- `reports/judge/winrate/simpo_vs_sft_summary.json`
+
 ## 任务审计（开题任务对齐）
 ```bash
 python scripts/audit/check_task_completion.py

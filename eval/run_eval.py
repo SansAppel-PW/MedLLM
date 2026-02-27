@@ -18,6 +18,14 @@ try:
     from eval.metrics import bleu_4, factscore_from_checks, interception_rate, rouge_l, win_rate
 except ModuleNotFoundError:  # pragma: no cover
     from metrics import bleu_4, factscore_from_checks, interception_rate, rouge_l, win_rate
+try:
+    from eval.judge import JudgeConfig, evaluate_pairwise
+except ModuleNotFoundError:  # pragma: no cover
+    try:
+        from judge import JudgeConfig, evaluate_pairwise
+    except ModuleNotFoundError:  # pragma: no cover
+        JudgeConfig = None  # type: ignore[assignment]
+        evaluate_pairwise = None  # type: ignore[assignment]
 from src.detect.atomic_fact_extractor import extract_atomic_facts
 from src.detect.nli_checker import classify_fact
 from src.detect.retriever import load_knowledge_docs, retrieve
@@ -110,6 +118,7 @@ def evaluate_variant(
                 "risk_score": float(out.get("risk_score", 0.0)),
                 "factscore": fact_score,
                 "utility": utility,
+                "answer_text": adapted,
             }
         )
         if log_every > 0 and idx % log_every == 0:
@@ -182,6 +191,11 @@ def main() -> int:
     parser.add_argument("--ablation-alignment", default="reports/ablation_alignment.md")
     parser.add_argument("--max-samples", type=int, default=0, help="Evaluate first N samples if > 0")
     parser.add_argument("--log-every", type=int, default=0, help="Progress interval for large runs")
+    parser.add_argument("--enable-llm-judge", action="store_true", help="Enable LLM-as-a-Judge win-rate")
+    parser.add_argument("--judge-model", default="gpt-4o-mini")
+    parser.add_argument("--judge-max-samples", type=int, default=120)
+    parser.add_argument("--judge-records-dir", default="reports/judge/winrate")
+    parser.add_argument("--judge-timeout-sec", type=float, default=60.0)
     parser.add_argument(
         "--include-splits",
         default="",
@@ -203,6 +217,63 @@ def main() -> int:
     dpo = evaluate_variant(benchmark, "dpo", kg_path, log_every=args.log_every)
     simpo = evaluate_variant(benchmark, "simpo", kg_path, log_every=args.log_every)
 
+    offline_win_dpo = win_rate(dpo["quality_scores"], sft["quality_scores"])
+    offline_win_simpo = win_rate(simpo["quality_scores"], sft["quality_scores"])
+
+    judge_dpo: dict[str, Any] = {"status": "disabled", "detail": "set --enable-llm-judge to enable"}
+    judge_simpo: dict[str, Any] = {"status": "disabled", "detail": "set --enable-llm-judge to enable"}
+    judge_config_path = Path(args.judge_records_dir) / "judge_config.json"
+    if args.enable_llm_judge:
+        if JudgeConfig is None or evaluate_pairwise is None:
+            judge_dpo = {"status": "skipped", "detail": "judge module unavailable"}
+            judge_simpo = {"status": "skipped", "detail": "judge module unavailable"}
+        else:
+            cfg = JudgeConfig(
+                model=args.judge_model,
+                timeout_sec=args.judge_timeout_sec,
+                criteria_version="med_winrate_v1",
+            )
+            judge_config_path.parent.mkdir(parents=True, exist_ok=True)
+            judge_config_path.write_text(
+                json.dumps(
+                    {
+                        "enable_llm_judge": True,
+                        "model": args.judge_model,
+                        "max_samples": args.judge_max_samples,
+                        "criteria_version": cfg.criteria_version,
+                        "api_key_env": "THIRD_PARTY_API_KEY",
+                        "base_url_env": "THIRD_PARTY_BASE_URL",
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            judge_dir = Path(args.judge_records_dir)
+            queries = [str(x.get("query", "")) for x in benchmark]
+            dpo_answers = [str(x.get("answer_text", "")) for x in dpo["rows"]]
+            simpo_answers = [str(x.get("answer_text", "")) for x in simpo["rows"]]
+            sft_answers = [str(x.get("answer_text", "")) for x in sft["rows"]]
+            judge_dpo = evaluate_pairwise(
+                queries=queries,
+                answers_a=dpo_answers,
+                answers_b=sft_answers,
+                config=cfg,
+                records_path=judge_dir / "dpo_vs_sft_records.jsonl",
+                summary_path=judge_dir / "dpo_vs_sft_summary.json",
+                max_samples=args.judge_max_samples,
+            )
+            judge_simpo = evaluate_pairwise(
+                queries=queries,
+                answers_a=simpo_answers,
+                answers_b=sft_answers,
+                config=cfg,
+                records_path=judge_dir / "simpo_vs_sft_records.jsonl",
+                summary_path=judge_dir / "simpo_vs_sft_summary.json",
+                max_samples=args.judge_max_samples,
+            )
+
     default_report = "\n".join(
         [
             "# 综合评测报告",
@@ -213,9 +284,15 @@ def main() -> int:
             f"| DPO | {dpo['avg_factscore']:.4f} | {dpo['avg_utility']:.4f} | {dpo['avg_risk_score']:.4f} | {dpo['interception_rate']:.4f} |",
             f"| SimPO | {simpo['avg_factscore']:.4f} | {simpo['avg_utility']:.4f} | {simpo['avg_risk_score']:.4f} | {simpo['interception_rate']:.4f} |",
             "",
-            "## Win Rate (quality = factscore + 1-risk)",
-            f"- DPO vs SFT: {win_rate(dpo['quality_scores'], sft['quality_scores']):.4f}",
-            f"- SimPO vs SFT: {win_rate(simpo['quality_scores'], sft['quality_scores']):.4f}",
+            "## Win Rate (offline proxy quality = factscore + 1-risk)",
+            f"- DPO vs SFT: {offline_win_dpo:.4f}",
+            f"- SimPO vs SFT: {offline_win_simpo:.4f}",
+            "",
+            "## Win Rate (LLM-as-a-Judge)",
+            f"- DPO vs SFT: status={judge_dpo.get('status')} win_rate={judge_dpo.get('win_rate_a', 0.0):.4f} detail={judge_dpo.get('detail', '')}",
+            f"- SimPO vs SFT: status={judge_simpo.get('status')} win_rate={judge_simpo.get('win_rate_a', 0.0):.4f} detail={judge_simpo.get('detail', '')}",
+            f"- Judge config: `{judge_config_path}`",
+            "- Judge env vars: `THIRD_PARTY_API_KEY`, `THIRD_PARTY_BASE_URL`",
         ]
     )
     write_markdown(Path(args.default_report), default_report + "\n")

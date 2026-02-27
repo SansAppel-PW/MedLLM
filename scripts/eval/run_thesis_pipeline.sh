@@ -12,6 +12,22 @@ DET_MAX="${DET_MAX:-0}"
 EVAL_MAX="${EVAL_MAX:-0}"
 SOTA_MAX="${SOTA_MAX:-0}"
 LOG_EVERY="${LOG_EVERY:-300}"
+ENABLE_LLM_JUDGE="${ENABLE_LLM_JUDGE:-0}"
+JUDGE_MODEL="${JUDGE_MODEL:-gpt-4o-mini}"
+JUDGE_MAX_SAMPLES="${JUDGE_MAX_SAMPLES:-120}"
+JUDGE_RECORDS_DIR="${JUDGE_RECORDS_DIR:-reports/judge/winrate}"
+JUDGE_TIMEOUT_SEC="${JUDGE_TIMEOUT_SEC:-60}"
+
+EVAL_JUDGE_ARGS=()
+if [[ "${ENABLE_LLM_JUDGE}" == "1" ]]; then
+  EVAL_JUDGE_ARGS+=(
+    --enable-llm-judge
+    --judge-model "${JUDGE_MODEL}"
+    --judge-max-samples "${JUDGE_MAX_SAMPLES}"
+    --judge-records-dir "${JUDGE_RECORDS_DIR}"
+    --judge-timeout-sec "${JUDGE_TIMEOUT_SEC}"
+  )
+fi
 
 python3 scripts/data/build_benchmark_reference_kb.py \
   --benchmark "${BENCHMARK}" \
@@ -36,7 +52,8 @@ python3 eval/run_eval.py \
   --ablation-alignment reports/ablation_alignment.md \
   --include-splits "${EVAL_SPLITS}" \
   --max-samples "${EVAL_MAX}" \
-  --log-every "${LOG_EVERY}"
+  --log-every "${LOG_EVERY}" \
+  "${EVAL_JUDGE_ARGS[@]}"
 
 python3 scripts/eval/run_sota_compare.py \
   --benchmark "${BENCHMARK}" \
