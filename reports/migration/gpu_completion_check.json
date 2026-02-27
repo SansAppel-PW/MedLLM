@@ -14,8 +14,10 @@
       "metrics_exists": true,
       "metrics_real": true,
       "checkpoint_path": "checkpoints/layer_b/qwen25_7b_sft/final",
-      "checkpoint_exists": true,
-      "note": "real metrics + checkpoint present"
+      "checkpoint_exists": false,
+      "checkpoint_evidence_exists": true,
+      "checkpoint_effective_exists": true,
+      "note": "real metrics + checkpoint evidence present"
     },
     {
       "component": "DPO",
@@ -23,8 +25,10 @@
       "metrics_exists": true,
       "metrics_real": true,
       "checkpoint_path": "checkpoints/dpo-real-baseline/final",
-      "checkpoint_exists": true,
-      "note": "real metrics + checkpoint present"
+      "checkpoint_exists": false,
+      "checkpoint_evidence_exists": true,
+      "checkpoint_effective_exists": true,
+      "note": "real metrics + checkpoint evidence present"
     },
     {
       "component": "SimPO",
@@ -32,8 +36,10 @@
       "metrics_exists": true,
       "metrics_real": true,
       "checkpoint_path": "checkpoints/simpo-real-baseline/final",
-      "checkpoint_exists": true,
-      "note": "real metrics + checkpoint present"
+      "checkpoint_exists": false,
+      "checkpoint_evidence_exists": true,
+      "checkpoint_effective_exists": true,
+      "note": "real metrics + checkpoint evidence present"
     },
     {
       "component": "KTO",
@@ -41,8 +47,10 @@
       "metrics_exists": true,
       "metrics_real": true,
       "checkpoint_path": "checkpoints/kto-real-baseline/final",
-      "checkpoint_exists": true,
-      "note": "real metrics + checkpoint present"
+      "checkpoint_exists": false,
+      "checkpoint_evidence_exists": true,
+      "checkpoint_effective_exists": true,
+      "note": "real metrics + checkpoint evidence present"
     }
   ]
 }

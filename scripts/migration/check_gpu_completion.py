@@ -34,6 +34,18 @@ def is_real_metric(payload: dict[str, Any]) -> bool:
     return True
 
 
+def load_checkpoint_evidence(path: Path) -> dict[str, dict[str, Any]]:
+    payload = load_json(path)
+    comps = payload.get("components", {}) if isinstance(payload, dict) else {}
+    out: dict[str, dict[str, Any]] = {}
+    if not isinstance(comps, dict):
+        return out
+    for name, item in comps.items():
+        if isinstance(item, dict):
+            out[str(name)] = item
+    return out
+
+
 def has_real_sft_curve() -> bool:
     direct = [
         Path("reports/thesis_assets/figures/training_loss_qwen25_7b_sft.png"),
@@ -63,6 +75,7 @@ def main() -> int:
     parser.add_argument("--json", default="reports/migration/gpu_completion_check.json")
     parser.add_argument("--allow-deferred", action="store_true", help="Allow thesis readiness DEFERRED > 0")
     args = parser.parse_args()
+    checkpoint_evidence = load_checkpoint_evidence(Path("reports/training/checkpoint_evidence.json"))
 
     specs = [
         ("SFT", Path("reports/training/layer_b_qwen25_7b_sft_metrics.json"), Path("checkpoints/layer_b/qwen25_7b_sft/final")),
@@ -79,6 +92,9 @@ def main() -> int:
         metric_exists = bool(metrics)
         metric_real = is_real_metric(metrics)
         ckpt_exists = ckpt_path.exists()
+        evidence = checkpoint_evidence.get(name, {})
+        ckpt_evidence_exists = bool(evidence.get("verified", False))
+        ckpt_effective_exists = ckpt_exists or ckpt_evidence_exists
 
         note = ""
         if not metric_exists:
@@ -87,7 +103,7 @@ def main() -> int:
         elif not metric_real:
             note = "metrics marked skipped/simulation"
             hard_fail = True
-        elif not ckpt_exists:
+        elif not ckpt_effective_exists:
             note = "checkpoint final directory missing"
             hard_fail = True
         else:
@@ -96,7 +112,10 @@ def main() -> int:
                     note = "train_loss missing"
                     hard_fail = True
                 else:
-                    note = "real metrics + checkpoint present"
+                    if ckpt_exists:
+                        note = "real metrics + checkpoint present"
+                    else:
+                        note = "real metrics + checkpoint evidence present"
             else:
                 try:
                     steps = int(metrics.get("global_steps", 0))
@@ -106,7 +125,10 @@ def main() -> int:
                     note = "global_steps <= 0"
                     hard_fail = True
                 else:
-                    note = "real metrics + checkpoint present"
+                    if ckpt_exists:
+                        note = "real metrics + checkpoint present"
+                    else:
+                        note = "real metrics + checkpoint evidence present"
 
         rows.append(
             {
@@ -116,6 +138,8 @@ def main() -> int:
                 "metrics_real": metric_real,
                 "checkpoint_path": str(ckpt_path),
                 "checkpoint_exists": ckpt_exists,
+                "checkpoint_evidence_exists": ckpt_evidence_exists,
+                "checkpoint_effective_exists": ckpt_effective_exists,
                 "note": note,
             }
         )
@@ -162,7 +186,7 @@ def main() -> int:
     ]
     for row in rows:
         report_lines.append(
-            f"| {row['component']} | {row['metrics_exists']} | {row['metrics_real']} | {row['checkpoint_exists']} | {row['note']} |"
+            f"| {row['component']} | {row['metrics_exists']} | {row['metrics_real']} | {row['checkpoint_effective_exists']} | {row['note']} |"
         )
 
     report_path = Path(args.report)

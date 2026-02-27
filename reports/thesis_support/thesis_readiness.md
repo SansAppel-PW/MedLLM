@@ -9,7 +9,7 @@
 | ID | Requirement | Status | Note |
 |---|---|---|---|
 | R1 | 数据收集、清洗与防泄露系统代码及数据统计报告 | PASS | scripts/data/build_real_dataset.py | scripts/data/run_data_governance_pipeline.py | reports/real_dataset_report.md | reports/data_cleaning_report.md |
-| R2 | 真实可复现微调系统（LoRA/QLoRA）及最优 checkpoint | PASS | 真实训练闭环完整；状态=SFT:real, DPO:real, SimPO:real, KTO:real |
+| R2 | 真实可复现微调系统（LoRA/QLoRA）及最优 checkpoint | PASS | 真实训练闭环完整；部分 checkpoint 通过证据清单验证（reports/training/checkpoint_evidence.json，组件=SFT,DPO,SimPO,KTO）；状态=SFT:real, DPO:real, SimPO:real, KTO:real |
 | R3 | 包含 API 自动评测的多维度指标对比表格 | PASS | eval/llm_judge.py | reports/eval_default.md | reports/sota_compare.md | reports/thesis_assets/tables/sota_compare_metrics.csv |
 | R4 | 真实训练 Loss 下降曲线图（png/pdf） | PASS | 已存在真实 SFT loss 曲线图 |
 | R5 | 系统说明文档（Readme、架构图、环境配置） | PASS | README.md | docs/ARCH.md | docs/DEPLOY.md | docs/RESOURCE_AWARE_EXECUTION.md |

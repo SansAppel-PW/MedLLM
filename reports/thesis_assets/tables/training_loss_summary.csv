@@ -1,5 +1,1 @@
 name,points,min_loss,max_loss,final_loss,final_step,source_log,figure
-qwen25_7b_sft,4,1.6389102935791016,2.279445838928223,1.6389102935791016,40,logs/layer_b/qwen25_7b_sft/train_log.jsonl,reports/thesis_assets/figures/training_loss_qwen25_7b_sft.png
-dpo-real-baseline,2,0.6853145956993103,0.6905251741409302,0.6853145956993103,20,logs/dpo-real-baseline/train_log.jsonl,reports/thesis_assets/figures/training_loss_dpo-real-baseline.png
-simpo-real-baseline,2,0.710473358631134,0.7157524824142456,0.710473358631134,20,logs/simpo-real-baseline/train_log.jsonl,reports/thesis_assets/figures/training_loss_simpo-real-baseline.png
-kto-real-baseline,2,0.6986916065216064,0.7013158798217773,0.7013158798217773,20,logs/kto-real-baseline/train_log.jsonl,reports/thesis_assets/figures/training_loss_kto-real-baseline.png

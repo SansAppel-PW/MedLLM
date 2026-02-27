@@ -80,6 +80,7 @@ bash scripts/train/run_real_alignment_pipeline.sh
 - `reports/training/layer_b_qwen25_7b_sft_metrics.json`
 - `reports/training/{dpo,simpo,kto}_metrics.json`
 - `reports/alignment_compare.md`
+- `reports/training/checkpoint_evidence.{json,md}`（当权重不落库时用于证据链审计）
 
 说明：
 - `ALIGNMENT_MODE=real`：真实 DPO/SimPO/KTO（默认）。

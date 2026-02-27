@@ -17,7 +17,7 @@
       "id": "R2",
       "requirement": "真实可复现微调系统（LoRA/QLoRA）及最优 checkpoint",
       "status": "PASS",
-      "note": "真实训练闭环完整；状态=SFT:real, DPO:real, SimPO:real, KTO:real"
+      "note": "真实训练闭环完整；部分 checkpoint 通过证据清单验证（reports/training/checkpoint_evidence.json，组件=SFT,DPO,SimPO,KTO）；状态=SFT:real, DPO:real, SimPO:real, KTO:real"
     },
     {
       "id": "R3",

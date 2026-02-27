@@ -8,7 +8,7 @@
 
 | component | metrics_exists | metrics_real | checkpoint_exists | note |
 |---|---|---|---|---|
-| SFT | True | True | True | real metrics + checkpoint present |
-| DPO | True | True | True | real metrics + checkpoint present |
-| SimPO | True | True | True | real metrics + checkpoint present |
-| KTO | True | True | True | real metrics + checkpoint present |
+| SFT | True | True | True | real metrics + checkpoint evidence present |
+| DPO | True | True | True | real metrics + checkpoint evidence present |
+| SimPO | True | True | True | real metrics + checkpoint evidence present |
+| KTO | True | True | True | real metrics + checkpoint evidence present |

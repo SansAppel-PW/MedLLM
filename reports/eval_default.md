@@ -2,11 +2,11 @@
 
 | 模型 | Avg FactScore | Avg Utility | Avg RiskScore | InterceptionRate |
 |---|---:|---:|---:|---:|
-| SFT | 0.5000 | 1.0000 | 0.2735 | 1.0000 |
-| DPO | 0.5000 | 0.8429 | 0.2782 | 1.0000 |
-| SimPO | 0.5000 | 0.8429 | 0.2782 | 1.0000 |
+| SFT | 0.4971 | 1.0000 | 0.1008 | 0.0050 |
+| DPO | 0.4971 | 0.8615 | 0.1102 | 0.0050 |
+| SimPO | 0.4971 | 0.8615 | 0.1102 | 0.0050 |
 
 ## Win Rate (quality = factscore + 1-risk)
-- DPO vs SFT: 0.2687
-- SimPO vs SFT: 0.2687
+- DPO vs SFT: 0.0346
+- SimPO vs SFT: 0.0346
 

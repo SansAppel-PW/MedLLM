@@ -1,6 +1,50 @@
 {
-  "git_commit": "UNKNOWN",
-  "dataset": {},
+  "git_commit": "d665697535930366a7e9580642b4dbd84daa17bd",
+  "dataset": {
+    "sources": [
+      {
+        "name": "cmtmedqa",
+        "dataset": "Suprit/CMtMedQA",
+        "config": "default",
+        "split": "train",
+        "num_rows_total": 8000,
+        "start_offset": 0,
+        "target_count": 8000,
+        "fetched_count": 8000,
+        "license": "MIT"
+      },
+      {
+        "name": "huatuo26m_lite",
+        "dataset": "FreedomIntelligence/Huatuo26M-Lite",
+        "config": "default",
+        "split": "train",
+        "num_rows_total": 6000,
+        "start_offset": 0,
+        "target_count": 6000,
+        "fetched_count": 6000,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "huatuo_encyclopedia",
+        "dataset": "FreedomIntelligence/huatuo_encyclopedia_qa",
+        "config": "default",
+        "split": "train",
+        "num_rows_total": 6000,
+        "start_offset": 0,
+        "target_count": 6000,
+        "fetched_count": 6000,
+        "license": "Apache-2.0"
+      }
+    ],
+    "merged_before_dedup": 20000,
+    "merged_after_dedup": 19978,
+    "train_count": 15984,
+    "dev_count": 1997,
+    "test_count": 1997,
+    "benchmark_count": 3600,
+    "seed": 42,
+    "rebuilt_from_local_artifacts": true
+  },
   "training_status": {
     "sft": "real",
     "dpo": "real",
@@ -24,7 +68,7 @@
     "cuda_min_compute_capability_major": 7
   },
   "artifact_report": {
-    "benchmark": "data/benchmark/real_medqa_benchmark.jsonl",
+    "benchmark": "data/benchmark/real_medqa_benchmark_v2_balanced.jsonl",
     "splits": [
       "test",
       "validation"
@@ -39,7 +83,7 @@
       "high": {
         "count": 600,
         "prefix_rate": 1.0,
-        "option_letter_rate": 0.008333333333333333
+        "option_letter_rate": 1.0
       },
       "medium": {
         "count": 0,
@@ -47,8 +91,8 @@
         "option_letter_rate": 0.0
       }
     },
-    "option_letter_gap_low_high": 0.9916666666666667,
-    "artifact_leakage_risk": "HIGH"
+    "option_letter_gap_low_high": 0.0,
+    "artifact_leakage_risk": "LOW"
   },
   "artifact_report_v2": {
     "benchmark": "data/benchmark/real_medqa_benchmark_v2_balanced.jsonl",
@@ -142,54 +186,71 @@
   "eval_rows": [
     {
       "model": "SFT",
-      "factscore": "0.5000",
+      "factscore": "0.4971",
       "utility": "1.0000",
-      "risk_score": "0.2735",
-      "interception_rate": "1.0000"
+      "risk_score": "0.1008",
+      "interception_rate": "0.0050"
     },
     {
       "model": "DPO",
-      "factscore": "0.5000",
-      "utility": "0.8429",
-      "risk_score": "0.2782",
-      "interception_rate": "1.0000"
+      "factscore": "0.4971",
+      "utility": "0.8615",
+      "risk_score": "0.1102",
+      "interception_rate": "0.0050"
     },
     {
       "model": "SimPO",
-      "factscore": "0.5000",
-      "utility": "0.8429",
-      "risk_score": "0.2782",
-      "interception_rate": "1.0000"
+      "factscore": "0.4971",
+      "utility": "0.8615",
+      "risk_score": "0.1102",
+      "interception_rate": "0.0050"
     }
   ],
   "sota_top4": [
     {
-      "name": "MedLLM-Hybrid (ours)",
-      "accuracy": "1.0",
-      "precision": "1.0",
-      "recall": "1.0",
-      "f1": "1.0",
-      "specificity": "1.0",
-      "unsafe_pass_rate": "0.0",
-      "risky_block_rate": "0.0",
-      "tp": "400.0",
-      "fp": "0.0",
-      "tn": "400.0",
-      "fn": "0.0"
+      "name": "BioMistral-7B-Proxy (whitebox)",
+      "accuracy": "0.49083333333333334",
+      "precision": "0.49411764705882355",
+      "recall": "0.77",
+      "f1": "0.6019543973941368",
+      "specificity": "0.21166666666666667",
+      "unsafe_pass_rate": "0.23",
+      "risky_block_rate": "0.23166666666666666",
+      "balanced_score": "0.47250000000000003",
+      "tp": "462.0",
+      "fp": "473.0",
+      "tn": "127.0",
+      "fn": "138.0"
     },
     {
-      "name": "BioMistral-7B-Proxy (whitebox)",
-      "accuracy": "0.36625",
-      "precision": "0.39731285988483683",
-      "recall": "0.5175",
-      "f1": "0.4495114006514657",
-      "specificity": "0.215",
-      "unsafe_pass_rate": "0.4825",
-      "risky_block_rate": "0.1875",
-      "tp": "207.0",
-      "fp": "314.0",
-      "tn": "86.0",
-      "fn": "193.0"
+      "name": "MedLLM-Hybrid (ours)",
+      "accuracy": "0.6075",
+      "precision": "0.7087378640776699",
+      "recall": "0.365",
+      "f1": "0.4818481848184819",
+      "specificity": "0.85",
+      "unsafe_pass_rate": "0.635",
+      "risky_block_rate": "0.24166666666666667",
+      "balanced_score": "0.8225",
+      "tp": "219.0",
+      "fp": "90.0",
+      "tn": "510.0",
+      "fn": "381.0"
+    },
+    {
+      "name": "MedQA-RAG-Proxy (retrieval)",
+      "accuracy": "0.49916666666666665",
+      "precision": "0.42857142857142855",
+      "recall": "0.005",
+      "f1": "0.009884678747940693",
+      "specificity": "0.9933333333333333",
+      "unsafe_pass_rate": "0.995",
+      "risky_block_rate": "0.005",
+      "balanced_score": "0.49749999999999994",
+      "tp": "3.0",
+      "fp": "4.0",
+      "tn": "596.0",
+      "fn": "597.0"
     },
     {
       "name": "HuatuoGPT-7B-Proxy (raw)",
@@ -200,34 +261,20 @@
       "specificity": "1.0",
       "unsafe_pass_rate": "1.0",
       "risky_block_rate": "0.0",
+      "balanced_score": "0.5",
       "tp": "0.0",
       "fp": "0.0",
-      "tn": "400.0",
-      "fn": "400.0"
-    },
-    {
-      "name": "MedQA-RAG-Proxy (retrieval)",
-      "accuracy": "0.5",
-      "precision": "0.0",
-      "recall": "0.0",
-      "f1": "0.0",
-      "specificity": "1.0",
-      "unsafe_pass_rate": "1.0",
-      "risky_block_rate": "0.0",
-      "tp": "0.0",
-      "fp": "0.0",
-      "tn": "400.0",
-      "fn": "400.0"
+      "tn": "600.0",
+      "fn": "600.0"
     }
   ],
   "error_summary": [
     "- 主预测文件样本数: 1200",
-    "- 误判总数: 507",
-    "- 漏检数: 193",
-    "- 误报数: 314",
-    "- BioMistral-7B-Proxy_(whitebox): 507",
-    "- 选项类样本检索噪声: 312",
-    "- 选项错配未识别: 193",
-    "- 长答案熵值偏高: 1"
+    "- 误判总数: 601",
+    "- 漏检数: 597",
+    "- 误报数: 4",
+    "- medllm_hybrid: 601",
+    "- 选项错配未识别: 597",
+    "- 选项类样本检索噪声: 4"
   ]
 }

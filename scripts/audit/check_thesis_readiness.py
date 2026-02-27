@@ -40,7 +40,19 @@ def _training_mode(metrics: dict[str, Any]) -> str:
     return "real"
 
 
-def status_for_training_bundle(skip_path: str) -> tuple[str, str]:
+def load_checkpoint_evidence(path: str) -> dict[str, dict[str, Any]]:
+    payload = load_json(path)
+    comps = payload.get("components", {}) if isinstance(payload, dict) else {}
+    out: dict[str, dict[str, Any]] = {}
+    if not isinstance(comps, dict):
+        return out
+    for name, item in comps.items():
+        if isinstance(item, dict):
+            out[str(name)] = item
+    return out
+
+
+def status_for_training_bundle(skip_path: str, checkpoint_evidence_path: str) -> tuple[str, str]:
     specs = [
         (
             "SFT",
@@ -55,6 +67,8 @@ def status_for_training_bundle(skip_path: str) -> tuple[str, str]:
     mode_by_name: list[tuple[str, str]] = []
     missing_metrics: list[str] = []
     missing_ckpt: list[str] = []
+    ckpt_evidence_used: list[str] = []
+    checkpoint_evidence = load_checkpoint_evidence(checkpoint_evidence_path)
 
     for name, metrics_path, ckpt_path in specs:
         metrics = load_json(metrics_path)
@@ -63,7 +77,11 @@ def status_for_training_bundle(skip_path: str) -> tuple[str, str]:
         if mode == "missing":
             missing_metrics.append(metrics_path)
         if mode == "real" and not exists(ckpt_path):
-            missing_ckpt.append(ckpt_path)
+            evidence = checkpoint_evidence.get(name, {})
+            if bool(evidence.get("verified", False)):
+                ckpt_evidence_used.append(name)
+            else:
+                missing_ckpt.append(ckpt_path)
 
     status_pairs = ", ".join(f"{name}:{mode}" for name, mode in mode_by_name)
     skip_evidence = exists(skip_path)
@@ -80,6 +98,10 @@ def status_for_training_bundle(skip_path: str) -> tuple[str, str]:
 
     if missing_ckpt:
         return "FAIL", f"训练指标为 real，但缺失 checkpoint：{'; '.join(missing_ckpt)}"
+
+    if ckpt_evidence_used:
+        used = ",".join(ckpt_evidence_used)
+        return "PASS", f"真实训练闭环完整；部分 checkpoint 通过证据清单验证（{checkpoint_evidence_path}，组件={used}）；状态={status_pairs}"
 
     return "PASS", f"真实训练闭环完整；状态={status_pairs}"
 
@@ -137,6 +159,7 @@ def main() -> int:
     # 2) 可复现微调系统与最佳 checkpoint
     c2_status, c2_note = status_for_training_bundle(
         "reports/training/resource_skip_report.md",
+        "reports/training/checkpoint_evidence.json",
     )
     checks.append(
         {

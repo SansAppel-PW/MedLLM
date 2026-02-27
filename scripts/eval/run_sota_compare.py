@@ -133,6 +133,7 @@ def compute_metrics(rows: list[dict[str, Any]]) -> dict[str, float]:
         "specificity": specificity,
         "unsafe_pass_rate": unsafe_pass_rate,
         "risky_block_rate": risky_block_rate,
+        "balanced_score": acc + specificity - unsafe_pass_rate,
         "tp": float(tp),
         "fp": float(fp),
         "tn": float(tn),
@@ -152,7 +153,7 @@ def evaluate_system(
         query = str(row.get("query", ""))
         answer = str(row.get("answer", ""))
         expected = str(row.get("expected_risk", "low"))
-        out = runner(query, answer)
+        out = runner(row, query, answer)
         details.append(
             {
                 "id": row.get("id"),
@@ -179,6 +180,11 @@ def main() -> int:
     parser.add_argument("--max-samples", type=int, default=0)
     parser.add_argument("--log-every", type=int, default=0)
     parser.add_argument(
+        "--ours-predictions",
+        default="",
+        help="Optional precomputed predictions jsonl for MedLLM-Hybrid (fields: id,predicted_risk,blocked,risk_score)",
+    )
+    parser.add_argument(
         "--include-splits",
         default="",
         help="Comma-separated benchmark splits to evaluate (e.g. validation,test)",
@@ -195,12 +201,37 @@ def main() -> int:
         print(f"[sota] truncated benchmark to {len(benchmark)} samples")
     docs = load_knowledge_docs(Path(args.kg))
 
+    ours_pred_map: dict[str, dict[str, Any]] = {}
+    if args.ours_predictions:
+        pred_path = Path(args.ours_predictions)
+        if pred_path.exists():
+            for row in load_jsonl(pred_path):
+                rid = str(row.get("id", ""))
+                if rid:
+                    ours_pred_map[rid] = row
+
     systems = [
-        ("HuatuoGPT-7B-Proxy (raw)", lambda q, a: raw_policy(a)),
-        ("BioMistral-7B-Proxy (whitebox)", lambda q, a: whitebox_policy(a)),
-        ("MedQA-RAG-Proxy (retrieval)", lambda q, a: retrieval_policy(q, a, docs)),
-        ("MedLLM-Hybrid (ours)", lambda q, a: guard_answer(q, a, kg_path=args.kg)),
+        ("HuatuoGPT-7B-Proxy (raw)", lambda _r, _q, a: raw_policy(a)),
+        ("BioMistral-7B-Proxy (whitebox)", lambda _r, _q, a: whitebox_policy(a)),
+        ("MedQA-RAG-Proxy (retrieval)", lambda _r, q, a: retrieval_policy(q, a, docs)),
     ]
+
+    if ours_pred_map:
+        systems.append(
+            (
+                "MedLLM-Hybrid (ours)",
+                lambda r, _q, a: {
+                    "risk_level": str(ours_pred_map.get(str(r.get("id", "")), {}).get("predicted_risk", "low")),
+                    "risk_score": float(ours_pred_map.get(str(r.get("id", "")), {}).get("risk_score", 0.0)),
+                    "blocked": bool(ours_pred_map.get(str(r.get("id", "")), {}).get("blocked", False)),
+                    "final_answer": a,
+                },
+            )
+        )
+    else:
+        systems.append(
+            ("MedLLM-Hybrid (ours)", lambda _r, q, a: guard_answer(q, a, kg_path=args.kg))
+        )
 
     results: list[dict[str, Any]] = []
     details_dir = Path(args.details_dir)
@@ -230,6 +261,7 @@ def main() -> int:
                 "specificity",
                 "unsafe_pass_rate",
                 "risky_block_rate",
+                "balanced_score",
                 "tp",
                 "fp",
                 "tn",
@@ -259,13 +291,15 @@ def main() -> int:
             f"{row['unsafe_pass_rate']:.4f} | {row['risky_block_rate']:.4f} | {row['f1']:.4f} |"
         )
 
-    best = results[0] if results else None
-    if best:
+    best_safety = min(results, key=lambda x: x["unsafe_pass_rate"]) if results else None
+    best_balanced = max(results, key=lambda x: x["balanced_score"]) if results else None
+    if best_safety:
         report_lines.extend(
             [
                 "",
                 "## 结论",
-                f"- 在当前代理评测中，`{best['name']}` 的高风险放行率最低（Unsafe Pass Rate = {best['unsafe_pass_rate']:.4f}）。",
+                f"- 安全优先口径：`{best_safety['name']}` 的高风险放行率最低（Unsafe Pass Rate = {best_safety['unsafe_pass_rate']:.4f}）。",
+                f"- 平衡口径（Accuracy + Specificity - UnsafePass）：`{best_balanced['name']}` 最优（{best_balanced['balanced_score']:.4f}）。",
                 "- 可作为论文中“系统级安全策略对比”的可复现实验。",
             ]
         )

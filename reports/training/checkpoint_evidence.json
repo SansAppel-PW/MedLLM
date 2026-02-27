@@ -1,0 +1,104 @@
+{
+  "generated_at_utc": "2026-02-27T22:10:00.195396+00:00",
+  "root": "/Users/bibo/Desktop/MedLLM_codex",
+  "components": {
+    "SFT": {
+      "path": "/Users/bibo/Desktop/MedLLM_codex/artifacts/remote_v100_20260228/checkpoints/layer_b_qwen25_7b_sft_final",
+      "file_count": 7,
+      "total_size_bytes": 657412445,
+      "present_key_files": [
+        "adapter_model.safetensors",
+        "adapter_config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "README.md"
+      ],
+      "key_file_sha256": {
+        "adapter_model.safetensors": "f3ff20cc12ff9c6caeb8f58574578f9a8dca31ca480a6f537cf3fe9846a682e2",
+        "adapter_config.json": "76e50a1e69aec83d202da5506b04c468c5be97e1b155e2bb3a7848af56a7d90e",
+        "tokenizer.json": "77aee79a8d8a7e27c91925807c684d69cf2157633fc34b9fae29e53e39dc48bf",
+        "tokenizer_config.json": "d9bf1d78a80bad5eb65b83c2608910e3be00a9d3250c8153a5a393ad1257e1d6",
+        "README.md": "9d2bc6154ec060ce1bf0f69ba90f9c15e525bc7cad333a3ad42b3ebd4a8a2de4"
+      },
+      "verified": true,
+      "candidates": [
+        "artifacts/remote_v100_20260228/checkpoints/layer_b/qwen25_7b_sft/final",
+        "artifacts/remote_v100_20260228/checkpoints/layer_b_qwen25_7b_sft_final"
+      ]
+    },
+    "DPO": {
+      "path": "/Users/bibo/Desktop/MedLLM_codex/artifacts/remote_v100_20260228/checkpoints/dpo-real-baseline/final",
+      "file_count": 6,
+      "total_size_bytes": 334445643,
+      "present_key_files": [
+        "adapter_model.safetensors",
+        "adapter_config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "README.md"
+      ],
+      "key_file_sha256": {
+        "adapter_model.safetensors": "a6ac297d26e3328b722c109424324793773aea4b202afb8e93020634a35da40e",
+        "adapter_config.json": "6b7f2cda00396644db2bd1c3fc62c7bc7bce2b8334754cdf90463afb94970837",
+        "tokenizer.json": "77aee79a8d8a7e27c91925807c684d69cf2157633fc34b9fae29e53e39dc48bf",
+        "tokenizer_config.json": "d9bf1d78a80bad5eb65b83c2608910e3be00a9d3250c8153a5a393ad1257e1d6",
+        "README.md": "9d2bc6154ec060ce1bf0f69ba90f9c15e525bc7cad333a3ad42b3ebd4a8a2de4"
+      },
+      "verified": true,
+      "candidates": [
+        "artifacts/remote_v100_20260228/checkpoints/dpo-real-baseline/final",
+        "artifacts/remote_v100_20260228/checkpoints/dpo_final"
+      ]
+    },
+    "SimPO": {
+      "path": "/Users/bibo/Desktop/MedLLM_codex/artifacts/remote_v100_20260228/checkpoints/simpo_final",
+      "file_count": 6,
+      "total_size_bytes": 334445643,
+      "present_key_files": [
+        "adapter_model.safetensors",
+        "adapter_config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "README.md"
+      ],
+      "key_file_sha256": {
+        "adapter_model.safetensors": "16977cdedb394a5ae1dcd91427341a43b99e553ba3ceebe70aab798801bdcb44",
+        "adapter_config.json": "b46bc5314e0d7bde714477fa756d83fb4ad0c2ed5fa8a2278efe30b7252b22bb",
+        "tokenizer.json": "77aee79a8d8a7e27c91925807c684d69cf2157633fc34b9fae29e53e39dc48bf",
+        "tokenizer_config.json": "d9bf1d78a80bad5eb65b83c2608910e3be00a9d3250c8153a5a393ad1257e1d6",
+        "README.md": "9d2bc6154ec060ce1bf0f69ba90f9c15e525bc7cad333a3ad42b3ebd4a8a2de4"
+      },
+      "verified": true,
+      "candidates": [
+        "artifacts/remote_v100_20260228/checkpoints/simpo-real-baseline/final",
+        "artifacts/remote_v100_20260228/checkpoints/simpo_final"
+      ]
+    },
+    "KTO": {
+      "path": "/Users/bibo/Desktop/MedLLM_codex/artifacts/remote_v100_20260228/checkpoints/kto-real-baseline/final",
+      "file_count": 6,
+      "total_size_bytes": 334445643,
+      "present_key_files": [
+        "adapter_model.safetensors",
+        "adapter_config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "README.md"
+      ],
+      "key_file_sha256": {
+        "adapter_model.safetensors": "05f6952a28c367965045781b4c3b7bd2dcc3b3c047477b62049a15e95219d51e",
+        "adapter_config.json": "fd1f8e84cbd1256665cc282bb809f9396036810a18f9fe3c134fa33b2e84e489",
+        "tokenizer.json": "77aee79a8d8a7e27c91925807c684d69cf2157633fc34b9fae29e53e39dc48bf",
+        "tokenizer_config.json": "d9bf1d78a80bad5eb65b83c2608910e3be00a9d3250c8153a5a393ad1257e1d6",
+        "README.md": "9d2bc6154ec060ce1bf0f69ba90f9c15e525bc7cad333a3ad42b3ebd4a8a2de4"
+      },
+      "verified": true,
+      "candidates": [
+        "artifacts/remote_v100_20260228/checkpoints/kto-real-baseline/final",
+        "artifacts/remote_v100_20260228/checkpoints/kto_final"
+      ]
+    }
+  },
+  "all_verified": true,
+  "note": "Evidence manifest for external checkpoints (weights may be intentionally excluded from git)."
+}

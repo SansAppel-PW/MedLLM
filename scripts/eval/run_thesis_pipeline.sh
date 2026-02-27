@@ -5,6 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
 BENCHMARK="${BENCHMARK:-data/benchmark/real_medqa_benchmark.jsonl}"
+BENCHMARK_V2="${BENCHMARK_V2:-data/benchmark/real_medqa_benchmark_v2_balanced.jsonl}"
+USE_BALANCED_BENCHMARK="${USE_BALANCED_BENCHMARK:-true}"
 KB_OUT="${KB_OUT:-data/kg/real_medqa_reference_kb.jsonl}"
 KG_BASE="${KG_BASE:-data/kg/cmekg_integrated.jsonl}"
 CM3KG_DIR="${CM3KG_DIR:-CM3KG}"
@@ -30,9 +32,33 @@ V2_LLM_CACHE="${V2_LLM_CACHE:-reports/eval/judge_risk_cache_v2.jsonl}"
 V2_LLM_MIN_CONF="${V2_LLM_MIN_CONF:-0.70}"
 V2_LLM_MAX_CALLS="${V2_LLM_MAX_CALLS:-0}"
 
+python3 scripts/data/build_cmekg_from_cm3kg.py \
+  --cm3kg-dir "${CM3KG_DIR}" \
+  --output "${KG_BASE}" \
+  --report reports/cm3kg_kg_report.md \
+  --summary-json reports/cm3kg_kg_summary.json \
+  --merge-demo data/kg/cmekg_demo.jsonl
+
+python3 scripts/data/rebuild_real_dataset_summary.py \
+  --root . \
+  --out-json reports/real_dataset_summary.json \
+  --out-md reports/real_dataset_report.md
+
+python3 scripts/data/build_balanced_detection_benchmark.py \
+  --input "${BENCHMARK}" \
+  --output "${BENCHMARK_V2}" \
+  --report reports/benchmark_v2_balanced_report.md \
+  --summary-json reports/benchmark_v2_balanced_summary.json
+
+if [[ "${USE_BALANCED_BENCHMARK}" == "true" ]]; then
+  BENCHMARK_EFFECTIVE="${BENCHMARK_V2}"
+else
+  BENCHMARK_EFFECTIVE="${BENCHMARK}"
+fi
+
 eval_cmd=(
   python3 eval/run_eval.py
-  --benchmark "${BENCHMARK}"
+  --benchmark "${BENCHMARK_EFFECTIVE}"
   --kg "${KB_OUT}"
   --default-report reports/eval_default.md
   --ablation-kg reports/ablation_kg.md
@@ -49,20 +75,8 @@ if [[ "${ENABLE_LLM_JUDGE}" == "true" ]]; then
   eval_cmd+=(--enable-llm-judge)
 fi
 
-python3 scripts/data/build_cmekg_from_cm3kg.py \
-  --cm3kg-dir "${CM3KG_DIR}" \
-  --output "${KG_BASE}" \
-  --report reports/cm3kg_kg_report.md \
-  --summary-json reports/cm3kg_kg_summary.json \
-  --merge-demo data/kg/cmekg_demo.jsonl
-
-python3 scripts/data/rebuild_real_dataset_summary.py \
-  --root . \
-  --out-json reports/real_dataset_summary.json \
-  --out-md reports/real_dataset_report.md
-
 python3 scripts/data/build_benchmark_reference_kb.py \
-  --benchmark "${BENCHMARK}" \
+  --benchmark "${BENCHMARK_EFFECTIVE}" \
   --include-splits "${KB_SOURCE_SPLITS}" \
   --extra-kg "${KG_BASE}" \
   --extra-kg-max "${EXTRA_KG_MAX}" \
@@ -70,7 +84,7 @@ python3 scripts/data/build_benchmark_reference_kb.py \
   --report reports/benchmark_reference_kb_report.md
 
 python3 -m src.detect.evaluate_detection \
-  --benchmark "${BENCHMARK}" \
+  --benchmark "${BENCHMARK_EFFECTIVE}" \
   --kg "${KB_OUT}" \
   --pred-output reports/detection_predictions.jsonl \
   --report reports/detection_eval.md \
@@ -78,7 +92,7 @@ python3 -m src.detect.evaluate_detection \
   --max-samples "${DET_MAX}"
 
 python3 scripts/audit/check_benchmark_artifacts.py \
-  --benchmark "${BENCHMARK}" \
+  --benchmark "${BENCHMARK_EFFECTIVE}" \
   --include-splits "${EVAL_SPLITS}" \
   --report reports/thesis_support/benchmark_artifact_report.md \
   --json reports/thesis_support/benchmark_artifact_report.json
@@ -98,7 +112,7 @@ fi
 
 if [[ "${ENABLE_LLM_RISK_JUDGE}" == "true" ]]; then
   python3 scripts/eval/run_detection_llm_judge.py \
-    --benchmark "${BENCHMARK}" \
+    --benchmark "${BENCHMARK_EFFECTIVE}" \
     --pred-output reports/detection_predictions_llm_judge.jsonl \
     --report reports/detection_eval_llm_judge.md \
     --model "${LLM_RISK_MODEL}" \
@@ -107,11 +121,10 @@ if [[ "${ENABLE_LLM_RISK_JUDGE}" == "true" ]]; then
     --include-splits "${EVAL_SPLITS}" \
     --log-every "${LOG_EVERY}"
 fi
-
 "${eval_cmd[@]}"
 
 python3 scripts/eval/run_sota_compare.py \
-  --benchmark "${BENCHMARK}" \
+  --benchmark "${BENCHMARK_EFFECTIVE}" \
   --kg "${KB_OUT}" \
   --report reports/sota_compare.md \
   --csv reports/thesis_assets/tables/sota_compare_metrics.csv \
@@ -153,6 +166,11 @@ python3 scripts/eval/generate_thesis_draft_material.py \
   --detection-eval-v2-hybrid-llm reports/detection_eval_v2_hybrid_llm.md \
   --output-md reports/thesis_support/thesis_draft_material.md \
   --output-json reports/thesis_support/experiment_record.json
+
+python3 scripts/migration/build_checkpoint_evidence.py \
+  --root . \
+  --output-json reports/training/checkpoint_evidence.json \
+  --output-md reports/training/checkpoint_evidence.md
 
 python3 scripts/audit/check_thesis_readiness.py \
   --report reports/thesis_support/thesis_readiness.md \
