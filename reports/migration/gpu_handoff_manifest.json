@@ -1,0 +1,121 @@
+{
+  "generated_at_utc": "2026-02-27T14:20:20.146147+00:00",
+  "repo_root": "/Users/bibo/Desktop/MedLLM_codex",
+  "git": {
+    "branch": "codex/worktree",
+    "commit": "63abf7909260c0bcba60e0e5c52a61f921ec60e7",
+    "worktree_clean": false
+  },
+  "target": {
+    "model_name": "Qwen/Qwen2.5-7B-Instruct",
+    "model_tier": "7b",
+    "alignment_mode": "real",
+    "allow_skip_training": false
+  },
+  "required_env_keys": [
+    "OPENAI_BASE_URL",
+    "OPENAI_API_KEY"
+  ],
+  "commands": {
+    "bootstrap": "bash scripts/migration/bootstrap_gpu_env.sh",
+    "run_experiment": "MODEL_NAME='Qwen/Qwen2.5-7B-Instruct' MODEL_TIER='7b' bash scripts/migration/run_gpu_thesis_experiment.sh"
+  },
+  "critical_files": [
+    {
+      "path": "requirements.txt",
+      "exists": true,
+      "size_bytes": 395,
+      "sha256": "c56bcc108b770dd0bd38cdc595d189d71130dc905d1ca1e05d304ffe5eafa2cd"
+    },
+    {
+      "path": "Makefile",
+      "exists": true,
+      "size_bytes": 938,
+      "sha256": "bd44485028c044a3f6e08fdfe367927f3a8de8085f2e658edb587a6c59f9a9c5"
+    },
+    {
+      "path": "README.md",
+      "exists": true,
+      "size_bytes": 5976,
+      "sha256": "33ccd35647677fae2ecce993d8c0fa39c65e7aeb9ffb360f1fd000d75d2af499"
+    },
+    {
+      "path": "docs/GPU_MIGRATION_RUNBOOK.md",
+      "exists": true,
+      "size_bytes": 1920,
+      "sha256": "cd053627892582bb45fbb578290b338167709d9b32b4b736ac1278442ea85d56"
+    },
+    {
+      "path": "docs/RESOURCE_AWARE_EXECUTION.md",
+      "exists": true,
+      "size_bytes": 1243,
+      "sha256": "6aaeb99f3fa369e71bf466abf5cfd9265ffabc85a4c230bc67e8e39c796c0e1f"
+    },
+    {
+      "path": "scripts/migration/bootstrap_gpu_env.sh",
+      "exists": true,
+      "size_bytes": 1900,
+      "sha256": "d5a673a30bd46ea90fa00150ed672ada1137cb6f7d58ff52c8811be888a8971b"
+    },
+    {
+      "path": "scripts/migration/run_gpu_thesis_experiment.sh",
+      "exists": true,
+      "size_bytes": 4673,
+      "sha256": "ab3717779b04a15dfdbc757e8b8a5b1de996aeffab9231f3f6e91c5aedde496c"
+    },
+    {
+      "path": "scripts/migration/check_handoff_readiness.py",
+      "exists": true,
+      "size_bytes": 2145,
+      "sha256": "e5d3f79252df2313b2855f15eba69237872ffce2bb08f6562adaeb366cee7a94"
+    },
+    {
+      "path": "scripts/train/run_real_alignment_pipeline.sh",
+      "exists": true,
+      "size_bytes": 12932,
+      "sha256": "e9c846d45efae5a4df9799085017357d079310e816bc8822709fd8f04eecb951"
+    },
+    {
+      "path": "scripts/train/run_layer_b_real_sft.sh",
+      "exists": true,
+      "size_bytes": 3300,
+      "sha256": "a8d7c1704cbcd81575e3fbf32af023eda50182fa0ff5bdd2d2ee22a297577390"
+    },
+    {
+      "path": "scripts/eval/run_thesis_pipeline.sh",
+      "exists": true,
+      "size_bytes": 5610,
+      "sha256": "e82114769021db15a05def4c8d45cd1923409cf5eaa2cf0a29f7c9a7b7e91b68"
+    },
+    {
+      "path": "scripts/pipeline/run_paper_ready.sh",
+      "exists": true,
+      "size_bytes": 6337,
+      "sha256": "8ade5bb39482c94e38eea63e5ef131920eb6a0fc94ffec0b506dc04ca9905d16"
+    },
+    {
+      "path": "configs/train/sft_layer_b_real.yaml",
+      "exists": true,
+      "size_bytes": 997,
+      "sha256": "b9c8bcf277e83754bd8a71d3c005708de609d5a744d61477cb7690ff2a05d076"
+    },
+    {
+      "path": "configs/train/dpo_real.yaml",
+      "exists": true,
+      "size_bytes": 381,
+      "sha256": "06fde6f94dc6cea4b0cce0c2a875194859a94f1a1217502db3846735424aad1c"
+    },
+    {
+      "path": "configs/train/simpo_real.yaml",
+      "exists": true,
+      "size_bytes": 393,
+      "sha256": "a60726b2536f457c7fec02ed2126a561f37364551949a92119a5064a8170c9f9"
+    },
+    {
+      "path": "configs/train/kto_real.yaml",
+      "exists": true,
+      "size_bytes": 383,
+      "sha256": "5fa4f3f4d41c964ae7961e62882421f904dcb3a9d3f5e9290773eea8b91e1667"
+    }
+  ]
+}

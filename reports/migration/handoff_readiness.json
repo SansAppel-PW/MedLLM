@@ -1,0 +1,43 @@
+{
+  "ready": true,
+  "missing_count": 0,
+  "missing": [],
+  "checks": [
+    {
+      "path": "scripts/migration/bootstrap_gpu_env.sh",
+      "exists": true
+    },
+    {
+      "path": "scripts/migration/run_gpu_thesis_experiment.sh",
+      "exists": true
+    },
+    {
+      "path": "scripts/migration/build_gpu_handoff_manifest.py",
+      "exists": true
+    },
+    {
+      "path": "docs/GPU_MIGRATION_RUNBOOK.md",
+      "exists": true
+    },
+    {
+      "path": "scripts/train/run_real_alignment_pipeline.sh",
+      "exists": true
+    },
+    {
+      "path": "scripts/eval/run_thesis_pipeline.sh",
+      "exists": true
+    },
+    {
+      "path": "scripts/pipeline/run_paper_ready.sh",
+      "exists": true
+    },
+    {
+      "path": "reports/pipeline/paper_ready_status.md",
+      "exists": true
+    },
+    {
+      "path": "reports/thesis_support/thesis_readiness.md",
+      "exists": true
+    }
+  ]
+}

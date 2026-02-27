@@ -105,6 +105,33 @@ make paper-ready
 
 状态总览输出：`reports/pipeline/paper_ready_status.md`。
 
+## GPU 迁移即跑（租赁环境）
+生成交接清单（含关键文件 hash、commit、执行命令）：
+```bash
+make gpu-manifest
+```
+
+迁移前自检：
+```bash
+make gpu-check
+```
+
+GPU 机器环境安装：
+```bash
+make gpu-bootstrap
+```
+
+GPU 一键真实实验：
+```bash
+MODEL_NAME="Qwen/Qwen2.5-7B-Instruct" \
+MODEL_TIER="7b" \
+ALLOW_SKIP_TRAINING=false \
+FORCE_SKIP_TRAINING=false \
+make gpu-run
+```
+
+详见：`docs/GPU_MIGRATION_RUNBOOK.md`。
+
 ## 评测与论文资产流水线
 ```bash
 PYTHONUNBUFFERED=1 \
@@ -157,3 +184,4 @@ scripts/deploy/run_demo.sh --web
 ## 当前执行清单
 - `docs/EXECUTION_TASKS.md`
 - `docs/RESOURCE_AWARE_EXECUTION.md`
+- `docs/GPU_MIGRATION_RUNBOOK.md`

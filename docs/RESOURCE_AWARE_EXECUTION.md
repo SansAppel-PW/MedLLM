@@ -36,3 +36,6 @@ make paper-ready
 
 状态总览：
 - `reports/pipeline/paper_ready_status.md`
+
+GPU 迁移与真实训练执行手册：
+- `docs/GPU_MIGRATION_RUNBOOK.md`
