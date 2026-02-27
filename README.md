@@ -284,6 +284,7 @@ scripts/deploy/run_demo.sh --web
 
 ## 当前执行清单
 - `docs/EXECUTION_TASKS.md`
+- `docs/PROJECT_HANDOFF_AND_THESIS_DOSSIER.md`
 - `docs/PROJECT_STATUS_AUDIT.md`
 - `docs/USER_MANUAL_COMPLETE.md`
 - `docs/THESIS_WRITING_MATERIALS.md`

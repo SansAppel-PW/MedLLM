@@ -1,6 +1,7 @@
 # Docs Index
 
 ## 当前有效主线文档
+- `PROJECT_HANDOFF_AND_THESIS_DOSSIER.md`：项目总览、执行手册、产出索引与论文章节草稿总文档。
 - `PROJECT_STATUS_AUDIT.md`：当前项目状态、GPU 迁移结论与剩余缺口。
 - `USER_MANUAL_COMPLETE.md`：完整使用说明（本地预演 + GPU 一键主实验 + 验收）。
 - `THESIS_WRITING_MATERIALS.md`：论文写作材料包（章节映射、图表清单、模板段落）。
