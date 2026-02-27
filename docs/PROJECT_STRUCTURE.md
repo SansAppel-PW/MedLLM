@@ -29,3 +29,7 @@
 ## 5. Non-Core Policy
 - 历史 tiny/proxy 试验残留与阶段性临时报告已清理，不再作为主链证据。
 - 当前主链只保留可支撑 Qwen2.5-7B/14B 或 Qwen3 小参数真实训练与论文写作的资产。
+
+## 6. High-Level Guides
+- `docs/USAGE_MANUAL_FULL.md`：完整使用说明（含 GPU 一键执行路径）。
+- `reports/thesis_support/thesis_writing_material_full.md`：论文写作材料（章节、结果、模板）。
