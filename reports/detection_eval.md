@@ -1,14 +1,14 @@
 # 幻觉检测离线评测报告
 
 ## 指标
-- Accuracy: 0.5010
-- Precision: 0.5005
-- Recall: 0.9970
-- F1: 0.6664
-- TP/FP/TN/FN: 997/995/5/3
-- FPR: 0.9950
-- FNR: 0.0030
-- 样本数: 2000
+- Accuracy: 0.5250
+- Precision: 0.5128
+- Recall: 1.0000
+- F1: 0.6780
+- TP/FP/TN/FN: 100/95/5/0
+- FPR: 0.9500
+- FNR: 0.0000
+- 样本数: 200
 
 ## 样例明细（前10条）
 | id | expected | predicted | score |
@@ -25,5 +25,5 @@
 | medqa_validation_000004_neg | high | high | 0.7323 |
 
 ## 误判统计
-- 高/中风险漏检（FN）: 3
-- 低风险误报（FP）: 995
+- 高/中风险漏检（FN）: 0
+- 低风险误报（FP）: 95

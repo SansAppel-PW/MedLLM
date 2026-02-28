@@ -1,5 +1,5 @@
 name,count
-TP,997
-FP,995
+TP,100
+FP,95
 TN,5
-FN,3
+FN,0

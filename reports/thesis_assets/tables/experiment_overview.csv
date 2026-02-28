@@ -5,5 +5,5 @@ real_dataset,dev_count,0
 real_dataset,test_count,0
 real_dataset,benchmark_count,0
 alignment,dpo_aligned_score,0.787646
-alignment,simpo_aligned_score,0.640625
-alignment,kto_aligned_score,0.689453125
+alignment,simpo_aligned_score,0.98046875
+alignment,kto_aligned_score,0.986328125

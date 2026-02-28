@@ -1,6 +1,6 @@
 # Loop Iteration Report
 
-- 生成时间(UTC): 2026-02-27T22:56:55.958290+00:00
+- 生成时间(UTC): 2026-02-28T01:18:09.334802+00:00
 
 ## 关键结果摘要
 - train_loss: 10.734590888023376
@@ -17,11 +17,11 @@
 
 ## 真实对齐摘要
 - dpo_pair_count: 70054
-- dpo_pref_accuracy_after: 0.662109375
-- simpo_score_after: 0.640625
-- kto_score_after: 0.689453125
+- dpo_pref_accuracy_after: 0.978515625
+- simpo_score_after: 0.98046875
+- kto_score_after: 0.986328125
 - best_alignment_method: KTO
-- best_alignment_score: 0.689453125
+- best_alignment_score: 0.986328125
 
 ## Baseline 分层摘要
 - baseline_real_mainline_count: 2

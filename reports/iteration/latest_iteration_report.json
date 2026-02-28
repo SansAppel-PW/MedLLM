@@ -1,6 +1,6 @@
 {
   "title": "Loop Iteration Report",
-  "generated_at_utc": "2026-02-27T22:56:55.958290+00:00",
+  "generated_at_utc": "2026-02-28T01:18:09.334802+00:00",
   "run_tag": null,
   "artifacts": {
     "small_real_train_metrics": "reports/training/small_real_lora_v7_metrics.json",
@@ -28,11 +28,11 @@
   },
   "real_alignment_summary": {
     "dpo_pair_count": 70054,
-    "dpo_pref_accuracy_after": 0.662109375,
-    "simpo_score_after": 0.640625,
-    "kto_score_after": 0.689453125,
+    "dpo_pref_accuracy_after": 0.978515625,
+    "simpo_score_after": 0.98046875,
+    "kto_score_after": 0.986328125,
     "best_method": "KTO",
-    "best_score": 0.689453125
+    "best_score": 0.986328125
   },
   "baseline_layer_summary": {
     "real_mainline_count": 2,

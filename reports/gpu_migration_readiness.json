@@ -1,9 +1,7 @@
 {
-  "status": "NOT_READY",
-  "ready_for_gpu_run": false,
-  "opening_audit_partial_ids": [
-    "A11"
-  ],
+  "status": "READY_FOR_GPU_MAINLINE",
+  "ready_for_gpu_run": true,
+  "opening_audit_partial_ids": [],
   "opening_audit_fail_ids": [],
   "remaining_primary_gap": null,
   "remaining_primary_gap_detail": "Layer-B 主实验已有真实训练指标。",
