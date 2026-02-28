@@ -15,6 +15,15 @@ TASK_ROW_RE = re.compile(r"^\|\s*(T\d+)\s*\|")
 CODE_PATH_RE = re.compile(r"`([^`]+)`")
 PATH_TOKEN_RE = re.compile(r"(?:[A-Za-z0-9_.-]+/)+[A-Za-z0-9_.-]+")
 
+DELIVERABLE_ALIASES: dict[str, list[str]] = {
+    # Real dataset naming is the canonical runtime path.
+    "data/clean/sft_train.jsonl": ["data/clean/real_sft_train.jsonl"],
+    "data/clean/sft_dev.jsonl": ["data/clean/real_sft_dev.jsonl"],
+    "data/clean/pref_seed_pairs.jsonl": ["data/clean/real_pref_seed_pairs.jsonl"],
+    # KG triples may be materialized as the merged core KB.
+    "data/kg/triples/*.jsonl": ["data/kg/cm3kg_core_kb.jsonl", "data/kg/real_medqa_reference_kb_merged.jsonl"],
+}
+
 
 def parse_task_rows(markdown: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
@@ -68,6 +77,12 @@ def expand_brace_path(path: str) -> list[str]:
     return [f"{prefix}{opt}{suffix}" for opt in parts]
 
 
+def path_exists(repo: Path, rel_item: str) -> bool:
+    if "*" in rel_item:
+        return len(glob.glob(str(repo / rel_item))) > 0
+    return (repo / rel_item).exists()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Audit task completion")
     parser.add_argument("--tasks", default="docs/EXECUTION_TASKS.md")
@@ -91,14 +106,17 @@ def main() -> int:
         for rel in paths:
             expanded = expand_brace_path(rel)
             for rel_item in expanded:
-                exists = False
-                if "*" in rel_item:
-                    matches = glob.glob(str(repo / rel_item))
-                    exists = len(matches) > 0
-                else:
-                    exists = (repo / rel_item).exists()
-                checks.append({"path": rel_item, "exists": exists})
+                exists = path_exists(repo, rel_item)
+                alias_used = None
+                if not exists:
+                    for alt in DELIVERABLE_ALIASES.get(rel_item, []):
+                        if path_exists(repo, alt):
+                            exists = True
+                            alias_used = alt
+                            break
+                checks.append({"path": rel_item, "exists": exists, "alias_used": alias_used})
         missing = [c["path"] for c in checks if not c["exists"]]
+        alias_hits = [c["alias_used"] for c in checks if c.get("alias_used")]
         audit_rows.append(
             {
                 "id": t["id"],
@@ -106,6 +124,7 @@ def main() -> int:
                 "status": t["status"],
                 "deliverable_paths": paths,
                 "missing_paths": missing,
+                "alias_hits": alias_hits,
                 "all_paths_exist": len(missing) == 0,
             }
         )

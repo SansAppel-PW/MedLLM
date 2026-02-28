@@ -17,9 +17,65 @@ METRICS_OUT_SFT_ALIAS="${METRICS_OUT_SFT_ALIAS:-reports/training/layer_b_qwen25_
 BLOCKER_REPORT="${BLOCKER_REPORT:-reports/small_real/qwen_layer_b_blocker.md}"
 ATTEMPT_TIMEOUT_SEC="${ATTEMPT_TIMEOUT_SEC:-900}"
 DEFAULT_MAX_STEPS="${DEFAULT_MAX_STEPS:-400}"
+MIN_CACHE_FREE_MB="${MIN_CACHE_FREE_MB:-12288}"
 
 mkdir -p "$(dirname "${BLOCKER_REPORT}")" "${BASE_LOG}" "$(dirname "${METRICS_OUT}")"
 mkdir -p "$(dirname "${METRICS_OUT_SFT_ALIAS}")"
+
+if [[ -z "${HF_HOME:-}" && -d "/root/autodl-tmp" && -w "/root/autodl-tmp" ]]; then
+  export HF_HOME="/root/autodl-tmp/hf-cache"
+fi
+if [[ -n "${HF_HOME:-}" ]]; then
+  export HF_HUB_CACHE="${HF_HUB_CACHE:-${HF_HOME}/hub}"
+  export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-${HF_HOME}/transformers}"
+  mkdir -p "${HF_HOME}" "${HF_HUB_CACHE}" "${TRANSFORMERS_CACHE}"
+fi
+
+write_blocker_report() {
+  local reason="$1"
+  local detail="$2"
+  cat >"${BLOCKER_REPORT}" <<EOF
+# Qwen7B Layer-B 阻塞报告
+
+- 时间: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+- 状态: ${reason}
+- 影响: Layer-B 主实验（Qwen7B）训练阶段暂不可用，但其余闭环可继续执行。
+
+## 详情
+${detail}
+
+## 建议
+1. 优先使用数据盘缓存模型，设置 \`HF_HOME=/root/autodl-tmp/hf-cache\`。
+2. 如为网络问题，可重试并切换镜像（\`HF_ENDPOINT\`）。
+3. 如为算力或显存问题，继续使用自动降级策略并保留 blocker 报告用于论文说明。
+EOF
+}
+
+model_cache_ready() {
+  local base="${HF_HUB_CACHE:-$HOME/.cache/huggingface/hub}"
+  local snap_dir="${base}/models--Qwen--Qwen2.5-7B-Instruct/snapshots"
+  if [[ ! -d "${snap_dir}" ]]; then
+    return 1
+  fi
+  find "${snap_dir}" -type l -name "*.safetensors" | grep -q .
+}
+
+check_cache_space() {
+  local probe_dir="${HF_HUB_CACHE:-$HOME/.cache/huggingface/hub}"
+  mkdir -p "${probe_dir}"
+  local free_mb
+  free_mb="$(df -Pm "${probe_dir}" | awk 'NR==2 {print $4}')"
+  if [[ -z "${free_mb}" ]]; then
+    return 0
+  fi
+  if (( free_mb < MIN_CACHE_FREE_MB )) && ! model_cache_ready; then
+    local detail="HF cache directory free space is ${free_mb}MB (<${MIN_CACHE_FREE_MB}MB) and Qwen2.5-7B local cache is incomplete."
+    echo "[qwen-layer-b] ${detail}"
+    write_blocker_report "磁盘空间不足导致模型下载失败风险高" "${detail}"
+    return 4
+  fi
+  return 0
+}
 
 if [[ -z "${BF16:-}" || -z "${FP16:-}" ]]; then
   bf16_capable="$("${PYTHON_BIN}" - <<'PY'
@@ -45,34 +101,15 @@ PY
 fi
 
 if ! command -v nvidia-smi >/dev/null 2>&1; then
-  cat >"${BLOCKER_REPORT}" <<EOF
-# Qwen7B Layer-B 阻塞报告
-
-- 时间: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
-- 状态: 当前环境无 \`nvidia-smi\`，无法执行 Qwen2.5-7B QLoRA 真实训练。
-- 影响: Layer-B 主实验（Qwen7B）训练阶段被阻塞，但小规模真实闭环已完成，可作为迁移前验证层。
-
-## 建议迁移配置
-- 模型: \`${MODEL_NAME}\`
-- 训练文件: \`${TRAIN_FILE}\`
-- 验证文件: \`${DEV_FILE}\`
-- 推荐最小显存: >= 24GB (QLoRA 4bit, bs=1, grad_acc>=16)
-- 启动命令:
-\`\`\`bash
-bash scripts/train/run_layer_b_qwen_autofallback.sh
-\`\`\`
-- V100 推荐:
-\`\`\`bash
-USE_TORCHRUN=1 NUM_GPUS=2 BF16=false FP16=true bash scripts/train/run_layer_b_qwen_autofallback.sh
-\`\`\`
-
-## 自愈策略
-1. 首次尝试: max_length=2048, grad_acc=16
-2. OOM 回退1: max_length=1536, grad_acc=32
-3. OOM 回退2: max_length=1024, grad_acc=64
-EOF
+  write_blocker_report \
+    "当前环境无 nvidia-smi，无法执行 Qwen2.5-7B QLoRA 真实训练" \
+    "可先完成其余模块（alignment/eval/report），迁移 GPU 后再重跑 Layer-B。"
   echo "[qwen-layer-b] no-gpu blocker report written: ${BLOCKER_REPORT}"
   exit 0
+fi
+
+if ! check_cache_space; then
+  exit 4
 fi
 
 available_gpus="$(nvidia-smi --list-gpus | wc -l | tr -d '[:space:]')"
@@ -175,6 +212,16 @@ try_train() {
     return 3
   fi
 
+  if grep -Eqi "Not enough free disk space|No space left on device" "${run_log}"; then
+    echo "[qwen-layer-b] cache/disk issue detected on attempt=${attempt}."
+    return 4
+  fi
+
+  if grep -Eqi "ReadTimeout|Connection timed out|Max retries exceeded|Temporary failure in name resolution|Failed to download|ConnectionError" "${run_log}"; then
+    echo "[qwen-layer-b] network/download issue detected on attempt=${attempt}."
+    return 5
+  fi
+
   if grep -Eqi "out of memory|cuda out of memory|cublas|resource exhausted" "${run_log}"; then
     echo "[qwen-layer-b] OOM detected on attempt=${attempt}, trying fallback..."
     return 2
@@ -249,5 +296,17 @@ if [[ ${rc} -eq 2 ]]; then
   fi
 fi
 
-echo "[qwen-layer-b] all attempts failed"
-exit 1
+case "${rc}" in
+  4)
+    write_blocker_report "缓存空间不足或写盘失败" "请检查 HF cache 所在分区剩余空间，并设置 HF_HOME 到数据盘。"
+    ;;
+  5)
+    write_blocker_report "模型下载网络不稳定" "请重试，或切换网络镜像后再运行 Layer-B。"
+    ;;
+  *)
+    write_blocker_report "Layer-B 训练失败" "请检查 logs/layer_b/*/attempt.log 获取详细错误。"
+    ;;
+esac
+
+echo "[qwen-layer-b] all attempts failed (rc=${rc})"
+exit "${rc}"

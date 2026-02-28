@@ -20,6 +20,7 @@
         "reports/"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -28,6 +29,7 @@
       "status": "DONE",
       "deliverable_paths": [],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -38,6 +40,7 @@
         "docs/ARCH.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -50,6 +53,7 @@
         "configs/eval/*.yaml"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -60,6 +64,7 @@
         "docs/DATA_CATALOG.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -70,6 +75,7 @@
         "docs/SAFETY_POLICY.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -80,6 +86,7 @@
         "scripts/data/download_datasets.sh"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -91,6 +98,7 @@
         "data/raw/schema_examples.json"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -101,6 +109,7 @@
         "src/data/pii_cleaner.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -111,6 +120,7 @@
         "src/data/ner_el_pipeline.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -122,6 +132,7 @@
         "data/kg/triples/*.jsonl"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -132,6 +143,7 @@
         "src/data/kg_validator.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -142,6 +154,7 @@
         "src/data/rewrite_low_conflict.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -152,6 +165,7 @@
         "reports/data_cleaning_report.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -163,6 +177,7 @@
         "data/clean/sft_dev.jsonl"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -173,6 +188,7 @@
         "data/clean/pref_seed_pairs.jsonl"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -183,6 +199,7 @@
         "src/detect/whitebox_uncertainty.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -193,6 +210,7 @@
         "src/detect/atomic_fact_extractor.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -203,6 +221,7 @@
         "src/detect/retriever.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -213,6 +232,7 @@
         "src/detect/nli_checker.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -223,6 +243,7 @@
         "src/detect/risk_fusion.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -233,6 +254,7 @@
         "src/detect/runtime_guard.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -243,6 +265,7 @@
         "reports/detection_eval.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -254,6 +277,7 @@
         "reports/sft_baseline.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -264,6 +288,7 @@
         "src/train/hard_negative_builder.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -275,6 +300,7 @@
         "configs/train/dpo.yaml"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -286,6 +312,7 @@
         "configs/train/simpo.yaml"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -296,6 +323,7 @@
         "src/train/kto_train.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -306,6 +334,7 @@
         "reports/alignment_compare.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -316,6 +345,7 @@
         "data/benchmark/med_hallu_benchmark.jsonl"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -327,6 +357,7 @@
         "scripts/eval/run_eval.sh"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -337,6 +368,7 @@
         "reports/ablation_kg.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -347,6 +379,7 @@
         "reports/ablation_detection.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -357,6 +390,7 @@
         "reports/ablation_alignment.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -367,6 +401,7 @@
         "reports/sota_compare.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -377,6 +412,7 @@
         "reports/error_analysis.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -387,6 +423,7 @@
         "src/serve/app.py"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -397,6 +434,7 @@
         "demo/"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -408,6 +446,7 @@
         "docs/DEPLOY.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -418,6 +457,7 @@
         "reports/e2e_acceptance.md"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -428,6 +468,7 @@
         "reports/thesis_assets/"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     },
     {
@@ -439,6 +480,7 @@
         "slides/"
       ],
       "missing_paths": [],
+      "alias_hits": [],
       "all_paths_exist": true
     }
   ]
