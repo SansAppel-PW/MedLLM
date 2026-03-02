@@ -205,6 +205,12 @@ make next-stage
 - `reports/thesis_assets/tables/main_results_dual_view.md`
 - `reports/thesis_assets/tables/conclusion_status_dashboard.csv`
 - `reports/thesis_assets/figures/conclusion_dashboard_mermaid.md`
+- `reports/thesis_assets/figures/loss_curve_latest.png`
+- `reports/thesis_assets/figures/alignment_metrics_bar.png`
+- `reports/thesis_assets/figures/train_loss_compare_bar.png`
+- `reports/thesis_assets/figures/dpo_beta_curve.png`
+- `reports/thesis_assets/figures/conclusion_status_bar.png`
+- `reports/thesis_assets/figures/figure_manifest.json`
 - `reports/thesis_assets/tables/baseline_real_mainline.csv`
 - `reports/thesis_assets/tables/baseline_proxy_background.csv`
 - `reports/thesis_assets/tables/baseline_audit_dual_view.md`

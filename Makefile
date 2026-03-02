@@ -72,6 +72,7 @@ loop-once:
 
 thesis-ready:
 	$(PYTHON) scripts/audit/build_thesis_ready_package.py
+	$(PYTHON) scripts/eval/build_thesis_figures.py
 
 next-stage:
 	$(MAKE) interface-audit

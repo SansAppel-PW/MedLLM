@@ -1,6 +1,6 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-03-02T13:30:14.592765+00:00
+- Generated(UTC): 2026-03-02T13:44:01.551437+00:00
 - Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table
@@ -22,6 +22,14 @@
 - Overall: [OK] READY
 - CSV: `reports/thesis_assets/tables/conclusion_status_dashboard.csv`
 - Mermaid: `reports/thesis_assets/figures/conclusion_dashboard_mermaid.md`
+
+## Visual Charts (PNG/PDF)
+- `reports/thesis_assets/figures/loss_curve_latest.png`
+- `reports/thesis_assets/figures/alignment_metrics_bar.png`
+- `reports/thesis_assets/figures/train_loss_compare_bar.png`
+- `reports/thesis_assets/figures/dpo_beta_curve.png`
+- `reports/thesis_assets/figures/conclusion_status_bar.png`
+- `reports/thesis_assets/figures/figure_manifest.json`
 
 ### Iconized Status
 - [OK] Real Dataset Scale: PASS | evidence=`reports/real_dataset_summary.json` | train/dev/test=70054/8755/8755

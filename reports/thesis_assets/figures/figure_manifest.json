@@ -1,0 +1,49 @@
+{
+  "generated_at_utc": "2026-03-02T13:44:01.624301+00:00",
+  "figures": [
+    {
+      "name": "loss_curve_latest",
+      "source": "reports/small_real/small_real_lora_v13/loss_curve.csv",
+      "png": "reports/thesis_assets/figures/loss_curve_latest.png",
+      "pdf": "reports/thesis_assets/figures/loss_curve_latest.pdf",
+      "status": "ok",
+      "points": 13
+    },
+    {
+      "name": "alignment_metrics_bar",
+      "source": "reports/thesis_assets/tables/main_results_real.csv",
+      "png": "reports/thesis_assets/figures/alignment_metrics_bar.png",
+      "pdf": "reports/thesis_assets/figures/alignment_metrics_bar.pdf",
+      "status": "ok",
+      "bars": 3
+    },
+    {
+      "name": "train_loss_compare_bar",
+      "source": "reports/thesis_assets/tables/main_results_real.csv",
+      "png": "reports/thesis_assets/figures/train_loss_compare_bar.png",
+      "pdf": "reports/thesis_assets/figures/train_loss_compare_bar.pdf",
+      "status": "ok",
+      "bars": 2
+    },
+    {
+      "name": "dpo_beta_curve",
+      "source": "reports/thesis_assets/tables/dpo_beta_ablation.csv",
+      "png": "reports/thesis_assets/figures/dpo_beta_curve.png",
+      "pdf": "reports/thesis_assets/figures/dpo_beta_curve.pdf",
+      "status": "ok",
+      "points": 3
+    },
+    {
+      "name": "conclusion_status_bar",
+      "source": "reports/thesis_assets/tables/conclusion_status_dashboard.csv",
+      "png": "reports/thesis_assets/figures/conclusion_status_bar.png",
+      "pdf": "reports/thesis_assets/figures/conclusion_status_bar.pdf",
+      "status": "ok",
+      "counts": {
+        "PASS": 5.0,
+        "PARTIAL": 0.0,
+        "FAIL": 0.0
+      }
+    }
+  ]
+}
