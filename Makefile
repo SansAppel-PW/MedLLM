@@ -2,7 +2,7 @@ PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo pytho
 VENV := .venv
 PIP := $(PYTHON) -m pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit interface-audit gpu-readiness gpu-closure bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment gpu-mainline gpu-mainline-dryrun decision-log loop-once thesis-ready next-stage run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit interface-audit gpu-readiness gpu-closure bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment gpu-mainline gpu-mainline-dryrun decision-log loop-once thesis-ready thesis-bundle gpu-once-harvest next-stage run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -73,6 +73,12 @@ loop-once:
 thesis-ready:
 	$(PYTHON) scripts/audit/build_thesis_ready_package.py
 	$(PYTHON) scripts/eval/build_thesis_figures.py
+
+thesis-bundle:
+	$(PYTHON) scripts/deploy/package_thesis_bundle.py --root . --out-dir exports --tag local_$(shell date +%Y%m%d_%H%M%S) --archive --include-clean-data
+
+gpu-once-harvest:
+	bash scripts/deploy/run_gpu_once_harvest.sh
 
 next-stage:
 	$(MAKE) interface-audit

@@ -148,10 +148,30 @@ NUM_GPUS=2 USE_TORCHRUN=1 BF16=false FP16=true make gpu-mainline
 make gpu-closure
 ```
 
+单次 GPU 高产出（推荐，租赁计时场景）：
+```bash
+# 一次执行：主实验 + 审计 + 图表刷新 + 产物打包
+NUM_GPUS=2 USE_TORCHRUN=1 BF16=false FP16=true \
+ENABLE_LLM_JUDGE=0 \
+AUTO_SHUTDOWN=0 \
+bash scripts/deploy/run_gpu_once_harvest.sh
+
+# 或 make 入口
+make gpu-once-harvest
+```
+
+单次执行后关键输出：
+- `reports/thesis_assets/`（图表/表格/案例/总结）
+- `reports/thesis_assets/figures/figure_manifest.json`
+- `exports/thesis_bundle_gpu_once_<timestamp>/`
+- `exports/thesis_bundle_gpu_once_<timestamp>.tar.gz`
+
 对应脚本：
 - `scripts/train/run_gpu_thesis_mainline.sh`
 - `scripts/audit/check_gpu_migration_readiness.py`
 - `scripts/audit/verify_gpu_experiment_closure.py`
+- `scripts/deploy/run_gpu_once_harvest.sh`
+- `scripts/deploy/package_thesis_bundle.py`
 
 ## Small Real 一键闭环（prepare -> train -> eval -> visualize -> run_card）
 ```bash
@@ -191,6 +211,9 @@ make decision-log
 ## 论文写作资产汇总
 ```bash
 make thesis-ready
+
+# 打包可回传论文资产（含校验）
+make thesis-bundle
 ```
 
 下一阶段（接口一致性 + 开题对齐审计 + 论文资产汇总）：
