@@ -1,6 +1,6 @@
 # Thesis Ready Summary
 
-- Generated(UTC): 2026-03-02T14:18:51.349300+00:00
+- Generated(UTC): 2026-03-02T23:13:12.482279+00:00
 - Latest Small-Real Run: small_real_lora_v13
 
 ## Main Result Table
@@ -25,6 +25,7 @@
 
 ## Visual Charts (PNG/PDF)
 - `reports/thesis_assets/figures/loss_curve_latest.png`
+- `reports/thesis_assets/figures/layer_b_loss_curve.png`
 - `reports/thesis_assets/figures/alignment_metrics_bar.png`
 - `reports/thesis_assets/figures/train_loss_compare_bar.png`
 - `reports/thesis_assets/figures/dpo_beta_curve.png`

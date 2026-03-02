@@ -1,10 +1,10 @@
 {
   "title": "Loop Iteration Report",
-  "generated_at_utc": "2026-02-28T01:18:09.334802+00:00",
+  "generated_at_utc": "2026-03-02T23:02:16.427916+00:00",
   "run_tag": null,
   "artifacts": {
-    "small_real_train_metrics": "reports/training/small_real_lora_v7_metrics.json",
-    "small_real_eval_metrics": "reports/small_real/small_real_lora_v7/eval_metrics.json",
+    "small_real_train_metrics": "reports/training/small_real_lora_v11_metrics.json",
+    "small_real_eval_metrics": "reports/small_real/small_real_lora_v11/eval_metrics.json",
     "baseline_json": "reports/thesis_assets/tables/baseline_audit_table.json",
     "real_dataset_summary": "reports/real_dataset_summary.json",
     "dpo_real_metrics": "reports/training/dpo_real_metrics.json",
@@ -28,11 +28,11 @@
   },
   "real_alignment_summary": {
     "dpo_pair_count": 70054,
-    "dpo_pref_accuracy_after": 0.978515625,
-    "simpo_score_after": 0.98046875,
-    "kto_score_after": 0.986328125,
-    "best_method": "KTO",
-    "best_score": 0.986328125
+    "dpo_pref_accuracy_after": 0.98828125,
+    "simpo_score_after": 0.982421875,
+    "kto_score_after": 0.982421875,
+    "best_method": "DPO",
+    "best_score": 0.98828125
   },
   "baseline_layer_summary": {
     "real_mainline_count": 2,

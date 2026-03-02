@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-03-02T14:18:51.430228+00:00",
+  "generated_at_utc": "2026-03-02T23:13:12.114981+00:00",
   "figures": [
     {
       "name": "loss_curve_latest",
@@ -8,6 +8,14 @@
       "pdf": "reports/thesis_assets/figures/loss_curve_latest.pdf",
       "status": "ok",
       "points": 13
+    },
+    {
+      "name": "layer_b_loss_curve",
+      "source": "logs/layer_b/qwen25_7b_qlora_attempt1/train_log.jsonl",
+      "png": "reports/thesis_assets/figures/layer_b_loss_curve.png",
+      "pdf": "reports/thesis_assets/figures/layer_b_loss_curve.pdf",
+      "status": "ok",
+      "points": 2
     },
     {
       "name": "alignment_metrics_bar",

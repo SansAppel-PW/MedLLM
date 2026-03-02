@@ -56,11 +56,29 @@ def find_latest_loss_csv(root: Path) -> Path | None:
 
 
 def find_layer_b_train_log(root: Path) -> Path | None:
-    candidates = [
+    direct_candidates = [
         root / "logs/layer_b/qwen25_7b_sft/train_log.jsonl",
         root / "logs/layer_b/qwen25_7b_sft/real_train_log.jsonl",
+        root / "logs/layer_b/qwen25_7b_qlora_attempt1/train_log.jsonl",
+        root / "logs/layer_b/qwen25_7b_qlora_attempt1/attempt.log",
     ]
-    for p in candidates:
+    for p in direct_candidates:
+        if p.exists():
+            return p
+    qlora_logs = sorted(
+        (root / "logs/layer_b").glob("qwen25_7b_qlora_attempt*/train_log.jsonl"),
+        key=lambda x: x.stat().st_mtime if x.exists() else 0.0,
+        reverse=True,
+    )
+    for p in qlora_logs:
+        if p.exists():
+            return p
+    qlora_attempt_logs = sorted(
+        (root / "logs/layer_b").glob("qwen25_7b_qlora_attempt*/attempt.log"),
+        key=lambda x: x.stat().st_mtime if x.exists() else 0.0,
+        reverse=True,
+    )
+    for p in qlora_attempt_logs:
         if p.exists():
             return p
     return None
@@ -70,6 +88,33 @@ def parse_train_log_jsonl(path: Path) -> tuple[list[tuple[float, float]], list[t
     train_pts: list[tuple[float, float]] = []
     eval_pts: list[tuple[float, float]] = []
     if not path.exists():
+        return train_pts, eval_pts
+    if path.name == "attempt.log":
+        step = 0.0
+        eval_step = 0.0
+        with path.open("r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                m_loss = re.search(r"'loss':\s*'([^']+)'", line)
+                if m_loss:
+                    try:
+                        loss_val = float(m_loss.group(1))
+                    except ValueError:
+                        loss_val = None
+                    if loss_val is not None:
+                        step += 10.0
+                        train_pts.append((step, loss_val))
+                m_eval = re.search(r"'eval_loss':\s*([0-9.+-eE]+)", line)
+                if m_eval:
+                    try:
+                        eval_val = float(m_eval.group(1))
+                    except ValueError:
+                        eval_val = None
+                    if eval_val is not None:
+                        eval_step = max(eval_step + 100.0, step)
+                        eval_pts.append((eval_step, eval_val))
         return train_pts, eval_pts
     with path.open("r", encoding="utf-8") as f:
         for line in f:
