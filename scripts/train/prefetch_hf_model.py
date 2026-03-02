@@ -101,6 +101,15 @@ def download_one_file(
         except Exception as exc:  # noqa: BLE001
             err = f"{type(exc).__name__}: {exc}"
             last_error = err
+            if (not required) and ("RemoteEntryNotFoundError" in err):
+                print(
+                    json.dumps(
+                        {"status": "skip_optional", "file": filename, "error": err},
+                        ensure_ascii=False,
+                    ),
+                    file=sys.stderr,
+                )
+                return None
             print(
                 json.dumps(
                     {
