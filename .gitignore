@@ -59,6 +59,7 @@ venv/
 # Local runtime caches
 tmp/.cache/
 tmp/mplconfig/
+tmp/docs/
 reports/pii_cleaning_report.json
 
 # Jupyter

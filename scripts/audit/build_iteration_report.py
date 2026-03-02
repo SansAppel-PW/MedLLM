@@ -79,7 +79,7 @@ def resolve_small_real_paths(run_tag: str | None) -> tuple[str, str]:
         latest_dir = max(candidates, key=lambda p: (p / "eval_metrics.json").stat().st_mtime)
         latest_tag = latest_dir.name
         return f"reports/training/{latest_tag}_metrics.json", str(latest_dir / "eval_metrics.json")
-    return "reports/training/small_real_lora_v3_metrics.json", "reports/small_real/small_real_lora_v3/eval_metrics.json"
+    return "reports/training/small_real_lora_v14_metrics.json", "reports/small_real/eval_metrics.json"
 
 
 def main() -> int:

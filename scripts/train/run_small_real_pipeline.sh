@@ -6,7 +6,7 @@ cd "${ROOT_DIR}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 SEED="${SEED:-42}"
-RUN_TAG="${RUN_TAG:-small_real_lora_v3}"
+RUN_TAG="${RUN_TAG:-small_real_lora_v14}"
 
 TRAIN_FILE="${TRAIN_FILE:-data/clean/sft_train.jsonl}"
 DEV_FILE="${DEV_FILE:-data/clean/sft_dev.jsonl}"

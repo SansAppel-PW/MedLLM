@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
-SMALL_RUN_TAG="${RUN_TAG:-small_real_lora_v3}"
+SMALL_RUN_TAG="${RUN_TAG:-small_real_lora_v14}"
 DPO_RUN_TAG="${DPO_RUN_TAG:-${SMALL_RUN_TAG/small_real_lora/small_real_dpo}}"
 
 echo "[loop] repo guard (preadd)"

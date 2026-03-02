@@ -2,7 +2,7 @@ PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo pytho
 VENV := .venv
 PIP := $(PYTHON) -m pip
 
-.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit interface-audit gpu-readiness gpu-closure bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment gpu-mainline gpu-mainline-dryrun decision-log loop-once thesis-ready run-config clean
+.PHONY: setup install check-env repo-guard repo-guard-staged opening-audit task-audit interface-audit gpu-readiness gpu-closure bootstrap-data ensure-real-data small-real small-real-dpo dpo-ablation qwen-layer-b real-alignment gpu-mainline gpu-mainline-dryrun decision-log loop-once thesis-ready next-stage run-config clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -72,6 +72,12 @@ loop-once:
 
 thesis-ready:
 	$(PYTHON) scripts/audit/build_thesis_ready_package.py
+
+next-stage:
+	$(MAKE) interface-audit
+	$(MAKE) task-audit
+	$(MAKE) opening-audit
+	$(MAKE) thesis-ready
 
 run-config:
 	@if [ -z "$(CONFIG)" ]; then echo "Usage: make run-config CONFIG=configs/train/sft.yaml"; exit 1; fi

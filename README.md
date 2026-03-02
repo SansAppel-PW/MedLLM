@@ -159,7 +159,7 @@ make gpu-closure
 bash scripts/train/run_small_real_pipeline.sh
 ```
 
-输出（默认 `RUN_TAG=small_real_lora_v3`）：
+输出（默认 `RUN_TAG=small_real_lora_v14`）：
 - `checkpoints/small_real/<RUN_TAG>/run_manifest.json`
 - `logs/small_real/<RUN_TAG>/train_log.jsonl`
 - `reports/training/<RUN_TAG>_metrics.json`
@@ -169,7 +169,7 @@ bash scripts/train/run_small_real_pipeline.sh
 
 ## 自治循环（单轮）
 ```bash
-RUN_TAG=small_real_lora_v6 bash scripts/run_autonomous_iteration.sh
+RUN_TAG=small_real_lora_v14 bash scripts/run_autonomous_iteration.sh
 # 或
 bash scripts/run_autonomous_iteration.sh
 make loop-once
@@ -193,11 +193,18 @@ make decision-log
 make thesis-ready
 ```
 
+下一阶段（接口一致性 + 开题对齐审计 + 论文资产汇总）：
+```bash
+make next-stage
+```
+
 输出：
 - `reports/thesis_assets/tables/main_results_small_real.csv`
 - `reports/thesis_assets/tables/main_results_real.csv`
 - `reports/thesis_assets/tables/main_results_proxy.csv`
 - `reports/thesis_assets/tables/main_results_dual_view.md`
+- `reports/thesis_assets/tables/conclusion_status_dashboard.csv`
+- `reports/thesis_assets/figures/conclusion_dashboard_mermaid.md`
 - `reports/thesis_assets/tables/baseline_real_mainline.csv`
 - `reports/thesis_assets/tables/baseline_proxy_background.csv`
 - `reports/thesis_assets/tables/baseline_audit_dual_view.md`
@@ -292,7 +299,7 @@ scripts/deploy/run_demo.sh --web
 
 ## 当前执行清单
 - `docs/EXECUTION_TASKS.md`
-- `docs/PROJECT_HANDOFF_AND_THESIS_DOSSIER.md`
+- `docs/EXPERIMENT_MASTER_PLAN.md`
 - `docs/PROJECT_STATUS_AUDIT.md`
-- `docs/USER_MANUAL_COMPLETE.md`
+- `docs/GPU_MIGRATION_RUNBOOK.md`
 - `docs/THESIS_WRITING_MATERIALS.md`

@@ -12,7 +12,7 @@
 - 产物：
   - `scripts/train/run_small_real_pipeline.sh`
   - `reports/small_real/`（指标、图表、run card、结论）
-  - `reports/training/small_real_lora_v3_metrics.json`
+  - `reports/training/small_real_lora_v13_metrics.json`
 
 ## 2026-02-26 | D002 | 训练脚本兼容 transformers 4.x/5.x
 - 背景：环境安装到 transformers 5.2 后，`TrainingArguments` 和 `Trainer` 参数发生不兼容。

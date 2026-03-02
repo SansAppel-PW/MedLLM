@@ -23,7 +23,8 @@ def resolve_small_real_eval_path(run_tag: str | None) -> str:
     base = Path("reports/small_real")
     candidates = [p / "eval_metrics.json" for p in base.glob("small_real_lora_v*/") if (p / "eval_metrics.json").exists()]
     if not candidates:
-        return "reports/small_real/small_real_lora_v3/eval_metrics.json"
+        default_eval = Path("reports/small_real/eval_metrics.json")
+        return str(default_eval) if default_eval.exists() else "reports/small_real/small_real_lora_v14/eval_metrics.json"
     latest = max(candidates, key=lambda p: p.stat().st_mtime)
     return str(latest)
 

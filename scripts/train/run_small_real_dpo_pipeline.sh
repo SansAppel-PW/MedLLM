@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
-RUN_TAG="${RUN_TAG:-small_real_dpo_v1}"
+RUN_TAG="${RUN_TAG:-small_real_dpo_v14}"
 SEED="${SEED:-42}"
 
 PREF_FILE="${PREF_FILE:-data/clean/pref_seed_pairs.jsonl}"

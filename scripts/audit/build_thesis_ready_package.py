@@ -100,6 +100,56 @@ def num(v: Any) -> float | None:
     return None
 
 
+def status_icon(status: str) -> str:
+    mapping = {
+        "PASS": "[OK]",
+        "PARTIAL": "[WARN]",
+        "FAIL": "[BLOCKED]",
+        "READY": "[OK]",
+        "READY_WITH_RISK": "[WARN]",
+        "BLOCKED": "[BLOCKED]",
+    }
+    return mapping.get(status, "[INFO]")
+
+
+def write_conclusion_mermaid(path: Path, rows: list[dict[str, Any]], pass_count: int, partial_count: int, fail_count: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    node_lines: list[str] = []
+    link_lines: list[str] = []
+    class_lines: list[str] = []
+    for idx, row in enumerate(rows, start=1):
+        node_id = f"N{idx}"
+        label = f"{row['icon']} {row['dimension']}\\n{row['status']}"
+        node_lines.append(f'  {node_id}["{label}"]')
+        if idx > 1:
+            prev = f"N{idx - 1}"
+            link_lines.append(f"  {prev} --> {node_id}")
+        cls = row["status"].lower()
+        class_lines.append(f"  class {node_id} {cls}")
+
+    lines = [
+        "# Conclusion Dashboard (Mermaid)",
+        "",
+        "```mermaid",
+        "flowchart TD",
+        *node_lines,
+        *link_lines,
+        "  classDef pass fill:#dcfce7,stroke:#16a34a,stroke-width:1px,color:#14532d;",
+        "  classDef partial fill:#fef9c3,stroke:#ca8a04,stroke-width:1px,color:#713f12;",
+        "  classDef fail fill:#fee2e2,stroke:#dc2626,stroke-width:1px,color:#7f1d1d;",
+        *class_lines,
+        "```",
+        "",
+        "```mermaid",
+        "pie title Readiness Status Distribution",
+        f'  "PASS" : {pass_count}',
+        f'  "PARTIAL" : {partial_count}',
+        f'  "FAIL" : {fail_count}',
+        "```",
+    ]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def alignment_metric_name(metrics: dict[str, Any]) -> str:
     if isinstance(metrics.get("pref_accuracy_after"), (int, float)):
         return "pref_accuracy_after"
@@ -293,6 +343,14 @@ def main() -> int:
     parser.add_argument("--ablation-csv", default="reports/thesis_assets/tables/ablation_small_real_runs.csv")
     parser.add_argument("--dpo-csv", default="reports/thesis_assets/tables/alignment_real_dpo_runs.csv")
     parser.add_argument("--dpo-beta-csv", default="reports/thesis_assets/tables/dpo_beta_ablation.csv")
+    parser.add_argument(
+        "--conclusion-dashboard-csv",
+        default="reports/thesis_assets/tables/conclusion_status_dashboard.csv",
+    )
+    parser.add_argument(
+        "--conclusion-dashboard-md",
+        default="reports/thesis_assets/figures/conclusion_dashboard_mermaid.md",
+    )
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
@@ -314,6 +372,55 @@ def main() -> int:
     baseline_proxy = root / "reports/thesis_assets/tables/baseline_proxy_background.csv"
     baseline_dual = root / "reports/thesis_assets/tables/baseline_audit_dual_view.md"
     error_cases = root / "reports/thesis_assets/cases/error_cases_top30.jsonl"
+    real_dataset_summary = maybe_json(root / "reports/real_dataset_summary.json") or {}
+
+    train_count = int(real_dataset_summary.get("train_count", 0))
+    dev_count = int(real_dataset_summary.get("dev_count", 0))
+    test_count = int(real_dataset_summary.get("test_count", 0))
+    if train_count <= 0 and isinstance(real_dataset_summary.get("final_sft"), dict):
+        final_sft = real_dataset_summary["final_sft"]
+        train_count = int(final_sft.get("train_count", 0))
+        dev_count = int(final_sft.get("dev_count", 0))
+        test_count = int(final_sft.get("test_count", 0))
+
+    dataset_status = "FAIL"
+    if train_count >= 5000 and dev_count > 0 and test_count > 0:
+        dataset_status = "PASS"
+    elif train_count > 0 and dev_count > 0 and test_count > 0:
+        dataset_status = "PARTIAL"
+
+    small_real_status = "PASS" if latest else "FAIL"
+    layer_b_status = "PASS" if layer_b_metrics else ("PARTIAL" if qwen_blocker.exists() else "FAIL")
+
+    real_alignment_methods = 0
+    if dpo_real_metrics and dpo_real_metrics.get("simulation") is not True:
+        real_alignment_methods += 1
+    if simpo_metrics and simpo_metrics.get("simulation") is False:
+        real_alignment_methods += 1
+    if kto_metrics and kto_metrics.get("simulation") is False:
+        real_alignment_methods += 1
+
+    if real_alignment_methods >= 3:
+        alignment_status = "PASS"
+    elif real_alignment_methods >= 1:
+        alignment_status = "PARTIAL"
+    else:
+        alignment_status = "FAIL"
+
+    assets_ready_count = sum(
+        [
+            1 if baseline_table.exists() else 0,
+            1 if baseline_dual.exists() else 0,
+            1 if error_cases.exists() else 0,
+            1 if (root / args.main_dual_md).exists() else 0,
+        ]
+    )
+    if assets_ready_count == 4:
+        thesis_asset_status = "PASS"
+    elif assets_ready_count >= 2:
+        thesis_asset_status = "PARTIAL"
+    else:
+        thesis_asset_status = "FAIL"
 
     main_rows: list[dict[str, Any]] = []
     if base_eval:
@@ -407,10 +514,89 @@ def main() -> int:
     )
     write_dual_md(root / args.main_dual_md, real_rows, proxy_rows)
 
+    conclusion_rows = [
+        {
+            "dimension": "Real Dataset Scale",
+            "status": dataset_status,
+            "icon": status_icon(dataset_status),
+            "evidence": "reports/real_dataset_summary.json",
+            "note": f"train/dev/test={train_count}/{dev_count}/{test_count}",
+        },
+        {
+            "dimension": "Small-Real Closure",
+            "status": small_real_status,
+            "icon": status_icon(small_real_status),
+            "evidence": f"reports/small_real/{latest['run_tag']}/run_card.json" if latest else "reports/small_real/",
+            "note": f"latest_run={latest['run_tag']}" if latest else "missing latest small-real run artifacts",
+        },
+        {
+            "dimension": "Qwen2.5-7B Layer-B",
+            "status": layer_b_status,
+            "icon": status_icon(layer_b_status),
+            "evidence": (
+                "reports/training/layer_b_qwen25_7b_sft_metrics.json"
+                if layer_b_metrics
+                else "reports/small_real/qwen_layer_b_blocker.md"
+            ),
+            "note": "mainline ready" if layer_b_metrics else "gpu blocker documented",
+        },
+        {
+            "dimension": "Alignment Realness",
+            "status": alignment_status,
+            "icon": status_icon(alignment_status),
+            "evidence": "reports/training/dpo_real_metrics.json",
+            "note": f"real_methods={real_alignment_methods}/3",
+        },
+        {
+            "dimension": "Thesis Asset Completeness",
+            "status": thesis_asset_status,
+            "icon": status_icon(thesis_asset_status),
+            "evidence": "reports/thesis_assets/tables/main_results_dual_view.md",
+            "note": f"asset_checks={assets_ready_count}/4",
+        },
+    ]
+    pass_count = sum(1 for row in conclusion_rows if row["status"] == "PASS")
+    partial_count = sum(1 for row in conclusion_rows if row["status"] == "PARTIAL")
+    fail_count = sum(1 for row in conclusion_rows if row["status"] == "FAIL")
+
+    overall_status = "BLOCKED"
+    if fail_count == 0 and partial_count == 0:
+        overall_status = "READY"
+    elif fail_count == 0:
+        overall_status = "READY_WITH_RISK"
+
+    if layer_b_metrics:
+        limitation_text = "当前主链（含 Qwen2.5-7B Layer-B）已具备可复现实验资产，剩余工作为扩展消融与跨数据集验证。"
+        next_action_text = "在 GPU 环境执行 full-scale 消融（长度/数据规模/对齐算法）并刷新主结果表。"
+    else:
+        limitation_text = "Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment."
+        next_action_text = "Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package."
+
+    write_csv(
+        root / args.conclusion_dashboard_csv,
+        conclusion_rows,
+        ["dimension", "status", "icon", "evidence", "note"],
+    )
+    write_conclusion_mermaid(
+        root / args.conclusion_dashboard_md,
+        conclusion_rows,
+        pass_count=pass_count,
+        partial_count=partial_count,
+        fail_count=fail_count,
+    )
+
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "latest_small_real_run": latest["run_tag"] if latest else None,
         "latest_small_real_dpo_run": latest_dpo["run_tag"] if latest_dpo else None,
+        "conclusion_status": {
+            "overall": overall_status,
+            "overall_icon": status_icon(overall_status),
+            "pass_count": pass_count,
+            "partial_count": partial_count,
+            "fail_count": fail_count,
+            "rows": conclusion_rows,
+        },
         "artifacts": {
             "main_results_csv": args.main_csv,
             "main_results_real_csv": args.main_real_csv,
@@ -419,11 +605,13 @@ def main() -> int:
             "ablation_csv": args.ablation_csv,
             "real_dpo_csv": args.dpo_csv,
             "dpo_beta_ablation_csv": args.dpo_beta_csv if dpo_beta_csv.exists() else None,
+            "conclusion_dashboard_csv": args.conclusion_dashboard_csv,
+            "conclusion_dashboard_mermaid_md": args.conclusion_dashboard_md,
             "baseline_audit_table": str(baseline_table.relative_to(root)) if baseline_table.exists() else None,
             "baseline_real_mainline_csv": str(baseline_real.relative_to(root)) if baseline_real.exists() else None,
             "baseline_proxy_background_csv": str(baseline_proxy.relative_to(root)) if baseline_proxy.exists() else None,
             "baseline_dual_view_md": str(baseline_dual.relative_to(root)) if baseline_dual.exists() else None,
-            "qwen_blocker": str(qwen_blocker.relative_to(root)) if qwen_blocker.exists() else None,
+            "qwen_blocker": str(qwen_blocker.relative_to(root)) if (not layer_b_metrics and qwen_blocker.exists()) else None,
             "error_cases": str(error_cases.relative_to(root)) if error_cases.exists() else None,
         },
         "paper_ready_notes": {
@@ -432,8 +620,9 @@ def main() -> int:
             "alignment_scope": (
                 "real/proxy 按 simulation 标记自动分层呈现，禁止跨口径直接比较绝对数值。"
             ),
-            "limitation": "Qwen2.5-7B Layer-B full experiment blocked by missing GPU/CUDA resources in current environment.",
-            "next_action": "Run scripts/train/run_layer_b_qwen_autofallback.sh on >=24GB GPU and regenerate package.",
+            "limitation": limitation_text,
+            "next_action": next_action_text,
+            "visual_conclusion_note": "结论状态看板已生成（图标+Mermaid），可直接粘贴进论文实验总结章节。",
         },
     }
 
@@ -462,21 +651,49 @@ def main() -> int:
         "## DPO Beta Ablation",
         f"- CSV: `{args.dpo_beta_csv}`",
         "",
-        "## Supporting Evidence",
-        f"- Baseline Audit: `{payload['artifacts']['baseline_audit_table']}`",
-        f"- Baseline Real Mainline: `{payload['artifacts']['baseline_real_mainline_csv']}`",
-        f"- Baseline Proxy Background: `{payload['artifacts']['baseline_proxy_background_csv']}`",
-        f"- Baseline Dual View: `{payload['artifacts']['baseline_dual_view_md']}`",
-        f"- Qwen Layer-B Blocker: `{payload['artifacts']['qwen_blocker']}`",
-        f"- Error Cases: `{payload['artifacts']['error_cases']}`",
+        "## Conclusion Dashboard",
+        f"- Overall: {payload['conclusion_status']['overall_icon']} {payload['conclusion_status']['overall']}",
+        f"- CSV: `{args.conclusion_dashboard_csv}`",
+        f"- Mermaid: `{args.conclusion_dashboard_md}`",
         "",
-        "## Thesis Writing Notes",
-        f"- 主结果口径: {payload['paper_ready_notes']['main_result_scope']}",
-        f"- 消融口径: {payload['paper_ready_notes']['ablation_scope']}",
-        f"- 对齐口径: {payload['paper_ready_notes']['alignment_scope']}",
-        f"- 局限性: {payload['paper_ready_notes']['limitation']}",
-        f"- 下一步: {payload['paper_ready_notes']['next_action']}",
+        "### Iconized Status",
     ]
+    for row in payload["conclusion_status"]["rows"]:
+        md_lines.append(
+            f"- {row['icon']} {row['dimension']}: {row['status']} | evidence=`{row['evidence']}` | {row['note']}"
+        )
+    md_lines.extend(
+        [
+            "",
+            "### Visual Conclusion (Mermaid)",
+            "```mermaid",
+            "pie title Readiness Status Distribution",
+            f"  \"PASS\" : {payload['conclusion_status']['pass_count']}",
+            f"  \"PARTIAL\" : {payload['conclusion_status']['partial_count']}",
+            f"  \"FAIL\" : {payload['conclusion_status']['fail_count']}",
+            "```",
+            "",
+            "## Supporting Evidence",
+            f"- Baseline Audit: `{payload['artifacts']['baseline_audit_table']}`",
+            f"- Baseline Real Mainline: `{payload['artifacts']['baseline_real_mainline_csv']}`",
+            f"- Baseline Proxy Background: `{payload['artifacts']['baseline_proxy_background_csv']}`",
+            f"- Baseline Dual View: `{payload['artifacts']['baseline_dual_view_md']}`",
+            f"- Error Cases: `{payload['artifacts']['error_cases']}`",
+            "",
+            "## Thesis Writing Notes",
+            f"- 主结果口径: {payload['paper_ready_notes']['main_result_scope']}",
+            f"- 消融口径: {payload['paper_ready_notes']['ablation_scope']}",
+            f"- 对齐口径: {payload['paper_ready_notes']['alignment_scope']}",
+            f"- 局限性: {payload['paper_ready_notes']['limitation']}",
+            f"- 下一步: {payload['paper_ready_notes']['next_action']}",
+            f"- 可视化结论: {payload['paper_ready_notes']['visual_conclusion_note']}",
+        ]
+    )
+    if payload["artifacts"]["qwen_blocker"]:
+        md_lines.insert(
+            md_lines.index("## Thesis Writing Notes"),
+            f"- Qwen Layer-B Blocker: `{payload['artifacts']['qwen_blocker']}`",
+        )
     out_md = root / args.out_md
     out_md.parent.mkdir(parents=True, exist_ok=True)
     out_md.write_text("\n".join(md_lines) + "\n", encoding="utf-8")

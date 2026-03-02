@@ -1,0 +1,6 @@
+dimension,status,icon,evidence,note
+Real Dataset Scale,PASS,[OK],reports/real_dataset_summary.json,train/dev/test=70054/8755/8755
+Small-Real Closure,PASS,[OK],reports/small_real/small_real_lora_v13/run_card.json,latest_run=small_real_lora_v13
+Qwen2.5-7B Layer-B,PASS,[OK],reports/training/layer_b_qwen25_7b_sft_metrics.json,mainline ready
+Alignment Realness,PASS,[OK],reports/training/dpo_real_metrics.json,real_methods=3/3
+Thesis Asset Completeness,PASS,[OK],reports/thesis_assets/tables/main_results_dual_view.md,asset_checks=4/4
