@@ -10,8 +10,12 @@
 - `figures/pipeline_mermaid.md`: 流程图源码
 - `figures/result_figure_notes.md`: 图表建议
 - `figures/loss_curve_latest.png`: 最新 small-real 训练 loss 折线图
+- `figures/layer_b_loss_curve.png`: Qwen2.5-7B Layer-B 训练 loss 折线图
 - `figures/alignment_metrics_bar.png`: DPO/SimPO/KTO 对齐指标柱状图
 - `figures/train_loss_compare_bar.png`: 主线训练损失对比柱状图
 - `figures/dpo_beta_curve.png`: DPO beta 消融折线图
 - `figures/conclusion_status_bar.png`: 结论状态分布柱状图
+- `figures/dataset_scale_bar.png`: 真实数据规模分布图
+- `figures/sota_f1_bar.png`: SOTA/Proxy F1 对比图
+- `figures/detection_confusion_bar.png`: 检测混淆矩阵计数图
 - `figures/figure_manifest.json`: 图表生成清单

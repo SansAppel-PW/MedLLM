@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-03-02T13:50:30.968556+00:00",
+  "generated_at_utc": "2026-03-02T14:18:51.430228+00:00",
   "figures": [
     {
       "name": "loss_curve_latest",
@@ -44,6 +44,30 @@
         "PARTIAL": 0.0,
         "FAIL": 0.0
       }
+    },
+    {
+      "name": "dataset_scale_bar",
+      "source": "reports/real_dataset_summary.json",
+      "png": "reports/thesis_assets/figures/dataset_scale_bar.png",
+      "pdf": "reports/thesis_assets/figures/dataset_scale_bar.pdf",
+      "status": "ok",
+      "bars": 5
+    },
+    {
+      "name": "sota_f1_bar",
+      "source": "reports/thesis_assets/tables/sota_compare_metrics.csv",
+      "png": "reports/thesis_assets/figures/sota_f1_bar.png",
+      "pdf": "reports/thesis_assets/figures/sota_f1_bar.pdf",
+      "status": "ok",
+      "bars": 4
+    },
+    {
+      "name": "detection_confusion_bar",
+      "source": "reports/thesis_assets/tables/detection_confusion.csv",
+      "png": "reports/thesis_assets/figures/detection_confusion_bar.png",
+      "pdf": "reports/thesis_assets/figures/detection_confusion_bar.pdf",
+      "status": "ok",
+      "bars": 4
     }
   ]
 }

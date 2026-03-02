@@ -34,6 +34,7 @@ def test_package_thesis_bundle_builds_manifest_and_index(tmp_path: Path) -> None
     bundle_dir = tmp_path / "exports/thesis_bundle_testbundle"
     assert (bundle_dir / "bundle_manifest.json").exists()
     assert (bundle_dir / "artifact_index.csv").exists()
+    assert (bundle_dir / "key_artifacts.csv").exists()
     manifest = json.loads((bundle_dir / "bundle_manifest.json").read_text(encoding="utf-8"))
     assert manifest["bundle_name"] == "thesis_bundle_testbundle"
     assert manifest["file_count"] >= 3

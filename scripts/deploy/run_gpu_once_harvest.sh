@@ -58,9 +58,13 @@ bash day1_run.sh
 
 step "Extra audits and figure refresh"
 make next-stage
+if ! make dpo-ablation; then
+  echo "[GPU-ONCE][WARN] dpo-ablation failed; continue with existing artifacts."
+fi
 "${PYTHON_BIN}" scripts/eval/build_thesis_assets.py || true
 "${PYTHON_BIN}" scripts/eval/build_thesis_figures.py
 "${PYTHON_BIN}" scripts/audit/build_proposal_compliance_report.py
+make gpu-closure
 
 step "Build portable thesis bundle"
 bundle_args=(

@@ -607,12 +607,36 @@ def main() -> int:
             "dpo_beta_ablation_csv": args.dpo_beta_csv if dpo_beta_csv.exists() else None,
             "conclusion_dashboard_csv": args.conclusion_dashboard_csv,
             "conclusion_dashboard_mermaid_md": args.conclusion_dashboard_md,
-            "fig_loss_curve_latest_png": "reports/thesis_assets/figures/loss_curve_latest.png",
-            "fig_alignment_metrics_bar_png": "reports/thesis_assets/figures/alignment_metrics_bar.png",
-            "fig_train_loss_compare_bar_png": "reports/thesis_assets/figures/train_loss_compare_bar.png",
-            "fig_dpo_beta_curve_png": "reports/thesis_assets/figures/dpo_beta_curve.png",
-            "fig_conclusion_status_bar_png": "reports/thesis_assets/figures/conclusion_status_bar.png",
-            "figure_manifest_json": "reports/thesis_assets/figures/figure_manifest.json",
+            "fig_loss_curve_latest_png": "reports/thesis_assets/figures/loss_curve_latest.png"
+            if (root / "reports/thesis_assets/figures/loss_curve_latest.png").exists()
+            else None,
+            "fig_layer_b_loss_curve_png": "reports/thesis_assets/figures/layer_b_loss_curve.png"
+            if (root / "reports/thesis_assets/figures/layer_b_loss_curve.png").exists()
+            else None,
+            "fig_alignment_metrics_bar_png": "reports/thesis_assets/figures/alignment_metrics_bar.png"
+            if (root / "reports/thesis_assets/figures/alignment_metrics_bar.png").exists()
+            else None,
+            "fig_train_loss_compare_bar_png": "reports/thesis_assets/figures/train_loss_compare_bar.png"
+            if (root / "reports/thesis_assets/figures/train_loss_compare_bar.png").exists()
+            else None,
+            "fig_dpo_beta_curve_png": "reports/thesis_assets/figures/dpo_beta_curve.png"
+            if (root / "reports/thesis_assets/figures/dpo_beta_curve.png").exists()
+            else None,
+            "fig_conclusion_status_bar_png": "reports/thesis_assets/figures/conclusion_status_bar.png"
+            if (root / "reports/thesis_assets/figures/conclusion_status_bar.png").exists()
+            else None,
+            "fig_dataset_scale_bar_png": "reports/thesis_assets/figures/dataset_scale_bar.png"
+            if (root / "reports/thesis_assets/figures/dataset_scale_bar.png").exists()
+            else None,
+            "fig_sota_f1_bar_png": "reports/thesis_assets/figures/sota_f1_bar.png"
+            if (root / "reports/thesis_assets/figures/sota_f1_bar.png").exists()
+            else None,
+            "fig_detection_confusion_bar_png": "reports/thesis_assets/figures/detection_confusion_bar.png"
+            if (root / "reports/thesis_assets/figures/detection_confusion_bar.png").exists()
+            else None,
+            "figure_manifest_json": "reports/thesis_assets/figures/figure_manifest.json"
+            if (root / "reports/thesis_assets/figures/figure_manifest.json").exists()
+            else None,
             "baseline_audit_table": str(baseline_table.relative_to(root)) if baseline_table.exists() else None,
             "baseline_real_mainline_csv": str(baseline_real.relative_to(root)) if baseline_real.exists() else None,
             "baseline_proxy_background_csv": str(baseline_proxy.relative_to(root)) if baseline_proxy.exists() else None,
@@ -635,6 +659,20 @@ def main() -> int:
     out_json = root / args.out_json
     out_json.parent.mkdir(parents=True, exist_ok=True)
     out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    figure_items = [
+        payload["artifacts"].get("fig_loss_curve_latest_png"),
+        payload["artifacts"].get("fig_layer_b_loss_curve_png"),
+        payload["artifacts"].get("fig_alignment_metrics_bar_png"),
+        payload["artifacts"].get("fig_train_loss_compare_bar_png"),
+        payload["artifacts"].get("fig_dpo_beta_curve_png"),
+        payload["artifacts"].get("fig_conclusion_status_bar_png"),
+        payload["artifacts"].get("fig_dataset_scale_bar_png"),
+        payload["artifacts"].get("fig_sota_f1_bar_png"),
+        payload["artifacts"].get("fig_detection_confusion_bar_png"),
+        payload["artifacts"].get("figure_manifest_json"),
+    ]
+    figure_items = [x for x in figure_items if isinstance(x, str) and x]
 
     md_lines = [
         "# Thesis Ready Summary",
@@ -663,15 +701,18 @@ def main() -> int:
         f"- Mermaid: `{args.conclusion_dashboard_md}`",
         "",
         "## Visual Charts (PNG/PDF)",
-        "- `reports/thesis_assets/figures/loss_curve_latest.png`",
-        "- `reports/thesis_assets/figures/alignment_metrics_bar.png`",
-        "- `reports/thesis_assets/figures/train_loss_compare_bar.png`",
-        "- `reports/thesis_assets/figures/dpo_beta_curve.png`",
-        "- `reports/thesis_assets/figures/conclusion_status_bar.png`",
-        "- `reports/thesis_assets/figures/figure_manifest.json`",
-        "",
-        "### Iconized Status",
     ]
+    if figure_items:
+        for item in figure_items:
+            md_lines.append(f"- `{item}`")
+    else:
+        md_lines.append("- (none yet, run `make thesis-ready` to generate charts)")
+    md_lines.extend(
+        [
+            "",
+            "### Iconized Status",
+        ]
+    )
     for row in payload["conclusion_status"]["rows"]:
         md_lines.append(
             f"- {row['icon']} {row['dimension']}: {row['status']} | evidence=`{row['evidence']}` | {row['note']}"

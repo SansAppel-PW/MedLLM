@@ -65,6 +65,15 @@ def iter_files(root: Path) -> list[Path]:
     return rows
 
 
+def line_count_jsonl(path: Path) -> int | None:
+    if not path.exists() or not path.is_file():
+        return None
+    if path.suffix != ".jsonl":
+        return None
+    with path.open("r", encoding="utf-8") as f:
+        return sum(1 for _ in f)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build portable thesis artifact bundle")
     parser.add_argument("--root", default=".")
@@ -163,6 +172,39 @@ def main() -> int:
         "file_count": len(file_rows),
         "total_bytes": sum(int(x["bytes"]) for x in file_rows),
     }
+
+    key_artifacts = [
+        "reports/thesis_assets/thesis_ready_summary.md",
+        "reports/thesis_assets/thesis_ready_summary.json",
+        "reports/thesis_assets/figures/figure_manifest.json",
+        "reports/thesis_assets/tables/main_results_real.csv",
+        "reports/thesis_assets/tables/main_results_proxy.csv",
+        "reports/thesis_assets/tables/main_results_dual_view.md",
+        "reports/thesis_assets/tables/baseline_audit_table.csv",
+        "reports/thesis_assets/tables/dpo_beta_ablation.csv",
+        "reports/thesis_assets/cases/error_cases_top30.jsonl",
+        "reports/detection_predictions.jsonl",
+        "reports/eval_default.md",
+        "reports/sota_compare.md",
+        "reports/error_analysis.md",
+        "reports/gpu_experiment_closure.json",
+        "reports/opening_alignment_audit.json",
+    ]
+    key_rows: list[dict[str, Any]] = []
+    for rel in key_artifacts:
+        p = bundle_root / rel
+        if not p.exists():
+            continue
+        row: dict[str, Any] = {
+            "path": rel,
+            "bytes": p.stat().st_size,
+            "sha256": sha256(p),
+        }
+        lc = line_count_jsonl(p)
+        if lc is not None:
+            row["jsonl_rows"] = lc
+        key_rows.append(row)
+    manifest["key_artifacts"] = key_rows
     (bundle_root / "bundle_manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
@@ -173,6 +215,14 @@ def main() -> int:
         writer.writeheader()
         for row in file_rows:
             writer.writerow(row)
+
+    key_csv = bundle_root / "key_artifacts.csv"
+    with key_csv.open("w", encoding="utf-8", newline="") as f:
+        fieldnames = ["path", "bytes", "sha256", "jsonl_rows"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in key_rows:
+            writer.writerow({k: row.get(k) for k in fieldnames})
 
     readme = [
         "# Thesis Bundle",
@@ -190,6 +240,7 @@ def main() -> int:
         "- reports/sota_compare.md",
         "- reports/error_analysis.md",
         "- artifact_index.csv",
+        "- key_artifacts.csv",
         "- bundle_manifest.json",
         "",
         "## Verification",

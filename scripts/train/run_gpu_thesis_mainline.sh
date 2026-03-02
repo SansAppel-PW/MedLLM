@@ -140,6 +140,7 @@ run_cmd env \
 run_thesis_pipeline_with_fallback
 
 run_cmd "${PYTHON_BIN}" scripts/audit/build_thesis_ready_package.py
+run_cmd "${PYTHON_BIN}" scripts/eval/build_thesis_figures.py
 run_cmd "${PYTHON_BIN}" scripts/audit/build_iteration_report.py
 run_cmd "${PYTHON_BIN}" scripts/audit/update_decision_log.py
 run_cmd "${PYTHON_BIN}" scripts/audit/check_opening_alignment.py

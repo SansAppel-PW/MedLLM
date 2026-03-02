@@ -30,6 +30,12 @@ def read_csv_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(f))
 
 
+def load_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def save_image_both(image: Image.Image, png_path: Path, pdf_path: Path) -> None:
     png_path.parent.mkdir(parents=True, exist_ok=True)
     pdf_path.parent.mkdir(parents=True, exist_ok=True)
@@ -47,6 +53,62 @@ def find_latest_loss_csv(root: Path) -> Path | None:
     if not candidates:
         return None
     return max(candidates, key=lambda p: p.stat().st_mtime)
+
+
+def find_layer_b_train_log(root: Path) -> Path | None:
+    candidates = [
+        root / "logs/layer_b/qwen25_7b_sft/train_log.jsonl",
+        root / "logs/layer_b/qwen25_7b_sft/real_train_log.jsonl",
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    return None
+
+
+def parse_train_log_jsonl(path: Path) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
+    train_pts: list[tuple[float, float]] = []
+    eval_pts: list[tuple[float, float]] = []
+    if not path.exists():
+        return train_pts, eval_pts
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except Exception:  # noqa: BLE001
+                continue
+            step = to_float(row.get("step"))
+            if step is None:
+                continue
+            loss = to_float(row.get("loss"))
+            eval_loss = to_float(row.get("eval_loss"))
+            if loss is not None:
+                train_pts.append((step, loss))
+            if eval_loss is not None:
+                eval_pts.append((step, eval_loss))
+    return train_pts, eval_pts
+
+
+def dataset_count(summary: dict[str, Any], key: str) -> float:
+    direct = summary.get(key)
+    if isinstance(direct, (int, float)):
+        return float(direct)
+    if key in {"train_count", "dev_count", "test_count"}:
+        final_sft = summary.get("final_sft")
+        if isinstance(final_sft, dict) and isinstance(final_sft.get(key), (int, float)):
+            return float(final_sft[key])
+    if key == "benchmark_count":
+        final_bench = summary.get("final_benchmark")
+        if isinstance(final_bench, dict) and isinstance(final_bench.get("count"), (int, float)):
+            return float(final_bench["count"])
+    if key == "merged_after_dedup":
+        comp = summary.get("external_real_qa_component")
+        if isinstance(comp, dict) and isinstance(comp.get("raw_merged_count"), (int, float)):
+            return float(comp["raw_merged_count"])
+    return 0.0
 
 
 def try_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -198,9 +260,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Build thesis chart assets")
     parser.add_argument("--root", default=".")
     parser.add_argument("--loss-csv", default=None)
+    parser.add_argument("--dataset-summary", default="reports/real_dataset_summary.json")
     parser.add_argument("--main-real-csv", default="reports/thesis_assets/tables/main_results_real.csv")
     parser.add_argument("--dpo-beta-csv", default="reports/thesis_assets/tables/dpo_beta_ablation.csv")
     parser.add_argument("--conclusion-csv", default="reports/thesis_assets/tables/conclusion_status_dashboard.csv")
+    parser.add_argument("--sota-csv", default="reports/thesis_assets/tables/sota_compare_metrics.csv")
+    parser.add_argument("--confusion-csv", default="reports/thesis_assets/tables/detection_confusion.csv")
     parser.add_argument("--out-dir", default="reports/thesis_assets/figures")
     parser.add_argument("--manifest", default="reports/thesis_assets/figures/figure_manifest.json")
     args = parser.parse_args()
@@ -214,7 +279,7 @@ def main() -> int:
         "figures": [],
     }
 
-    # 1) Loss curve
+    # 1) Small-real loss curve
     loss_csv = Path(args.loss_csv) if args.loss_csv else find_latest_loss_csv(root)
     if loss_csv and loss_csv.exists():
         loss_rows = read_csv_rows(loss_csv)
@@ -252,7 +317,33 @@ def main() -> int:
             }
         )
 
-    # 2) Alignment real metrics bar chart
+    # 2) Layer-B loss curve (if log exists)
+    layer_b_log = find_layer_b_train_log(root)
+    if layer_b_log:
+        lb_train, lb_eval = parse_train_log_jsonl(layer_b_log)
+        ok_layer_b = draw_line_chart(
+            title="Qwen2.5-7B Layer-B Training Loss Curve",
+            x_label="Step",
+            y_label="Loss",
+            series=[
+                {"name": "train_loss", "color": (0, 102, 204), "points": lb_train},
+                {"name": "eval_loss", "color": (204, 102, 0), "points": lb_eval},
+            ],
+            out_png=out_dir / "layer_b_loss_curve.png",
+            out_pdf=out_dir / "layer_b_loss_curve.pdf",
+        )
+        manifest["figures"].append(
+            {
+                "name": "layer_b_loss_curve",
+                "source": str(layer_b_log.relative_to(root)),
+                "png": str((out_dir / "layer_b_loss_curve.png").relative_to(root)),
+                "pdf": str((out_dir / "layer_b_loss_curve.pdf").relative_to(root)),
+                "status": "ok" if ok_layer_b else "skipped",
+                "points": len(lb_train) + len(lb_eval),
+            }
+        )
+
+    # 3) Alignment real metrics bar chart
     main_real_rows = read_csv_rows(root / args.main_real_csv)
     align_labels: list[str] = []
     align_values: list[float] = []
@@ -311,7 +402,7 @@ def main() -> int:
         }
     )
 
-    # 3) DPO beta ablation line chart
+    # 4) DPO beta ablation line chart
     dpo_rows = read_csv_rows(root / args.dpo_beta_csv)
     beta_points: list[tuple[float, float]] = []
     for row in dpo_rows:
@@ -341,7 +432,7 @@ def main() -> int:
         }
     )
 
-    # 4) Conclusion status bar
+    # 5) Conclusion status bar
     status_rows = read_csv_rows(root / args.conclusion_csv)
     counts = {"PASS": 0.0, "PARTIAL": 0.0, "FAIL": 0.0}
     for row in status_rows:
@@ -365,6 +456,98 @@ def main() -> int:
             "pdf": str((out_dir / "conclusion_status_bar.pdf").relative_to(root)),
             "status": "ok" if ok_status else "skipped",
             "counts": counts,
+        }
+    )
+
+    # 6) Dataset scale bar chart
+    dataset_summary = load_json(root / args.dataset_summary)
+    ds_labels = ["merged", "train", "dev", "test", "benchmark"]
+    ds_values = [
+        dataset_count(dataset_summary, "merged_after_dedup"),
+        dataset_count(dataset_summary, "train_count"),
+        dataset_count(dataset_summary, "dev_count"),
+        dataset_count(dataset_summary, "test_count"),
+        dataset_count(dataset_summary, "benchmark_count"),
+    ]
+    ok_dataset = draw_bar_chart(
+        title="Real Dataset Scale Overview",
+        y_label="Count",
+        labels=ds_labels,
+        values=ds_values,
+        out_png=out_dir / "dataset_scale_bar.png",
+        out_pdf=out_dir / "dataset_scale_bar.pdf",
+        bar_color=(70, 130, 180),
+    )
+    manifest["figures"].append(
+        {
+            "name": "dataset_scale_bar",
+            "source": args.dataset_summary,
+            "png": str((out_dir / "dataset_scale_bar.png").relative_to(root)),
+            "pdf": str((out_dir / "dataset_scale_bar.pdf").relative_to(root)),
+            "status": "ok" if ok_dataset else "skipped",
+            "bars": len(ds_labels),
+        }
+    )
+
+    # 7) SOTA F1 comparison bar chart
+    sota_rows = read_csv_rows(root / args.sota_csv)
+    sota_labels: list[str] = []
+    sota_f1: list[float] = []
+    for row in sota_rows:
+        name = str(row.get("name", "")).strip()
+        f1 = to_float(row.get("f1"))
+        if not name or f1 is None:
+            continue
+        sota_labels.append(name)
+        sota_f1.append(f1)
+    ok_sota = draw_bar_chart(
+        title="SOTA/Proxy F1 Comparison",
+        y_label="F1",
+        labels=sota_labels,
+        values=sota_f1,
+        out_png=out_dir / "sota_f1_bar.png",
+        out_pdf=out_dir / "sota_f1_bar.pdf",
+        bar_color=(46, 139, 87),
+    )
+    manifest["figures"].append(
+        {
+            "name": "sota_f1_bar",
+            "source": args.sota_csv,
+            "png": str((out_dir / "sota_f1_bar.png").relative_to(root)),
+            "pdf": str((out_dir / "sota_f1_bar.pdf").relative_to(root)),
+            "status": "ok" if ok_sota else "skipped",
+            "bars": len(sota_labels),
+        }
+    )
+
+    # 8) Detection confusion bar chart
+    confusion_rows = read_csv_rows(root / args.confusion_csv)
+    c_labels: list[str] = []
+    c_values: list[float] = []
+    for row in confusion_rows:
+        name = str(row.get("name", "")).strip()
+        count = to_float(row.get("count"))
+        if not name or count is None:
+            continue
+        c_labels.append(name)
+        c_values.append(count)
+    ok_conf = draw_bar_chart(
+        title="Detection Confusion Matrix Counts",
+        y_label="Count",
+        labels=c_labels,
+        values=c_values,
+        out_png=out_dir / "detection_confusion_bar.png",
+        out_pdf=out_dir / "detection_confusion_bar.pdf",
+        bar_color=(205, 92, 92),
+    )
+    manifest["figures"].append(
+        {
+            "name": "detection_confusion_bar",
+            "source": args.confusion_csv,
+            "png": str((out_dir / "detection_confusion_bar.png").relative_to(root)),
+            "pdf": str((out_dir / "detection_confusion_bar.pdf").relative_to(root)),
+            "status": "ok" if ok_conf else "skipped",
+            "bars": len(c_labels),
         }
     )
 

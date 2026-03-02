@@ -134,6 +134,7 @@ USE_TORCHRUN=1 NUM_GPUS=2 BF16=false FP16=true bash scripts/train/run_layer_b_qw
 ```bash
 # 迁移前审计：确认当前仓库只剩 GPU 主实验缺口
 make gpu-readiness
+make gpu-once-readiness
 
 # 本机预演（不执行，只打印将运行的命令）
 make gpu-mainline-dryrun
@@ -165,6 +166,7 @@ make gpu-once-harvest
 - `reports/thesis_assets/figures/figure_manifest.json`
 - `exports/thesis_bundle_gpu_once_<timestamp>/`
 - `exports/thesis_bundle_gpu_once_<timestamp>.tar.gz`
+- `exports/thesis_bundle_gpu_once_<timestamp>/key_artifacts.csv`
 
 对应脚本：
 - `scripts/train/run_gpu_thesis_mainline.sh`
@@ -229,10 +231,14 @@ make next-stage
 - `reports/thesis_assets/tables/conclusion_status_dashboard.csv`
 - `reports/thesis_assets/figures/conclusion_dashboard_mermaid.md`
 - `reports/thesis_assets/figures/loss_curve_latest.png`
+- `reports/thesis_assets/figures/layer_b_loss_curve.png`
 - `reports/thesis_assets/figures/alignment_metrics_bar.png`
 - `reports/thesis_assets/figures/train_loss_compare_bar.png`
 - `reports/thesis_assets/figures/dpo_beta_curve.png`
 - `reports/thesis_assets/figures/conclusion_status_bar.png`
+- `reports/thesis_assets/figures/dataset_scale_bar.png`
+- `reports/thesis_assets/figures/sota_f1_bar.png`
+- `reports/thesis_assets/figures/detection_confusion_bar.png`
 - `reports/thesis_assets/figures/figure_manifest.json`
 - `reports/thesis_assets/tables/baseline_real_mainline.csv`
 - `reports/thesis_assets/tables/baseline_proxy_background.csv`

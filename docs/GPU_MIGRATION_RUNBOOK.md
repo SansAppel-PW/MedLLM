@@ -19,6 +19,7 @@ make gpu-mainline-dryrun
 
 ## 3. GPU 环境执行
 ```bash
+make gpu-once-readiness
 python -m pip install -r requirements.txt
 make gpu-mainline
 ```
@@ -80,4 +81,5 @@ rsync -avz --progress <remote>:/root/autodl-tmp/MedLLM_codex_worktree-gpt-prompt
 
 核验：
 - `bundle_manifest.json` 与 `artifact_index.csv` 中 sha256；
+- `key_artifacts.csv` 是否包含主表、主图、主指标；
 - `reports/thesis_assets/figures/figure_manifest.json` 图表是否齐全。

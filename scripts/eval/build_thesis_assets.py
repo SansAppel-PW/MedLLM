@@ -56,6 +56,29 @@ def confusion_from_predictions(rows: list[dict[str, Any]]) -> dict[str, int]:
     return {"tp": tp, "fp": fp, "tn": tn, "fn": fn}
 
 
+def dataset_count(summary: dict[str, Any], key: str) -> int:
+    direct = summary.get(key)
+    if isinstance(direct, int):
+        return int(direct)
+    if key in {"train_count", "dev_count", "test_count"}:
+        final_sft = summary.get("final_sft")
+        if isinstance(final_sft, dict) and isinstance(final_sft.get(key), int):
+            return int(final_sft[key])
+    if key == "benchmark_count":
+        final_bench = summary.get("final_benchmark")
+        if isinstance(final_bench, dict):
+            val = final_bench.get("count")
+            if isinstance(val, int):
+                return int(val)
+    if key == "merged_after_dedup":
+        comp = summary.get("external_real_qa_component")
+        if isinstance(comp, dict):
+            val = comp.get("raw_merged_count")
+            if isinstance(val, int):
+                return int(val)
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build thesis assets")
     parser.add_argument("--out-dir", default="reports/thesis_assets")
@@ -82,31 +105,37 @@ def main() -> int:
     predictions = load_jsonl(Path(args.predictions))
     confusion = confusion_from_predictions(predictions)
 
+    train_count = dataset_count(dataset_summary, "train_count")
+    dev_count = dataset_count(dataset_summary, "dev_count")
+    test_count = dataset_count(dataset_summary, "test_count")
+    benchmark_count = dataset_count(dataset_summary, "benchmark_count")
+    merged_after_dedup = dataset_count(dataset_summary, "merged_after_dedup")
+
     experiment_rows = [
         {
             "section": "real_dataset",
             "metric": "merged_after_dedup",
-            "value": dataset_summary.get("merged_after_dedup", 0),
+            "value": merged_after_dedup,
         },
         {
             "section": "real_dataset",
             "metric": "train_count",
-            "value": dataset_summary.get("train_count", 0),
+            "value": train_count,
         },
         {
             "section": "real_dataset",
             "metric": "dev_count",
-            "value": dataset_summary.get("dev_count", 0),
+            "value": dev_count,
         },
         {
             "section": "real_dataset",
             "metric": "test_count",
-            "value": dataset_summary.get("test_count", 0),
+            "value": test_count,
         },
         {
             "section": "real_dataset",
             "metric": "benchmark_count",
-            "value": dataset_summary.get("benchmark_count", 0),
+            "value": benchmark_count,
         },
         {
             "section": "alignment",
@@ -176,6 +205,16 @@ def main() -> int:
         "- `cases/error_cases_top30.jsonl`: 错误案例样本（由 `generate_error_analysis.py` 生成）",
         "- `figures/pipeline_mermaid.md`: 流程图源码",
         "- `figures/result_figure_notes.md`: 图表建议",
+        "- `figures/loss_curve_latest.png`: 最新 small-real 训练 loss 折线图",
+        "- `figures/layer_b_loss_curve.png`: Qwen2.5-7B Layer-B 训练 loss 折线图",
+        "- `figures/alignment_metrics_bar.png`: DPO/SimPO/KTO 对齐指标柱状图",
+        "- `figures/train_loss_compare_bar.png`: 主线训练损失对比柱状图",
+        "- `figures/dpo_beta_curve.png`: DPO beta 消融折线图",
+        "- `figures/conclusion_status_bar.png`: 结论状态分布柱状图",
+        "- `figures/dataset_scale_bar.png`: 真实数据规模分布图",
+        "- `figures/sota_f1_bar.png`: SOTA/Proxy F1 对比图",
+        "- `figures/detection_confusion_bar.png`: 检测混淆矩阵计数图",
+        "- `figures/figure_manifest.json`: 图表生成清单",
     ]
     (out_dir / "README.md").write_text("\n".join(readme_lines) + "\n", encoding="utf-8")
 

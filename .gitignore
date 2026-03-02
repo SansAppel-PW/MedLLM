@@ -38,6 +38,7 @@ venv/
 /tensorboard/
 /mlruns/
 /logs/
+/exports/
 *.log
 *.tmp
 

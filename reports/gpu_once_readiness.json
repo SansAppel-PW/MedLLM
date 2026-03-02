@@ -1,0 +1,64 @@
+{
+  "summary": {
+    "total": 5,
+    "pass": 5,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "id": "R01",
+      "item": "主执行入口脚本齐全",
+      "status": "PASS",
+      "detail": "all present",
+      "evidence": [
+        "day1_run.sh",
+        "scripts/train/run_gpu_thesis_mainline.sh",
+        "scripts/deploy/run_gpu_once_harvest.sh",
+        "scripts/deploy/package_thesis_bundle.py",
+        "scripts/eval/build_thesis_figures.py"
+      ]
+    },
+    {
+      "id": "R02",
+      "item": "Makefile 目标齐全",
+      "status": "PASS",
+      "detail": "all present",
+      "evidence": [
+        "Makefile"
+      ]
+    },
+    {
+      "id": "R03",
+      "item": "数据/KG/评测链路脚本齐全",
+      "status": "PASS",
+      "detail": "all present",
+      "evidence": [
+        "scripts/data/ensure_real_dataset.sh",
+        "scripts/data/build_cm3kg_real_assets.py",
+        "scripts/data/build_unified_real_assets.py",
+        "scripts/eval/run_thesis_pipeline.sh"
+      ]
+    },
+    {
+      "id": "R04",
+      "item": "关键表格模板/历史产物存在",
+      "status": "PASS",
+      "detail": "all present",
+      "evidence": [
+        "reports/thesis_assets/tables/main_results_real.csv",
+        "reports/thesis_assets/tables/baseline_audit_table.csv",
+        "reports/thesis_assets/tables/conclusion_status_dashboard.csv"
+      ]
+    },
+    {
+      "id": "R05",
+      "item": "图表产线入口存在",
+      "status": "PASS",
+      "detail": "all present",
+      "evidence": [
+        "reports/thesis_assets/figures/figure_manifest.json",
+        "reports/thesis_assets/figures/conclusion_dashboard_mermaid.md"
+      ]
+    }
+  ]
+}
