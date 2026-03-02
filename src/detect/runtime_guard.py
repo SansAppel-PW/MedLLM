@@ -55,7 +55,7 @@ def guard_answer(
         facts = [answer]
 
     kg_abs = str(Path(kg_path).resolve())
-    docs = list(cached_docs(kg_abs))
+    docs = cached_docs(kg_abs)
     nli_results = []
     for fact in facts:
         top_docs = retrieve(fact, docs, top_k=top_k, context_query=query)

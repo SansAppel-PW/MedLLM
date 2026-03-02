@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
+import heapq
 import hashlib
 import json
 from pathlib import Path
@@ -22,6 +24,10 @@ RELATION_TEXT = {
     "dosage": "用量",
     "reference_answer": "参考答案",
 }
+
+
+# Cache inverted index for large KB retrieval to avoid O(|query|*|docs|) scans.
+_DOC_INDEX_CACHE: dict[int, tuple[int, dict[str, list[int]], dict[str, list[int]]]] = {}
 
 
 def stable_query_hash(text: str) -> str:
@@ -84,9 +90,64 @@ def score_doc(
     return base + bonus
 
 
+def _build_doc_index(docs: list[dict[str, Any]] | tuple[dict[str, Any], ...]) -> tuple[dict[str, list[int]], dict[str, list[int]]]:
+    key = id(docs)
+    size = len(docs)
+    cached = _DOC_INDEX_CACHE.get(key)
+    if cached and cached[0] == size:
+        return cached[1], cached[2]
+
+    token_index: dict[str, list[int]] = defaultdict(list)
+    hash_index: dict[str, list[int]] = defaultdict(list)
+    for idx, doc in enumerate(docs):
+        for tok in set(doc.get("tokens", [])):
+            token_index[tok].append(idx)
+        qh = str(doc.get("query_hash", "")).strip()
+        if qh:
+            hash_index[qh].append(idx)
+
+    # Keep cache bounded for long-running processes.
+    if len(_DOC_INDEX_CACHE) >= 8:
+        _DOC_INDEX_CACHE.clear()
+    _DOC_INDEX_CACHE[key] = (size, dict(token_index), dict(hash_index))
+    return _DOC_INDEX_CACHE[key][1], _DOC_INDEX_CACHE[key][2]
+
+
+def _iter_candidate_docs(
+    docs: list[dict[str, Any]] | tuple[dict[str, Any], ...],
+    q_tokens: list[str],
+    context_hash: str,
+    top_k: int,
+) -> list[dict[str, Any]] | tuple[dict[str, Any], ...]:
+    # For small KB keep the exact full scan; for large KB use lexical candidate pruning.
+    if len(docs) < 50_000:
+        return docs
+
+    token_index, hash_index = _build_doc_index(docs)
+    counts: dict[int, int] = defaultdict(int)
+    for tok in set(q_tokens):
+        for idx in token_index.get(tok, []):
+            counts[idx] += 1
+    if context_hash:
+        for idx in hash_index.get(context_hash, []):
+            counts[idx] += 3
+
+    if not counts:
+        return docs
+
+    # Retain enough candidates to keep recall while avoiding full-table scoring.
+    max_candidates = max(6000, top_k * 1200)
+    if len(counts) > max_candidates:
+        picked = heapq.nlargest(max_candidates, counts.items(), key=lambda x: x[1])
+        candidate_ids = [idx for idx, _ in picked]
+    else:
+        candidate_ids = list(counts.keys())
+    return [docs[idx] for idx in candidate_ids]
+
+
 def retrieve(
     query: str,
-    docs: list[dict[str, Any]],
+    docs: list[dict[str, Any]] | tuple[dict[str, Any], ...],
     top_k: int = 5,
     min_score: float = 0.08,
     context_query: str = "",
@@ -98,8 +159,9 @@ def retrieve(
     q_norm = (merged_query or "").lower()
     context_hash = stable_query_hash(context_query) if context_query else ""
 
+    candidate_docs = _iter_candidate_docs(docs, q_tokens, context_hash, top_k)
     scored = []
-    for doc in docs:
+    for doc in candidate_docs:
         s = score_doc(q_tokens, q_norm, doc, context_hash=context_hash)
         if s >= min_score:
             scored.append(
