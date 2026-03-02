@@ -18,9 +18,20 @@ BLOCKER_REPORT="${BLOCKER_REPORT:-reports/small_real/qwen_layer_b_blocker.md}"
 ATTEMPT_TIMEOUT_SEC="${ATTEMPT_TIMEOUT_SEC:-900}"
 DEFAULT_MAX_STEPS="${DEFAULT_MAX_STEPS:-400}"
 MIN_CACHE_FREE_MB="${MIN_CACHE_FREE_MB:-12288}"
+MODEL_PREFETCH_RETRIES="${MODEL_PREFETCH_RETRIES:-6}"
+MODEL_PREFETCH_RETRY_SLEEP_SEC="${MODEL_PREFETCH_RETRY_SLEEP_SEC:-30}"
+MODEL_PREFETCH_MAX_WORKERS="${MODEL_PREFETCH_MAX_WORKERS:-4}"
+MODEL_PREFETCH_ALLOW_PATTERNS="${MODEL_PREFETCH_ALLOW_PATTERNS:-*.json,*.safetensors,*.txt,tokenizer*,*.model,*.py}"
 
 mkdir -p "$(dirname "${BLOCKER_REPORT}")" "${BASE_LOG}" "$(dirname "${METRICS_OUT}")"
 mkdir -p "$(dirname "${METRICS_OUT_SFT_ALIAS}")"
+
+# On some rental hosts, Xet/CAS links are unstable and can timeout repeatedly.
+# Force classic hub download path and longer timeouts for large model shards.
+export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
+export HF_HUB_ENABLE_HF_TRANSFER="${HF_HUB_ENABLE_HF_TRANSFER:-0}"
+export HF_HUB_DOWNLOAD_TIMEOUT="${HF_HUB_DOWNLOAD_TIMEOUT:-1800}"
+export HF_HUB_ETAG_TIMEOUT="${HF_HUB_ETAG_TIMEOUT:-120}"
 
 if [[ -z "${HF_HOME:-}" && -d "/root/autodl-tmp" && -w "/root/autodl-tmp" ]]; then
   export HF_HOME="/root/autodl-tmp/hf-cache"
@@ -77,6 +88,25 @@ check_cache_space() {
   return 0
 }
 
+prefetch_model_if_needed() {
+  if [[ -d "${MODEL_NAME}" ]] || [[ -f "${MODEL_NAME}/config.json" ]]; then
+    echo "[qwen-layer-b] model appears local path, skip remote prefetch: ${MODEL_NAME}"
+    return 0
+  fi
+  if model_cache_ready; then
+    echo "[qwen-layer-b] model cache ready, skip prefetch."
+    return 0
+  fi
+  echo "[qwen-layer-b] prefetch model=${MODEL_NAME} retries=${MODEL_PREFETCH_RETRIES} workers=${MODEL_PREFETCH_MAX_WORKERS}"
+  "${PYTHON_BIN}" scripts/train/prefetch_hf_model.py \
+    --repo-id "${MODEL_NAME}" \
+    --retries "${MODEL_PREFETCH_RETRIES}" \
+    --sleep-seconds "${MODEL_PREFETCH_RETRY_SLEEP_SEC}" \
+    --max-workers "${MODEL_PREFETCH_MAX_WORKERS}" \
+    --allow-patterns "${MODEL_PREFETCH_ALLOW_PATTERNS}" \
+    --require-safetensors
+}
+
 if [[ -z "${BF16:-}" || -z "${FP16:-}" ]]; then
   bf16_capable="$("${PYTHON_BIN}" - <<'PY'
 import torch
@@ -110,6 +140,11 @@ fi
 
 if ! check_cache_space; then
   exit 4
+fi
+
+if ! prefetch_model_if_needed; then
+  write_blocker_report "模型预拉取失败（网络不稳定）" "请检查 HF_ENDPOINT/HF_HOME，并重试。已启用禁用Xet与重试策略。"
+  exit 5
 fi
 
 available_gpus="$(nvidia-smi --list-gpus | wc -l | tr -d '[:space:]')"

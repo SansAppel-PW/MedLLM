@@ -8,6 +8,10 @@ PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 DRY_RUN="${DRY_RUN:-0}"
 REQUIRE_GPU="${REQUIRE_GPU:-1}"
 export HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"
+export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
+export HF_HUB_ENABLE_HF_TRANSFER="${HF_HUB_ENABLE_HF_TRANSFER:-0}"
+export HF_HUB_DOWNLOAD_TIMEOUT="${HF_HUB_DOWNLOAD_TIMEOUT:-1800}"
+export HF_HUB_ETAG_TIMEOUT="${HF_HUB_ETAG_TIMEOUT:-120}"
 LAYER_B_OPTIONAL="${LAYER_B_OPTIONAL:-1}"
 THESIS_EVAL_AUTOFALLBACK="${THESIS_EVAL_AUTOFALLBACK:-1}"
 
@@ -123,6 +127,7 @@ run_cmd "${PYTHON_BIN}" scripts/audit/check_pipeline_interface_consistency.py
 run_cmd "${PYTHON_BIN}" scripts/data/bootstrap_minimal_assets.py
 run_cmd bash scripts/data/ensure_real_dataset.sh
 echo "[gpu-mainline] HF_ENDPOINT=${HF_ENDPOINT}"
+echo "[gpu-mainline] HF_HUB_DISABLE_XET=${HF_HUB_DISABLE_XET} HF_HUB_DOWNLOAD_TIMEOUT=${HF_HUB_DOWNLOAD_TIMEOUT}"
 
 run_layer_b_with_policy
 

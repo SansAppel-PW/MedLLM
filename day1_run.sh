@@ -58,6 +58,10 @@ BF16="${BF16:-}"
 FP16="${FP16:-}"
 HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"
 export HF_ENDPOINT
+export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
+export HF_HUB_ENABLE_HF_TRANSFER="${HF_HUB_ENABLE_HF_TRANSFER:-0}"
+export HF_HUB_DOWNLOAD_TIMEOUT="${HF_HUB_DOWNLOAD_TIMEOUT:-1800}"
+export HF_HUB_ETAG_TIMEOUT="${HF_HUB_ETAG_TIMEOUT:-120}"
 
 TS="${TS:-$(date +%Y%m%d_%H%M%S)}"
 LOG_DIR="logs/session"
@@ -169,6 +173,7 @@ PY
     fi
   fi
   echo "runtime_plan: NUM_GPUS=${NUM_GPUS} USE_TORCHRUN=${USE_TORCHRUN} BF16=${BF16} FP16=${FP16}"
+  echo "runtime_hf_hub: disable_xet=${HF_HUB_DISABLE_XET} dl_timeout=${HF_HUB_DOWNLOAD_TIMEOUT} etag_timeout=${HF_HUB_ETAG_TIMEOUT}"
 fi
 
 if [[ "${ENABLE_LLM_JUDGE}" == "1" ]]; then
