@@ -64,11 +64,38 @@ EOF
 
 model_cache_ready() {
   local base="${HF_HUB_CACHE:-$HOME/.cache/huggingface/hub}"
-  local snap_dir="${base}/models--Qwen--Qwen2.5-7B-Instruct/snapshots"
+  local model_dir="${base}/models--Qwen--Qwen2.5-7B-Instruct"
+  local snap_dir="${model_dir}/snapshots"
   if [[ ! -d "${snap_dir}" ]]; then
     return 1
   fi
-  find "${snap_dir}" -type l -name "*.safetensors" | grep -q .
+  "${PYTHON_BIN}" - "${model_dir}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+model_dir = Path(sys.argv[1])
+snapshots = sorted(
+    [p for p in (model_dir / "snapshots").glob("*") if p.is_dir()],
+    key=lambda p: p.stat().st_mtime,
+    reverse=True,
+)
+if not snapshots:
+    raise SystemExit(1)
+snap = snapshots[0]
+idx = snap / "model.safetensors.index.json"
+if not idx.exists():
+    raise SystemExit(1)
+data = json.loads(idx.read_text(encoding="utf-8"))
+shards = sorted(set(data.get("weight_map", {}).values()))
+if not shards:
+    raise SystemExit(1)
+missing = [name for name in shards if not (snap / name).exists()]
+if missing:
+    print("[qwen-layer-b] cache missing shard files:", ",".join(missing))
+    raise SystemExit(2)
+print("[qwen-layer-b] cache shards ready:", len(shards))
+PY
 }
 
 check_cache_space() {
